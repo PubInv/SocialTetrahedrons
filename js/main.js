@@ -31,6 +31,8 @@ var TET_DISTANCE = 0.5;
 const MAX_PARAMETRIC_STEPS = 1000;
 const PARAMETRIC_BISECTION_LIMIT = 50;
 
+const DIMENSIONS = ["Mind","Body","Spirit","Abundance"];
+
 
 // Detects webgl
 if (!Detector.webgl) {
@@ -169,18 +171,44 @@ function create_vertex_mesh(pos, c) {
 
 function draw_big_tet() {
     const colors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Blue")];
+    const three_colors = [0xff0000,
+                          0xffff00,
+                          0x00ff00,
+                          0x0000ff];    
     const l = 2;
 
     var v = [new THREE.Vector3( Math.sqrt(8/9),-1/3,0),
              new THREE.Vector3(-Math.sqrt(2/9),-1/3,Math.sqrt(2/3)),
              new THREE.Vector3(-Math.sqrt(2/9),-1/3,-Math.sqrt(2/3)),
-             new THREE.Vector3(      0,1,0)];
+             new THREE.Vector3(0,1,0)];
     v[0].y += 1/3;
     v[1].y += 1/3;
     v[2].y += 1/3;
     v[3].y += 1/3;    
     v.forEach(x => { x.x *= l; x.y *= l; x.z *= l; });
     v.forEach(x => create_vertex_mesh(x,d3.color("DarkRed")));
+
+    for (var i in DIMENSIONS) {
+        var label = makeTextSprite(DIMENSIONS[i],{fontsize: 60 },"red");
+        label.position.set(v[i].x,v[i].y,v[i].z);
+        am.grid_scene.add(label);
+
+       var bulbGeometry = new THREE.SphereBufferGeometry( 0.02, 16, 8 );
+        const col_num = three_colors[i];
+        bulbLight = new THREE.PointLight( col_num, 1, 100, 0.01 );
+        bulbMat = new THREE.MeshStandardMaterial( {
+            emissive: 0xffffee,
+            emissiveIntensity: 1,
+            color: col_num
+        } );
+        bulbLight.add( new THREE.Mesh( bulbGeometry, bulbMat ) );
+        bulbLight.position.set(v[i].x,v[i].y+1,v[i].z);
+        bulbLight.castShadow = true;
+        am.scene.add( bulbLight );
+     
+    }
+
+
     var tcolor = new THREE.Color(0xFF8C00);
     create_actuator(v[0], v[1], null, memo_color_mat(tcolor));
     create_actuator(v[1], v[2], null, memo_color_mat(tcolor));
@@ -191,7 +219,7 @@ function draw_big_tet() {
     create_actuator(v[2], v[3], null, memo_color_mat(tcolor));
 
     // now we will draw in the Maslow's Pyramid....
-    for(let i = 0; i < 3; i++) {
+    for(let i = 0; i < 2; i++) {
         const f = (i+1)/3;
         // I despise the non-functionl nature of THREE.js...
         const a = new THREE.Vector3(v[0].x,v[0].y,v[0].z);
@@ -200,7 +228,6 @@ function draw_big_tet() {
         a.lerp(v[3],f);
         b.lerp(v[3],f);
         c.lerp(v[3],f);
-        console.log(i,a,b,c);
         create_actuator(a, b, null, memo_color_mat(tcolor));
         create_actuator(b, c, null, memo_color_mat(tcolor));
         create_actuator(c, a, null, memo_color_mat(tcolor));
@@ -575,10 +602,12 @@ function initGraphics() {
     hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
     am.scene.add(hemiLight);
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position = new THREE.Vector3(100, 5, 0);
-    am.scene.add(directionalLight);
+    // var directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    // directionalLight.position = new THREE.Vector3(100, 5, 0);
+    // am.scene.add(directionalLight);
 
+
+    
     var ambientLight = new THREE.AmbientLight(0x404040);
 
     am.grid_scene = new THREE.Scene();
