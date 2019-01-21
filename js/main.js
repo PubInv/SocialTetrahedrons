@@ -33,6 +33,8 @@ const PARAMETRIC_BISECTION_LIMIT = 50;
 
 const DIMENSIONS = ["Mind","Body","Spirit","Abundance"];
 
+var DATA_OBJECTS = [];
+var CURRENT_DATA_OBJECT = -1;
 
 // Detects webgl
 if (!Detector.webgl) {
@@ -138,29 +140,6 @@ var scolors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Indigo")];
 var smats = [new THREE.Color(0x8B0000),
 new THREE.Color(0xFF8C00),
 new THREE.Color(0x000082)];
-function load_NTetHelix(am, helix, tets, pvec, hparams) {
-    var len = hparams.len;
-    var rho = hparams.rho;
-    var d = hparams.d;
-    var radius = hparams.radius;
-    var lambda = hparams.lambda;
-    var chi = hparams.chirality;
-    var n = tets + 3;
-
-    var coords = [];
-
-
-    for (var i = 0; i < n; i++) {
-
-        var myRho = rho;
-        var rail = i % 3;
-        var num = Math.floor(i / 3);
-        var q = tm.H_general(chi, num, rail, myRho, d, radius);
-        var v = new THREE.Vector3(q[0], q[1], q[2]);
-        coords.push(v);
-    }
-    return load_NTetHelixAux(am, helix, tets, pvec, coords);
-}
 
 function create_vertex_mesh(pos, c) {
         var mesh = createSphere(am.JOINT_RADIUS/2, pos, c.hex());
@@ -775,158 +754,6 @@ init();
 animate();
 
 
-//  var r0 = (2/3)*Math.sqrt(2/3);
-var r0 = (2 / 3) * Math.sqrt(2 / 3);
-// This is the splitting difference.
-// var r0 = Math.sqrt(35/9)/4;
-var trial = 0;
-var num = 4;
-
-//add_equitetrabeam_helix_lambda(am, 1.0, pvec0, len);
-
-
-
-function draw_central() {
-    am.clear_non_floor_body_mesh_pairs();
-    for (var i = am.scene.children.length - 1; i >= 0; i--) {
-        var obj = am.scene.children[i];
-        if (obj.type == "Mesh" && obj.name != "GROUND") {
-            am.scene.remove(obj);
-        }
-    }
-    am.helices = [];
-    am.helix_params = [];
-    draw_and_register();
-}
-
-
-function draw_and_register() {
-    var pvec0 = new THREE.Vector3(0, HELIX_RADIUS * 3, -3);
-    var hp = draw_new(pvec0);
-}
-
-function draw_new(pvec) {
-    return add_equitetrabeam_helix(am, CHIRALITY_CCW, null,
-        RAIL_ANGLE_RHO_d * Math.PI / 180,
-        HELIX_RADIUS, pvec, TET_DISTANCE);
-}
-
-function draw_many() {
-    for (var i = 0; i < 6; i++) {
-        var rho = (i / 5.0) * RAIL_ANGLE_RHO_d * Math.PI / 180;
-        var pvec0 = new THREE.Vector3(((5 - i) / 2.0) * 2 + -3, HELIX_RADIUS * 3, -3);
-        add_equitetrabeam_helix(am, CHIRALITY_CCW, null, rho, HELIX_RADIUS, pvec0, TET_DISTANCE);
-    }
-}
-
-function build_central() {
-    //    var pvec0 = new THREE.Vector3(0,0,0);
-    var pvec0 = new THREE.Vector3(0, HELIX_RADIUS * 3, -3);
-
-    // I can't figure out if HELIX_RADIUS is wrong, if
-    // my formula is wrong, or if the CylinderGeometry is wrong....
-    // The formula checks out in the 2-D 2case.
-    var ir1 = tm.inradius_assumption1(Math.PI * RAIL_ANGLE_RHO_d / 180, HELIX_RADIUS);
-    var ir2 = tm.inradius_assumption2(Math.PI * RAIL_ANGLE_RHO_d / 180, HELIX_RADIUS);
-
-    console.log("inradius1", ir1);
-    console.log("inradius2", ir2);
-    {
-        var geometry = new THREE.CylinderGeometry(ir1, ir1, 3, 32);
-        var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-        var cylinder = new THREE.Mesh(geometry, material);
-        cylinder.rotateX(Math.PI / 2);
-        cylinder.translateZ(-HELIX_RADIUS * 3);
-        am.scene.add(cylinder);
-    }
-}
-
-
-
-function draw_helices() {
-    var pvec0 = new THREE.Vector3(0, HELIX_RADIUS * 2.1, -1.0);
-    var hp = draw_new(pvec0);
-    var h = am.helices.slice(-1)[0];
-    var score = compute_helix_minimax(h)[2];
-    hp.score = score;
-    hp.inradius = tm.inradius_assumption1(hp.rho, hp.radius);
-    register_trials(trial++, OPTIMALITY, RAIL_ANGLE_RHO_d, HELIX_RADIUS, hp.d, TET_DISTANCE,
-        hp.onehop,
-        hp.twohop,
-        hp.pitch,
-        hp.inradius,
-        hp.score);
-
-    var factor = 3 * tm.BCtheta / tm.BCrho;
-    draw_helix(pvec0, 0, hp, factor, "black", 1.0, 0.003);
-
-    draw_helix(pvec0, 0, hp, 1, "red", 1.2, 0.005);
-    draw_helix(pvec0, 1, hp, 1, "orange", 1.2, 0.005);
-    draw_helix(pvec0, 2, hp, 1, "blue", 1.2, 0.005);
-}
-
-function draw_helix(pvec, rail, hparams, factor, color, fudge, lw) {
-    var lineGeometry = new THREE.Geometry();
-    var path = new THREE.Group();
-
-    var currentPosition = new THREE.Vector3(0, 0, 0);
-    var lastPosition = null;
-
-
-    var tets = am.NUMBER_OF_TETRAHEDRA;
-
-    var len = hparams.len;
-    var rho = hparams.rho;
-    var d = hparams.d;
-    var radius = hparams.radius * fudge;
-    var lambda = hparams.lambda;
-
-    var big = (tets + 1) * d;
-
-    var limit = 1000.0;
-    for (var i = 0; i < limit; i++) {
-        var chi = hparams.chirality;
-        var n = i * (big / limit);
-        var q = tm.H_general_factor(chi, n, rail, rho, d, radius, factor);
-        var v = new THREE.Vector3(q[0], q[1], q[2]);
-        v = v.add(pvec);
-        currentPosition = v;
-        if (!lastPosition) lastPosition = currentPosition;
-
-        lineGeometry.vertices.push(currentPosition);
-
-        lastPosition = currentPosition;
-    }
-
-    var line = new MeshLine();
-    line.setGeometry(lineGeometry);
-
-    var material = new MeshLineMaterial({
-        color: new THREE.Color(color),
-        lineWidth: lw
-    }
-    );
-    //    material.color = new THREE.Color("red");
-
-    var mesh = new THREE.Mesh(line.geometry, material);
-    am.scene.add(mesh);
-}
-
-
-function renderComputed() {
-    alert("renderComputed");
-    var pvec = new THREE.Vector3(0, 1, 0);
-    am.helices.push(
-        {
-            helix_joints: [],
-            helix_members: []
-        });
-
-    var cs = [];
-    var tets = 2;
-    load_NTetHelixAux(am, am.helices[0], tets, pvec, cs);
-}
-
 
 
 // for testing, we need to know when somethigns is "closeto a target"
@@ -945,314 +772,6 @@ function normal(a, b, c) {
 }
 
 
-// Very useful for debugging, determine the "handedness" or chirality
-// of a tetrahedron: Is the 4th point to the "right" (CCW) of the plane of the
-// first three, or the left? (CW)
-// arguments are THREE.js Vector3's
-function tet_chirality(a, b, c, d) {
-    var N = normal(a, b, c);
-    var prod = N.dot(d);
-    return (prod > 0) ? CHIRALITY_CCW : CHIRALITY_CW;
-}
-
-function test_tet_chirality() {
-    var c = [];
-    c[0] = new THREE.Vector3(0, 0, 0);
-    c[1] = new THREE.Vector3(1, 0, 0);
-    c[2] = new THREE.Vector3(0, 1, 0);
-    c[3] = new THREE.Vector3(0, 0, 1);
-    var chi0 = tet_chirality(c[0], c[1], c[2], c[3]);
-    // This should be different,
-    var chi1 = tet_chirality(c[0], c[2], c[1], c[3]);
-    console.assert(chi0 == CHIRALITY_CCW);
-    console.assert(chi1 == CHIRALITY_CW);
-    console.log("TEST CHIRALITY", chi0, chi1);
-}
-
-// This is a tricky but essential routine. Given a triangle abc and three distances
-// to a point d (da, db, dc), we have to find the point d.
-// The best way to do this is to translate and rotate the point to
-// the origin in a specific way, then comupte things simply, then perform the inverse transport.
-// We are using the right-hand rule. Following computer graphichs convention, is condidered "up"
-// and the Z dimenstion is considered depth.
-// A is at the origin
-// B is on the x axis (positive)
-// C is in the x-y plane
-// D is in the positive Z semiplane
-// I need to work out the naming very clearly! That is a task for tomorrow.
-// The input is the 6 distances.
-// This code inspired by Dave Barber: view-source:http://tamivox.org/redbear/tetra_calc/index.html
-
-function find_point_from_transformed(sense, AB, AC, AD, BC, BD, CD, v) {
-    // _m2 means "squared"
-    var AB_m2 = AB * AB; var AC_m2 = AC * AC;
-    var AD_m2 = AD * AD; var BC_m2 = BC * BC;
-    var BD_m2 = BD * BD; var CD_m2 = CD * CD;
-    var qx = AB;
-    var rx = (AB_m2 + AC_m2 - BC_m2) / (2.0 * AB);
-    var ry = Math.sqrt(AC_m2 - rx * rx);
-    var sx = (AB_m2 + AD_m2 - BD_m2) / (2.0 * AB);
-    var sy = (BD_m2 - (sx - qx) * (sx - qx) - CD_m2 + (sx - rx) * (sx - rx) + ry * ry) / (2 * ry);
-    var factor = AD_m2 - sx * sx - sy * sy;
-    var sz = 0;
-    var debug = 0;
-    if (factor < 0) {
-        if (debug) {
-            console.log("INTERNAL ERROR: this is not a legal tetrahedron\n");
-            console.log("AB AC AD BC BD CD\n");
-            console.log(AB, AC, AD, BC, BD, CD);
-        }
-        // I have no idea what to return here -- I'll return half the average distance.
-        sz = (AB + AC + AD + BC + BD + CD) / (6 * 2);
-        v.valid = false;
-    } else {
-        sz = Math.sqrt(AD_m2 - sx * sx - sy * sy);
-        v.valid = true;
-    }
-    A = new THREE.Vector3(0.0, 0.0, 0.0);
-    B = new THREE.Vector3(qx, 0.0, 0.0);
-    D = new THREE.Vector3(sx, sy, (sense == CHIRALITY_CCW) ? -sz : sz);
-    // We compute this only for debugging purposesn
-    C = new THREE.Vector3(rx, ry, 0.0);
-
-    // if (debug) {
-    //   Chirality senseABC = tet_chirality(A,B,C,D);
-    //     console.log("chirality (demanded, computed) ",sense,", ",senseABC,"\n");
-    //   if (sense != senseABC) {
-    //       console.log("SENSE CHECK ON TET FAILED!\n");
-    //       console.log(A,B,C,D);
-    //   }
-    //   assert(sense == senseABC);	      
-    // }
-    return D;
-
-}
-
-// This tries to rotate the vector A-B on to the X-Axis. C should end up in the XY plane.
-// I think if the the vector A-B points in the negative x direction, we have a special case
-// that causes a problem here. In that case we are 180 degrees out of sync. I need to think
-// carefully about how to handle this.
-function compute_transform_to_axes2(pa, pb, pc) {
-    var m = new THREE.Matrix4();
-    // Translate a to the origin...
-    m.makeTranslation(-pa.x, -pa.y, -pa.z);
-
-    var a0 = new THREE.Vector3(pa.x, pa.y, pa.z);
-    var b0 = new THREE.Vector3(pb.x, pb.y, pb.z);
-    var c0 = new THREE.Vector3(pc.x, pc.y, pc.z);
-
-    a0.applyMatrix4(m);
-    b0.applyMatrix4(m);
-    c0.applyMatrix4(m);
-
-    // now a0 should be at the origin;
-    var debug = 0;
-    if (debug) console.log("a0b0c0", a0, b0, c0);
-
-    var xaxis = new THREE.Vector3(1, 0, 0);
-    var yaxis = new THREE.Vector3(0, 1, 0);
-    var zaxis = new THREE.Vector3(0, 0, 1);
-
-    var b0norm = new THREE.Vector3(b0.x, b0.y, b0.z).normalize();
-    if (debug) console.log("b0norm", b0norm);
-
-    var q = new THREE.Quaternion()
-    q.setFromUnitVectors(b0norm, xaxis);
-    if (debug) console.log("quaternion", q);
-    var b1 = new THREE.Vector3(b0.x, b0.y, b0.z);
-    if (debug) console.log("b1", b1);
-    var c1 = new THREE.Vector3(c0.x, c0.y, c0.z);
-
-    b1 = b1.applyQuaternion(q);
-
-    if (debug) console.log("b1", b1);
-    c1 = c1.applyQuaternion(q);
-    // now b1 should be on the x axis..
-    if (debug) console.log("b1", b1);
-    var m1 = new THREE.Matrix4();
-    m1.makeRotationFromQuaternion(q);
-
-    var m2 = new THREE.Matrix4();
-
-    m2.multiplyMatrices(m1, m);
-    // m2 applied to our original points should give us b1,c1
-    var ct = new THREE.Vector3(pc.x, pc.y, pc.z);
-    ct.applyMatrix4(m2);
-    if (debug) console.log("===", ct, c1);
-
-
-    // Now finally, we need to rotate point c into the xy plane
-    var c2 = new THREE.Vector3(pc.x, pc.y, pc.z);
-
-
-    if (debug) console.log("c2 first", c2);
-    c2.applyMatrix4(m2);
-
-    if (debug) console.log("c2 trans", c2);
-
-    var theta = Math.atan2(c2.z, c2.y);
-    if (debug) console.log("theta", theta);
-
-    var m3 = new THREE.Matrix4();
-    m3.makeRotationX(-theta);
-
-    // If this is applied to C, it should place it in the XY plane (z = 0);
-    c2.applyMatrix4(m3);
-    if (debug) console.log("C2 after rotation", c2);
-
-    //    m4.multiplyMatrices(m2,m3);
-    //    console.log(m,m3,m4);
-
-    // m4 applied to our stating point must place it in the XY plane
-    var c3 = new THREE.Vector3(pc.x, pc.y, pc.z);
-    c3.applyMatrix4(m);
-    c3.applyMatrix4(m1);
-    c3.applyMatrix4(m3);
-    if (debug) console.log("POINT C3 FINAL", c3);
-
-    var c4 = new THREE.Vector3(pc.x, pc.y, pc.z);
-    var m4 = new THREE.Matrix4();
-    m4.identity()
-    m4.premultiply(m);
-    m4.premultiply(m1);
-    m4.premultiply(m3);
-    c4.applyMatrix4(m4);
-    if (debug) console.log("POINT C4 FINAL", c4);
-
-    return m4;
-}
-
-function test_compute_transform_to_axes2() {
-    var c = [];
-
-    c[0] = new THREE.Vector3(0, -0.5, 0.5);
-    c[1] = new THREE.Vector3(1, 1, 4);
-    c[2] = new THREE.Vector3(0, 10, 10);
-
-    var trans = compute_transform_to_axes2(c[0], c[1], c[2]);
-
-    c[1].applyMatrix4(trans);
-    console.log("point b transformed", c[1]);
-
-    console.assert(near(c[1].y, 0, 1e-5) && near(c[1].z, 0, 1e-5));
-    c[2].applyMatrix4(trans);
-    console.log("point c transformed", c[2]);
-    console.assert(near(c[2].z, 0, 1e-5));
-    console.log(trans);
-}
-
-test_compute_transform_to_axes2();
-
-function find_fourth_point_given_three_points_and_three_distances(
-    sense,
-    pa, pb, pc,
-    ad, bd, cd,
-    valid) {
-
-    var debug = 0;
-    if (debug) console.log("ad bd cd\n");
-    if (debug) console.log(ad, bd, cd);
-
-    // First compute all 6 distances....
-    var ab = pa.distanceTo(pb);
-    var ac = pa.distanceTo(pc);
-    var bc = pb.distanceTo(pc);
-
-    // Now find transformation that rotates and translates to axes...
-    if (debug) console.log("pa pb pc \n");
-    if (debug) console.log(pa, pb, pc);
-
-    var tform = compute_transform_to_axes2(pa, pb, pc);
-
-    var Ap, Bp, Cp;
-
-    var Ap = pa.clone();
-    var Bp = pb.clone();
-    var Cp = pc.clone();
-
-    Ap = Ap.applyMatrix4(tform);
-    if (debug) console.log("Ap \n");
-    if (debug) console.log(Ap);
-
-    Bp = Bp.applyMatrix4(tform);
-    if (debug) console.log("Bp \n");
-    if (debug) console.log(Bp);
-
-    Cp = Cp.applyMatrix4(tform);
-    if (debug) console.log("Cp \n");
-    if (debug) console.log(Cp);
-
-    // Not written yet!
-    //    point_transform_affine3d tform_inv = inv(tform);
-    var tform_inv = new THREE.Matrix4();
-    tform_inv.getInverse(tform);
-
-    if (debug) console.log("tform inv\n");
-    if (debug) console.log(tform_inv.get_m());
-
-    // Now get the fourth point...
-    if (debug) console.log("INPUT YYY\n");
-    if (debug) console.log(ab, ac, ad, bc, bd, cd);
-    // TODO: Need to translate this
-    var D = find_point_from_transformed(sense, ab, ac, ad, bc, bd, cd, valid);
-
-    if (isNaN(D.x) || isNaN(D.y) || isNaN(D.z)) {
-        console.log("INPUT YYY\n");
-        console.log(D.x);
-        console.log(D.y);
-        console.log(D.z);
-        console.log(ab, ac, ad, bc, bd, cd);
-    }
-    // if (debug) {
-    //     Chirality untransformed = tet_chirality(pa,pb,pc,tform_inv(D));
-    //     Chirality transformed = tet_chirality(Ap,Bp,Cp,D);
-
-    //     console.log("Chirality demanded: " << sense << "\n";  
-    //                 console.log("Chirality of transformed computations: " << transformed << "\n";
-    //                             console.log("Chirality of untransformed computations: " << untransformed << "\n";
-    // }
-    var D_inv = D.clone();
-    D_inv.applyMatrix4(tform_inv);
-    return D_inv;
-}
-
-function test_find_point_from_transformed() {
-    var v = { valid: true };
-    var chi = CHIRALITY_CCW;
-    var AB = 1;
-    var AC = 1;
-    var AD = 1;
-    var BC = 1;
-    var BD = 1;
-    var CD = 1;
-
-    var D = find_point_from_transformed(chi, AB, AC, AD, BC, BD, CD, v)
-    console.log(D, v);
-
-}
-test_find_point_from_transformed();
-test_tet_chirality();
-
-
-
-function test_find_fourth_point_given_three_points_and_three_distance() {
-    var c = [];
-    var pa = c[0] = new THREE.Vector3(-1, 0, 0);
-    var pb = c[1] = new THREE.Vector3(1, 0, 0);
-    var pc = c[2] = new THREE.Vector3(0, 1, 0);
-    var valid = { v: true };
-    var ad = 1;
-    var bd = 1;
-    var cd = 1;
-    var d = find_fourth_point_given_three_points_and_three_distances(
-        CHIRALITY_CCW,
-        pa, pb, pc,
-        ad, bd, cd,
-        valid);
-    console.log("computed point", d, valid);
-}
-
-test_find_fourth_point_given_three_points_and_three_distance();
 
 function clearAm() {
     am.clear_non_floor_body_mesh_pairs();
@@ -1291,33 +810,84 @@ function drawTetrahedron(dir, i, other_params) {
     return other_params;
 }
 
+function add_data_object() {
+    DATA_OBJECTS.push({label: new_label.value,
+                       pos: new THREE.Vector3(0, 0, 0)});
+
+    // Now how do I add a simple object that can be moved?
+
+    // we have no way to release this.
+    
+    var tcolor = new THREE.Color("white");
+    var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
+    var tet = new THREE.TetrahedronGeometry(0.2, 0);
+
+    // https://stackoverflow.com/questions/12784455/three-js-rotate-tetrahedron-on-correct-axis
+    tet.applyMatrix(
+        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
+
+    tet.applyMatrix(
+        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 1, 0 ).normalize(),
+                                              45*(Math.PI/180) )
+    );
+
+    tet.translate(0,1,0);
+    
+    var mesh = new THREE.Mesh(tet, cmat);
+    
+    mesh.castShadow = false;
+    mesh.receiveShadow = false;
+    mesh.debugObject = true;
+
+    
+    am.scene.add(mesh);
+    render_data_objects();
+}
+
+
+function render_data_objects() {
+    var table = document.getElementById('object_table');
+    function addRow(d,i) {
+        var row = table.insertRow();
+
+        // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+        var cell0 = row.insertCell(0);
+        cell0.innerHTML = d.label;
+        var cell1 = row.insertCell(1);
+        cell1.innerHTML = "<button class='currentbutton' id='current"+i+"'>Make Current</button>";
+    }
+    var rows = table.getElementsByTagName("tr")
+    const n = rows.length;
+    for (var i = 1; i < n; i++) {
+        table.deleteRow(-1);
+    }
+    DATA_OBJECTS.forEach(addRow);
+    
+$(".currentbutton").on('click', function(event){
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    //(... rest of your JS code)
+    console.log(event);
+    console.log(event.currentTarget.id);
+    let idstr = event.currentTarget.id.substring("current".length);
+    let idnum = parseInt(idstr);
+    console.log(idnum);
+    CURRENT_DATA_OBJECT = idnum;
+    let current_label = document.getElementById("current-label");
+    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;
+    
+    
+});
+}
+
 (function () {
 
-    var EXAMPLE_GENERATORS = {
-        alert: {
-            name: "Random",
-            src: '(i) => { return i<6 ? Math.floor(Math.random() * 3): -1; }'
-        },
-        console: {
-            name: "Regular",
-            src: '(i) => { return i<20 ? [ 2,1,0,1,2][i%5]: -1; }'
-        }
-    };
-
-    // CONSTANTS
-    
-    var INTERVAL = 25; // milliseconds between steps.
-    
-    // GLOBAL VARIABLES
-    
-    var generatorFn;
-    
-    // PAGE ELEMENTS
+    // // PAGE ELEMENTS
     
     var executeButton;
     var funcStatus;
 //    var generatorsSelector;
-//    var generatorText;
+    var new_label;
     
     // MAIN FUNCTION
     
@@ -1325,35 +895,11 @@ function drawTetrahedron(dir, i, other_params) {
     function main() {
         executeButton = document.getElementById('execute-button');
         funcStatus = document.getElementById('function-status');
-//        generatorsSelector = document.getElementById("generators-selector");
-//        generatorText = document.getElementById('user-defined-generator');
-        
+        var addButton = document.getElementById('add');
+        addButton.addEventListener('click', add_data_object);
+
+        new_label = document.getElementById('new_label');        
         executeButton.addEventListener('click', onExecute);
-//        generatorsSelector.addEventListener("change", onGeneratorChanged);
-
-        // TEMPORARY: Render button is placeholder until example generators are working.
-//        var renderButton = document.getElementById('render-button');
-//        renderButton.addEventListener('click', renderComputed);
-
-  //      var renderTestGeneratorsButton = document.getElementById('render-test-generators');
-//        renderTestGeneratorsButton.addEventListener('click', renderTestGenerators);
-
-//        var sht = document.getElementById("stacking-helix-table");
-//        if (sht) sht.addEventListener("click", function(){ stackingHelixTable(); });
-        
-        // Add the Parametric Curve functionality
-//        document.getElementById("circle-button").addEventListener("click", function(){ followParametricCurve(parametricCircle, false); });
-//        document.getElementById("sine-button").addEventListener("click", function(){ followParametricCurve(parametricSineWave, true); });
-//        document.getElementById("cone-button").addEventListener("click", function(){ followParametricCurve(parametricCone, true); });
-//        document.getElementById("helix-button").addEventListener("click", function(){ followParametricCurve(parametricHelix, true); });
-
-        // Fill the generators selector
-        // for (var key in EXAMPLE_GENERATORS) {
-        //     if (EXAMPLE_GENERATORS.hasOwnProperty(key)) {
-        //         var entry = EXAMPLE_GENERATORS[key];
-        //         generatorsSelector.options[generatorsSelector.options.length] = new Option(entry.name, key);
-        //     }
-        // }
         onExecute();
         draw_big_tet();
     }
@@ -1392,87 +938,12 @@ function drawTetrahedron(dir, i, other_params) {
     // EVENT HANDLERS
 
     function generator_init(params) {
-//        for (var i = 0; i < 3; i++) {
-//            add_vertex(am, 0, i, params);            
-//        }
-//        return params;
     }
 
     function onExecute() {
-//        executeButton.disabled = true;
-//        generatorFn = compileGenerator(generatorText.value);
-//        if (!generatorFn) { 
-//            executeButton.disabled = false;
-//            return;
-//        }
         clearAm();
-        // var wf = document.getElementById('wireframe').checked;
-        // var bc = document.getElementById('blendcolor').checked;
-        // var a = document.getElementById('alternate').checked;
-        // var l = [];
-        // for(var i = 0; i < 6; i++) {
-        //     l[i] = +document.getElementById('l'+i).value || 1;
-        //     console.log(l[i]);
-        // }
-        // create_vertex_mesh(new THREE.Vector3(0,0,0),d3.color("white"));
-        // create_vertex_mesh(new THREE.Vector3(1,0,0),d3.color("red"));
-        // create_vertex_mesh(new THREE.Vector3(0,1,0),d3.color("green"));
-        // create_vertex_mesh(new THREE.Vector3(0,0,1),d3.color("blue"));
-//        var other_params = initialParameters(new THREE.Vector3(0,0,0),wf,bc,l,a);
-//        generator_init(other_params);
-//        setTimeout(step, INTERVAL, generatorFn, 1, other_params);
     }
 
-    // function renderTestGenerators() {
-    //     executeButton.disabled = true;
-    //     var test_gen = [];
-    //     for(var i = 0; i < 4; i++) {
-    //         //            test_gen[i] = "(i) => { const K = "+i+";\n return i<200 ? ((\n(i % K) == 7) ||  ((K % 24) == 8)\n ? 1 : 2 ): -1; }";
-    //         test_gen[i] = (i+0.5)*1+ 0.105;
-    //     }
-    //     clearAm();
-        
-    //     test_gen.forEach((x,j) => {
-    //         console.log("calling with x",x);
-    //         followParametricCurve(i => { return parametricCircle_rad(i,x);}, true);
-    //                              }
-    //     );
-    // }
-    
-    // function renderTestGenerators_orig() {
-    //     executeButton.disabled = true;
-    //     var test_gen = [];
-    //     for(var i = 0; i < 4; i++) {
-    //         //            test_gen[i] = "(i) => { const K = "+i+";\n return i<200 ? ((\n(i % K) == 7) ||  ((K % 24) == 8)\n ? 1 : 2 ): -1; }";
-    //         test_gen[i] = "(i) => { const K = "+(i+20)+";\n return i<200 ? ((((i % K) == K-1) || ((i % K) == K-2) )? 1 : 2 ): -1; }";            
-    //     }
-    //     clearAm();
-    //     var wf = document.getElementById('wireframe').checked;
-    //     var bc = document.getElementById('blendcolor').checked;
-    //     test_gen.forEach( (x,i) => 
-    //                         {
-    //                             console.log("XXXX",x,i);
-    //                             generatorFn = compileGenerator(x);
-    //                             if (!generatorFn) { 
-    //                                 executeButton.disabled = false;
-    //                                 return;
-    //                             }
-    //                             // clearAm();
-    //                             console.log("AAA");
-    //                             const square = 3;
-    //                             var y = Math.floor(i / square);
-    //                             var x = i % square;
-    //                             const space = 10;
-    //                             var l = [];
-    //                             for(var i = 0; i < 6; i++) {
-    //                                 l[i] = document.getElementById('l'+i).value || 1;
-    //                             }
-
-    //                             var other_params = initialParameters(new THREE.Vector3(x*space -(space/2),5,y*space - (space/2)),wf,bc,l);
-
-    //                             setTimeout(step, INTERVAL, generatorFn, 0, other_params);
-    //                         });
-    // }
     
         
     function onGeneratorChanged() {
@@ -1663,20 +1134,6 @@ function drawTetrahedron(dir, i, other_params) {
         // otherwise we can't reach it in one...
         return "NOREACH";
         
-        // var tcLeft = [ tc[0]-1, tc[1] ];
-        // if (pointIsInsideTriangle(lpt, tcLeft)) { return tcLeft; }
-        // else {
-        //     var tcRight = [ tc[0]+1, tc[1] ];
-        //     if (pointIsInsideTriangle(lpt, tcRight)) { return tcRight; }
-        //     else {
-        //         var tcAboveOrBelow = triangleIsUp(tc[0], tc[1]) ? [ tc[0], tc[1]-1 ] : [ tc[0], tc[1]+1 ];
-        //         if (pointIsInsideTriangle(lpt, tcAboveOrBelow)) { return tcAboveOrBelow; }
-        //         else {
-        //             funcStatus.innerHTML = "Parametric curve point is unreachable.";
-        //             return false;
-        //         }
-        //     }
-        // }
     }
 
 
@@ -1727,397 +1184,6 @@ function drawTetrahedron(dir, i, other_params) {
         // console.assert(nextParametricTet(B, 3 ,params) );                 var C = new THREE.Vector3(0,0,0);
         // console.assert(nextParametricTet(C, 3 ,params) );
         clearAm();        
-    }
-//    test_nextParametricTet();
-
-
-    // These are hard-wired test functions, not fully parametrized.
-    // They were taken from the 2D case, but planar figures
-    // are of great interest in the 3D world.
-    // At present, I will place all of these at Z = 0.
-    // I will probably change the format to have a definite end
-    // point and a definite start point and move the point along
-    // the unit interval later.
-    var MAX_X = 10.0; // These have a different meaning here in 3space
-    var MAX_Y = 10.0; // These have a different meaning here in 3space
-    function polarToXY(r, theta) {
-        return [ r*Math.cos(theta), r*Math.sin(theta) ];
-    }
-    // These are some initial displacements to keep us from starting right on an edge...
-    var D_X = 0;
-    var D_Y = 0;
-    var D_Z = 0;        
-    function parametricCircle_rad(i,r) {        
-        if (i>=360) { return false; }
-        var theta = i/360*2*Math.PI;
-        var radius = r;
-        var x = radius * Math.cos(theta);
-        var y = radius * Math.sin(theta);
-        return new THREE.Vector3(x,y,0);
-//        return [x,y];
-        }
-    function parametricCircle(i) {
-        return parametricCircle_rad(i,(MAX_X * 0.75) + 0.001);          
-    }
-                                      
-    function parametricHelix(i) {
-        if (i>=720) { return false; }
-        var j = i * 10;
-        var theta = j/360*2*Math.PI;
-        var radius = 2;
-        var x = radius * Math.cos(theta);
-        var y = radius * Math.sin(theta);
-        var z = j/320;
-        return new THREE.Vector3(x+D_X,y+D_Y,z+D_Z);
-    }
-    function parametricCone(i) {
-        if (i>=360) { return false; }
-        var j = i * 10;
-        var theta = j/360*2*Math.PI;
-        var radius = 1 + (i/120);
-        var x = radius * Math.cos(theta);
-        var y = radius * Math.sin(theta);
-        var z = j/319;
-        return new THREE.Vector3(x,y,z);
-    }
-
-    // Takes integer i parameter 0,1,2,..., returns [x,y] curve coordinate.
-    function parametricGoldenSpiral(i) {
-        const phi = (1 + Math.sqrt(5))/2.0;
-        const contraction = 2;
-        var theta = i*0.05;
-        var r = Math.pow(phi, theta*2/Math.PI)/contraction;
-        var lpt = polarToXY(r, theta);
-        return new THREE.Vector3(lpt[0],lpt[1],0);        
-//        return [ lpt[0]+3, lpt[1]+2 ]; // Shift up and right to see more spiral
-    }
-
-    // Takes integer i parameter 0,1,2,..., returns [x,y] curve coordinate.
-    function parametricSineWave(i) {
-        if (i>360) { return false; }
-        var frac = i/360; // fraction between 0-1.
-        var x = -0.75 * MAX_X + frac * 1.5 * MAX_X + 0.1;
-        var y = Math.sin(frac * 2*Math.PI) * MAX_Y * 0.75;
-        return new THREE.Vector3(x,y,0);                
-//        return [x,y];
-    }
-
-    // This is much tricker in 3D than in two.
-    // THREE.js has sophsticated splines and curvepath
-    // objects that could be used to both represent and
-    // render our relatively primite parametric curves.
-    // It unclear to me if using them is better than
-    // using a polyline or a collection of dots.
-    function renderParametricCurve(am,curveFn, open) {
-        var onCanvas = true;
-//        var points = [];
-        var points3D = new THREE.Geometry();
-
-        
-        for (var i=0; i<MAX_PARAMETRIC_STEPS && onCanvas; i++) {
-            const lpt = curveFn(i);
-            // drawSpot(lpt[0], lpt[1], 'black', 1);
-            if (lpt) {
-//                points.push(lpt);
-                points3D.vertices.push(lpt);
-            }
-        }
-        // for now, test with fake data...
-        // points3D.vertices.push(        
-        //     new THREE.Vector3(0, 0, 0.5),
-        //     new THREE.Vector3(2, 0, 1),
-        //     new THREE.Vector3(2, 2, 2),
-        //     new THREE.Vector3(0, 2, 3),
-        //     new THREE.Vector3(0, 0, 0.5) // there is no autoClose function here, thus we need the fifth point
-        // );
-        var line2 = new THREE.Line(points3D, new THREE.LineBasicMaterial({color: "red"}));
-        am.scene.add(line2);
-
-    }
-
-    // This is an attempt to follow David Jeschke's code
-    // from the 2D solution.
-    function followParametricCurve(curveFn, open) {
-//    two.clear();
-        //    drawEmptyGrid();
-        clearAm();
-
-    var i = 0;
-    var initialPt = curveFn(i);
-    // if (!initialPt || !logicalPointIsVisible(initialPt)) {
-    //     funcStatus.innerHTML = "Initial point of parametric curve is not visible.";
-    //     return;
-    // }
-    if (!initialPt) {
-         return;
-    }
-        console.log("initialPt",initialPt);
-
-        // Although debatable, we will basically create the
-        // first tet centered on initialPot
-        // We will move this over a little to get it in the center.
-        // var offset = new THREE.Vector3(initialPt.x-0.5,
-        //                                initialPt.y-(Math.sqrt(3) / 2)/2,
-        //                                initialPt.z-0.5);
-        var offset = new THREE.Vector3(initialPt.x,
-                                        initialPt.y,
-                                        initialPt.z+-0.5);
-        
-//        var wf = document.getElementById('wireframe').checked;
-        //        var bc = document.getElementById('blendcolor').checked;
-        var wf = true;
-        var bc = true;
-        var l = [];
-        { // This variable is a different "i" then we are using in the loop below
-            for(var i = 0; i < 6; i++) {
-                l[i] = document.getElementById('l'+i).value || 1;
-            }
-        }
-        var params = initialParameters(offset,wf,bc,l);
-        console.log("params",params);
-    
-//    var tc = triangleCoordsFromLogicalPt(initialPt); // current triangle coordinates.
-//    ;;    drawTriangle(tc[0], tc[1], RED);
-    
-    // We will have to use "vertices" for this.
-//    const occupiedTets = [ tc ];
-
-    // This is the index in params of the highest-numbered vertex
-    // in the tet we are producing
-    // intialParameters adds an initial triangle, we will
-    // go ahead and add a value here to have tet to start with.
-        //    add_vertex(am,0,3,params);
-    var tci = 3;
-    i = 0;
-    for ( ; true; i+=1) {
-
-        var lpt = curveFn(i);
-        if (!lpt) { /* we are done! */ break; }
-
-        //        tcNext = nextParametricTriangle(lpt, tc);
-        
-        // We will mark a tet by it's highest number vertex.
-        var tetNext = nextParametricTet(lpt,tci,params);
-        if (tetNext == "INSIDECURRENT") {
-            continue;
-        }
-
-
-        var last_i = i-1;
-        var next_i = i;
-        var j = 0;
-        for ( ; (tetNext == "NOREACH") && next_i > last_i && j<PARAMETRIC_BISECTION_LIMIT; j++) {
-
-            // var tc2 = triangleCoordsFromLogicalPt(lpt); // For debugging output only.
-            // console.log("Bisect r" + j + "(" + lpt[0] + ", " + lpt[1] + "), T(" + tc[0] + ", " + tc[1] + ") (" + tc2[0] + ", " + tc2[1] + ")");
-
-            i = (next_i+last_i)/2;
-            lpt = curveFn(i);
-            if (!lpt) {
-                break;
-            }
-            tetNext = nextParametricTet(lpt, tci,params);
-            if (tetNext == "INSIDECURRENT") {
-                console.log("Bisecting at " + i + "[" + (next_i-last_i) + "]. Same triangle.");
-                last_i = i; tetNext = "NOREACH";
-            }
-            else if (tetNext == "NOREACH") {
-                console.log("Bisecting at " + i + "[" + (next_i-last_i) + "/" + next_i + "]. Not adjacent.");
-                next_i = i
-            }
-        }
-        if (tetNext == "NOREACH") {
-            if (j>=PARAMETRIC_BISECTION_LIMIT) {
-                funcStatus.innerHTML = "Parametric bisection algorithm reached limit.";
-            } else {
-                funcStatus.innerHTML = "Parametric bisection algorithm failed.";
-            }
-            break;
-        }
-
-        // TODO: Handle case where self collision happens because we returned to the starting point
-        // in a closed curve. I am going to comment out.
-        // if (triangleIsOccupied(occupiedTriangles, tcNext[0], tcNext[1])) {
-        //     funcStatus.innerHTML = "Self-collision at p(" + i + ") = (" + lpt[0] + ", " + lpt[1] + ") / (" + tcNext[0] + ", " + tcNext[1] + ")";
-        //     break;
-        // }
-
-        
-        //        tc = tetNext;
-
-        add_vertex(am, tetNext, tci+1, params);
-        
-        tci++;
-        
-        // const color = RAINBOW_COLORS[occupiedTriangles.length%RAINBOW_COLORS.length];
-        // drawTriangle(tc[0], tc[1], color);
-        // occupiedTriangles.push(tc);
-    }
-
-        
-        renderParametricCurve(am,curveFn,open);
-    }
-    function rhand(hsq,D,psi,L,phi) {
-        var q = ((D*Math.sin(psi+phi)) -
-                 (L*Math.sin(phi)));
-//        console.log("phi,c2",phi,Math.sqrt(hsq+(1/4)*q*q));
-        return Math.sqrt(hsq+(1/4)*q*q);
-    }
-    function lhand(L,phi) {
-//        console.log("phi,c1",phi,Math.abs(L*Math.sin(phi)));        
-        return Math.abs(L*Math.sin(phi));
-    }
-    function calc_phi(L,h,D,psi) {
-        var result =
-            newtonRaphson((phi) => lhand(L,phi) - rhand(h*h,D,psi,L,phi),0.02
-                          ,{ verbose: true, maxIter: 20});
-        return result;
-    }
-
-    function test_xxx() {
-        var h = 0.5;
-        var w = 0.5;
-        var L = 1;
-        var psi = 22.5*Math.PI/180;
-        var D =  2.613125929752753 ;
-        for(var i = 0; i < 90; i += 1) {
-            var irad = i*Math.PI/180;
-            var c1 = lhand(L,irad);
-            var c2 = rhand(h*h,D,psi,L,irad)
-            console.log("xxx c1",i,c1);
-            console.log("xxx c2",i,c2);
-            console.log("xxx c1-c2",i,c1-c2);                                    
-        }
-    }
-//    test_xxx();
-
-    // alpha and theta, phi in radians.
-    // 0 <= alpha < PI
-    // 0 <= theta <= PI/2 
-    // L is the length of the object along the axis.
-    // return array [phi,radius, kappa,theta0]
-    function helix_parameters(alpha, theta, L) {
-        // if theta == 0, we have a "circle", so we return special....
-        if (theta == 0) {
-            if (alpha == 0) {
-                // it would make more sense to return a symbolic "infinity"
-                // for a radius here, but your number system does not easily support that.
-                return [0,0,0];                
-            } else {
-                // This is effectively a circle.
-                return [0,L/(2*Math.sin((alpha)/2)),0,0];
-            }
-        }
-        
-        // length of 
-        var a = L * Math.cos(alpha);
-        // x total length of prism
-        var x = L + 2*a;
-        // z is length of "face" of the prism, and lenghth of a chord before roation 
-        var z = L * Math.sin(alpha);
-        // w is the half width of the prism in the z-dimension
-        var w = z * Math.sin(theta);
-        // h is the height of the prism
-        var h = Math.sqrt(z*z - w*w);
-        // D is the lenth of the diagonal from P_0 to P_3
-        var D = Math.sqrt(4*w*w + x*x);
-        // psi is the angle P_0 to P_3 witht he z-axis
-        var psi = Math.atan(w/(x/2));
-        // phi is the amount of rotation about the y-axis needed to make
-        // the chords of equal length
-        var phi = calc_phi(L,h,D,psi);
-
-        // note psi + phi CAN be greater than 90.
-        // I need to figure out what this says about the helix---is there one?
-        console.log("check",Math.sin(psi)*D,2*w)
-        console.log("a,x,z",a,x,z);
-        console.log("w,h,D",w,h,D);
-        console.log("psi,phi",psi*180/Math.PI,phi*180/Math.PI);
-        // if psi and phi are both zero, we have a collinear system.
-        // pow compute P1, P2, P3, and compute that
-        // they have the same cord lengths and
-        // the same distances.
-        p3z = D/2*Math.sin(psi+phi);
-        p3x = D/2*Math.cos(psi+phi);
-        p3y = -h;
-
-        p2z = (L/2)*Math.sin(phi);
-        p2x = (L/2)*Math.cos(phi);
-        p2y = 0;
-        
-        var p3 = new THREE.Vector3(p3x,p3y,p3z);
-        var p2 = new THREE.Vector3(p2x,p2y,p2z);
-        console.log("p2,p3",p2,p3);
-        // now check that distance p3-p2 = L
-        console.log("distance",L,p2.distanceTo(p3));
-
-        // now check chord length...
-        var c1 = 2*(p2z);
-        var c2v = p3.clone().sub(p2);
-        console.log("c2v",c2v);
-        c2v.projectOnPlane(new THREE.Vector3(1,0,0));
-        console.log("projected c2v",c2v,c2v.length());
-        console.log("projected c1",c1);        
-        
-        console.log("distance",L,p2.distanceTo(p3));        
-        
-        // We can return r = 0, k = 0, t0 = 0, I think.
-        if ((phi + psi) == 0) {
-            return [0,0,0,0];
-        }
-
-        // All of this needs to be re-checked
-        var E = (D/2)*Math.sin(phi + psi)
-        var F = Math.sin(phi);
-
-        var r = 2*Math.pow(F,3/2)/Math.sqrt(3*F-E);
-        var iv = F*F*(F+E)/(E-3*F);
-        var t0= -2 * Math.atan(x)*(r+Math.sqrt(iv));
-        var k = L/(4*Math.atan((r+Math.sqrt(iv))/F));
-        return [phi,r,k,t0];
-    }
-
-    // MATH FOR STACKING HELIX
-    function stackingHelixTable() {
-        var tab = document.getElementById('stacking_table');
-        function addRow(table,alpha,theta,phi, radius, kappa, t0) {
-            var row = table.insertRow();
-
-// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-            var cell0 = row.insertCell(0);
-            cell0.innerHTML = alpha;
-            var cell1 = row.insertCell(1);
-            cell1.innerHTML = theta;
-            var cell2 = row.insertCell(2);
-            cell2.innerHTML = phi;            
-            var cell3 = row.insertCell(3);
-            cell3.innerHTML = radius;            
-            var cell4 = row.insertCell(4);
-            cell4.innerHTML = kappa;            
-            var cell5 = row.insertCell(5);
-            cell5.innerHTML = t0;            
-// Add some text to the new cells:
-        }
-        var radius = 0;
-        var kappa = 0;
-        var t0 = 0;
-        var L = 1;
-        // We'll tree these as degrees.
-        for (var i = 0; i < 8; i++) {
-            for (var j = 0; j < 1; j++) {
-                var alpha = i*10;
-                var theta = j*60;
-                alpha= i*10;
-                theta = 170;
-                var arad = alpha*Math.PI/180;
-                var trad = theta*Math.PI/180;
-                console.log("arad",arad*180/Math.PI);
-                var res = helix_parameters(arad,trad,L);
-                console.log("alpha, theta, res",alpha,theta,res);
-                addRow(tab,alpha,theta,res[0]*180/Math.PI,res[1],res[2],res[3]);                
-            }
-        }
-
     }
 })();
 
