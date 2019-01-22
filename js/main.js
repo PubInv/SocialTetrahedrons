@@ -753,6 +753,16 @@ $(".currentbutton").on('click', function(event){
             am.scene.remove(child);
     });
 
+    am.grid_scene.children.forEach(function (child) {
+        console.log(child.obj_type);
+        console.log(child.userData);
+        console.log(child);
+        if (child.userData.obj_type == "data_tet") {
+            console.log("XXX");
+            am.grid_scene.remove(child);
+        }
+    });
+
     DATA_OBJECTS.forEach(d => {
 
         // we have no way to release this.
@@ -781,6 +791,13 @@ $(".currentbutton").on('click', function(event){
 
         mesh.obj_type = "data_tet";
         am.scene.add(mesh);
+
+        var label = makeTextSprite(d.label,{fontsize: 60 },"red");
+        label.position.set(d.pos.x,d.pos.y,d.pos.z);
+
+        label.userData.obj_type = "data_tet";
+        am.grid_scene.add(label);
+        
     });
 
 }
