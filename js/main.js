@@ -212,165 +212,13 @@ function draw_big_tet() {
         create_actuator(c, a, null, memo_color_mat(tcolor));
     }
     
-
-    
-    
-}
-function add_vertex(am, d, i, params) {
-    var colors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Blue")];
-    var darkgreen = d3.color("#008000");
-    var dcolor = [null, darkgreen, d3.color("purple")];
-
-    var vertices = params.vertices;
-    var indices = params.indices;
-    var prev = params.prev;
-    var helix = params.helix;
-    var v;
-    var c;
-    var th;
-    if (i < 3) return;
-    if (i == 3) {
-        var base = get_base(params.init_pos, params.l);
-        params.vertices = vertices = base.v.slice(0);
-        th = [0, 1, 2, 3];
-        indices.push(th, th, th, th); //First 3 are dummy copies to align indices and vertices
-        v = base.v[i];
-
-        if (params.wireframe == true) {
-            create_vertex_mesh(base.v[0], base.vc[0]);
-            create_vertex_mesh(base.v[1], base.vc[1]);
-            create_vertex_mesh(base.v[2], base.vc[2]);
-            create_actuator(base.v[0], base.v[1], null, memo_color_mat(cto3(base.ec[2])));
-            create_actuator(base.v[1], base.v[2], null, memo_color_mat(cto3(base.ec[0])));
-            create_actuator(base.v[2], base.v[0], null, memo_color_mat(cto3(base.ec[1])));
-        }
-        else {
-            var geometry = new THREE.Geometry();
-            geometry.vertices.push(vertices[0],vertices[1],vertices[2]);
-            if (params.blendcolor == true) {
-                geometry.faces.push(new THREE.Face3(0, 1, 2, undefined, [cto3(base.ec[0]),cto3(base.ec[1]),cto3(base.ec[2])]));
-            }
-            else {
-                geometry.faces.push(new THREE.Face3(0, 1, 2, undefined, new THREE.Color(0)));
-            }
-            var material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
-            var mesh = new THREE.Mesh(geometry, material);
-            am.scene.add(mesh);
-        }
-    } else {
-            //                var d = get_direction(i - 3, vertices, indices);
-        switch (d) {
-            case 0: th = [prev[1], prev[2], prev[3], i]; break;
-            case 1: th = [prev[0], prev[3], prev[2], i]; break;
-            case 2: th = [prev[3], prev[0], prev[1], i]; break;
-            case 3: th = [prev[2], prev[1], prev[0], i]; break;
-        }
-        var l = params.l
-        v = get_vertex(i, vertices, indices, vertices[th[0]], vertices[th[1]], vertices[th[2]], [l[0]+l[3],l[1]+l[4],l[2]+l[5]], params.l, params.m);
-        vertices.push(v);
-        indices.push(th);
-    }
-    c = get_colors(i, vertices, indices);
-    if (params.wireframe == true) {
-        create_vertex_mesh(v, c[3]);
-
-        for (var k = 0; k < Math.min(3, i); k++) {
-            var tcolor = new THREE.Color(c[k].hex());
-            var cmat = memo_color_mat(tcolor);
-            var mesh = create_actuator(vertices[th[k]], vertices[th[3]], null, cmat);
-        }
-    }
-    else {
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(vertices[th[0]],vertices[th[1]],vertices[th[2]],vertices[th[3]]);
-        if (params.blendcolor == true) {
-            geometry.faces.push(
-                new THREE.Face3(2, 3, 0, undefined, [cto3(c[2]),cto3(c[3]),cto3(c[0])]),
-                new THREE.Face3(3, 2, 1, undefined, [cto3(c[3]),cto3(c[2]),cto3(c[1])]),
-                new THREE.Face3(1, 0, 3, undefined, [cto3(c[1]),cto3(c[0]),cto3(c[3])]));
-        }
-        else {
-            geometry.faces.push(
-                new THREE.Face3(2, 3, 0, undefined, cto3(c[1])),
-                new THREE.Face3(3, 2, 1, undefined, cto3(c[0])),
-                new THREE.Face3(1, 0, 3, undefined, cto3(c[2])));
-        }
-        var material = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
-        var mesh = new THREE.Mesh(geometry, material);
-        am.scene.add(mesh);
-    }
-    params.prev = th;
-}
-function cto3(c) {
-     return new THREE.Color(c.hex());
 }
 
-function get_random_int(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-
-function get_direction(n, v, i) {
-    if (n < 10)
-        return get_random_int(3);
-    else return -1;
-}
-
-function get_vertex(n, v, i, pa, pb, pc, s, l, m) {
-    var valid = { v: true };
-    var l0 = pa.distanceTo(pb);
-    var l1 = pc.distanceTo(pa);
-    var l2 = pb.distanceTo(pc);
-    var ad = m ? s[0]-l0 : (n % 2 == 0) ? l[0] : l[3];
-    var bd = m ? s[1]-l1 : (n % 2 == 0) ? l[1] : l[4];
-    var cd = m ? s[2]-l2 : (n % 2 == 0) ? l[2] : l[5];
-    var pd = find_fourth_point_given_three_points_and_three_distances(
-        CHIRALITY_CCW,
-        pa, pb, pc,
-        ad, bd, cd,
-        valid);
-    return pd;
-}
 var colors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Indigo"), d3.color("purple"), d3.color("black")];
 function get_colors(n, v, i) {
     return [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Indigo"), d3.color("purple")];
 }
-// I believe all of these must in principle be locatable by initial position
-// if we are to allow parametric curves to start in different positions.
-// I believe we should hold invariant that "init_pos" passed into
-// initialParameters below is always respected.
-// var cs = [];
-// cs[0] = new THREE.Vector3(0, 0, 0);
-// cs[1] = new THREE.Vector3(3, 0, 0);
-// cs[2] = new THREE.Vector3(.5, -Math.sqrt(3) / 2, 0);
 
-function calculate_tetrahedron(l) {
-    var v = [new THREE.Vector3( l[1]/2,0,0),
-             new THREE.Vector3(      0,0,0),
-             new THREE.Vector3(-l[1]/2,0,0),
-             new THREE.Vector3(      0,0,0)];
-    v1 = v[1];
-    v3 = v[3];
-    s0 = l[0]*l[0];
-    s1 = l[1]*l[1];
-    s2 = l[2]*l[2];
-    s3 = l[3]*l[3];
-    s4 = l[4]*l[4];
-    s5 = l[5]*l[5];
-    var x1 = v1.x = -(s2-s0)/2/l[1];
-    var x3 = v3.x = -(s3-s5)/2/l[1];
-    var xm = (x1+x3)/2;
-    var xyz1s = (s2+s0-s1/2)/2;
-    var xyz3s = (s3+s5-s1/2)/2;
-    var zs = (xyz1s+xyz3s-s4/2)/2-xm*xm;
-    var z = Math.sqrt(zs);
-    var zd = (s4/4-xyz1s+zs)/2/z;
-    var z1 = v1.z = ((3*(s2+s0)+(s3+s5)-2*s1-2*s4)/8-x1*xm)/z;
-    v3.z = 2*z-z1;
-    v1.y = -(v3.y=Math.sqrt(xyz1s-x1*x1-z1*z1));
-    return v;
-}
-
-// v [a, b, c, d], vc[a, b, c, d], ec[cb, ac, ba, ad, bd, cd]
 function get_base(init_pos, l) {
     var v = calculate_tetrahedron(l);
     // now shift this dtetrhedron by the init_pos...
@@ -624,24 +472,24 @@ function initGraphics() {
 
 }
 
-AM.prototype.push_body_mesh_pair = function (body, mesh) {
-    this.meshes.push(mesh);
-    this.bodies.push(body);
-}
-AM.prototype.remove_body_mesh_pair = function (body, mesh) {
-    for (var i = this.meshes.length - 1; i >= 0; i--) {
-        if (this.meshes[i].name === mesh.name) {
-            this.meshes.splice(i, 1);
-            this.bodies.splice(i, 1);
-        }
-    }
-    delete mesh["ammo_obj"];
-    for (var i = this.rigidBodies.length - 1; i >= 0; i--) {
-        if (this.rigidBodies[i].name === body.name) {
-            this.rigidBodies.splice(i, 1);
-        }
-    }
-}
+// AM.prototype.push_body_mesh_pair = function (body, mesh) {
+//     this.meshes.push(mesh);
+//     this.bodies.push(body);
+// }
+// AM.prototype.remove_body_mesh_pair = function (body, mesh) {
+//     for (var i = this.meshes.length - 1; i >= 0; i--) {
+//         if (this.meshes[i].name === mesh.name) {
+//             this.meshes.splice(i, 1);
+//             this.bodies.splice(i, 1);
+//         }
+//     }
+//     delete mesh["ammo_obj"];
+//     for (var i = this.rigidBodies.length - 1; i >= 0; i--) {
+//         if (this.rigidBodies[i].name === body.name) {
+//             this.rigidBodies.splice(i, 1);
+//         }
+//     }
+// }
 
 
 function onWindowResize() {
@@ -813,35 +661,52 @@ function drawTetrahedron(dir, i, other_params) {
 function add_data_object() {
     DATA_OBJECTS.push({label: new_label.value,
                        pos: new THREE.Vector3(0, 0, 0)});
+    CURRENT_DATA_OBJECT = DATA_OBJECTS.length - 1;
 
     // Now how do I add a simple object that can be moved?
 
-    // we have no way to release this.
-    
-    var tcolor = new THREE.Color("white");
-    var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
-    var tet = new THREE.TetrahedronGeometry(0.2, 0);
-
-    // https://stackoverflow.com/questions/12784455/three-js-rotate-tetrahedron-on-correct-axis
-    tet.applyMatrix(
-        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
-
-    tet.applyMatrix(
-        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 1, 0 ).normalize(),
-                                              45*(Math.PI/180) )
-    );
-
-    tet.translate(0,1,0);
-    
-    var mesh = new THREE.Mesh(tet, cmat);
-    
-    mesh.castShadow = false;
-    mesh.receiveShadow = false;
-    mesh.debugObject = true;
-
-    
-    am.scene.add(mesh);
     render_data_objects();
+}
+
+const GRADIENT = 0.1;
+
+function move_current(f) {
+    if (CURRENT_DATA_OBJECT >= 0) {
+        f(DATA_OBJECTS[CURRENT_DATA_OBJECT].pos);
+    }
+    render_data_objects();
+}
+
+function up_click() {
+    move_current(d => {d.y += GRADIENT});
+}
+
+function dn_click() {
+    move_current(d => {d.y -= GRADIENT});    
+}
+
+function body_plus_click() {
+    move_current(d => {d.z += GRADIENT});
+}
+
+function body_minus_click() {
+    move_current(d => {d.z -= GRADIENT});    
+}
+
+function mind_plus_click() {
+    move_current(d => {d.x += GRADIENT});
+}
+
+function mind_minus_click() {
+    move_current(d => {d.x -= GRADIENT});    
+}
+
+function spirit_plus_click() {
+    move_current(d => {d.z -= GRADIENT});
+}
+
+function spirit_minus_click() {
+    move_current(d => {d.z += GRADIENT});    
 }
 
 
@@ -862,6 +727,9 @@ function render_data_objects() {
         table.deleteRow(-1);
     }
     DATA_OBJECTS.forEach(addRow);
+
+    let current_label = document.getElementById("current-label");    
+    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;    
     
 $(".currentbutton").on('click', function(event){
     event.stopPropagation();
@@ -878,6 +746,43 @@ $(".currentbutton").on('click', function(event){
     
     
 });
+
+
+    am.scene.children.forEach(function (child) {
+        if (child.obj_type == "data_tet")
+            am.scene.remove(child);
+    });
+
+    DATA_OBJECTS.forEach(d => {
+
+        // we have no way to release this.
+    
+    var tcolor = new THREE.Color("white");
+    var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
+    var tet = new THREE.TetrahedronGeometry(0.2, 0);
+
+    // https://stackoverflow.com/questions/12784455/three-js-rotate-tetrahedron-on-correct-axis
+    tet.applyMatrix(
+        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
+
+        tet.applyMatrix(
+            new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 1, 0 ).normalize(),
+                                                  45*(Math.PI/180) )
+        );
+
+
+        tet.translate(d.pos.x,d.pos.y,d.pos.z);
+        
+        var mesh = new THREE.Mesh(tet, cmat);
+        
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        mesh.debugObject = true;
+
+        mesh.obj_type = "data_tet";
+        am.scene.add(mesh);
+    });
+
 }
 
 (function () {
@@ -888,7 +793,18 @@ $(".currentbutton").on('click', function(event){
     var funcStatus;
 //    var generatorsSelector;
     var new_label;
-    
+
+    var up_button;
+    var dn_button;
+    // This is a mistake, in that it makes the dimensions unparameterizable...
+    var mind_plus_button;
+    var mind_minus_button;
+    var body_plus_button;
+    var body_minus_button;
+    var spirit_plus_button;
+    var spirit_minus_button;
+    var axis_button;
+
     // MAIN FUNCTION
     
     $(function () { main(); });
@@ -900,290 +816,77 @@ $(".currentbutton").on('click', function(event){
 
         new_label = document.getElementById('new_label');        
         executeButton.addEventListener('click', onExecute);
+
+
+        up_button = document.getElementById('up');        
+        up_button.addEventListener('click', up_click);
+        dn_button = document.getElementById('dn');        
+        dn_button.addEventListener('click', dn_click);
+
+
+        mind_plus_button = document.getElementById('mind_plus');        
+        mind_plus_button.addEventListener('click', mind_plus_click);
+        mind_minus_button = document.getElementById('mind_minus');        
+        mind_minus_button.addEventListener('click', mind_minus_click);
+
+        body_plus_button = document.getElementById('body_plus');        
+        body_plus_button.addEventListener('click', body_plus_click);
+        body_minus_button = document.getElementById('body_minus');        
+        body_minus_button.addEventListener('click', body_minus_click);
+
+        spirit_plus_button = document.getElementById('spirit_plus');        
+        spirit_plus_button.addEventListener('click', spirit_plus_click);
+        spirit_minus_button = document.getElementById('spirit_minus');        
+        spirit_minus_button.addEventListener('click', spirit_minus_click);
+        
+
+
+        
         onExecute();
         draw_big_tet();
     }
 
     // STEP FUNCTION
     
-    function step(fn, i, other_params) {
-        var dir;
-        try {
-            dir = fn(i);
-//            dir = generatorFn(i);
-        } catch (err) {
-           funcStatus.innerHTML = "Step " + i + ": " + err.message;
-           dir = -1;
-        }
+//     function step(fn, i, other_params) {
+//         var dir;
+//         try {
+//             dir = fn(i);
+// //            dir = generatorFn(i);
+//         } catch (err) {
+//            funcStatus.innerHTML = "Step " + i + ": " + err.message;
+//            dir = -1;
+//         }
         
-        if (dir!==-1 && dir!==0 && dir!==1 && dir!==2) {
-            funcStatus.innerHTML = "Step " + i + ": Unexpected return value " + dir;
-            dir = -1;    
-        }
+//         if (dir!==-1 && dir!==0 && dir!==1 && dir!==2) {
+//             funcStatus.innerHTML = "Step " + i + ": Unexpected return value " + dir;
+//             dir = -1;    
+//         }
         
-//        console.log('Step ' + i + ' direction ' + dir);
-        if (dir != -1) {
-            other_params = drawTetrahedron(dir, i, other_params);
-            setTimeout(step, INTERVAL, fn, i+1, other_params);
-        } else {
-                var vertices = other_params.vertices;
-                var indices = other_params.indices;
-                var th = indices.slice(-1)[0];
-                console.log(vertices[th[0]], vertices[th[1]], vertices[th[2]], vertices[th[3]]);
+// //        console.log('Step ' + i + ' direction ' + dir);
+//         if (dir != -1) {
+//             other_params = drawTetrahedron(dir, i, other_params);
+//             setTimeout(step, INTERVAL, fn, i+1, other_params);
+//         } else {
+//                 var vertices = other_params.vertices;
+//                 var indices = other_params.indices;
+//                 var th = indices.slice(-1)[0];
+//                 console.log(vertices[th[0]], vertices[th[1]], vertices[th[2]], vertices[th[3]]);
 
-            executeButton.disabled = false;
-        }
-    }
+//             executeButton.disabled = false;
+//         }
+//     }
     
-    // EVENT HANDLERS
+//     // EVENT HANDLERS
 
-    function generator_init(params) {
-    }
+//     function generator_init(params) {
+//     }
 
-    function onExecute() {
-        clearAm();
-    }
+     function onExecute() {
+         clearAm();
+     }
 
     
         
-    function onGeneratorChanged() {
-        funcStatus.innerHTML = '';
-        generatorText.value = EXAMPLE_GENERATORS[generatorsSelector.value].src || '';
-    }
-    
-    // HELPER FUNCTIONS
-    
-    function compileGenerator(src) {
-        var fn;
-        try { fn = eval(src); }
-        catch(err) {
-            funcStatus.innerHTML = err.message;
-            return undefined;
-        }
-        var fnType = typeof fn;
-        if (fnType != 'function') {
-            funcStatus.innerHTML = "Generator needs to be a function, not " + fnType;
-            return undefined;
-        }
-        funcStatus.innerHTML = "";
-        return fn;
-    }
-
-    // return true iff lpt is inside the tetrahedron formed
-    // by a,b,c,d
-    // https://stackoverflow.com/questions/25179693/how-to-check-whether-the-point-is-in-the-tetrahedron-or-not
-    function SameSide(v1, v2, v3, v4, p)
-    {
-        var v21 = v2.clone();
-        v21.sub(v1);
-        var v31 = v3.clone();
-        v31.sub(v1);
-        var normal = new THREE.Vector3();
-        normal.crossVectors(v21,v31);
-        //        var normal = cross(v2 - v1, v3 - v1);
-        var v41 = v4.clone();
-        v41.sub(v1);
-        
-        var dotV4 = normal.dot(v41);
-        var p_v1 = p.clone();
-        p_v1.sub(v1);
-        var dotP = normal.dot(p_v1);
-
-        var r = (Math.sign(dotV4) == Math.sign(dotP));
-        return r;
-    }
-    function test_SameSide() {
-        var c = [];
-        c[0] = new THREE.Vector3(0, 0, 0);
-        c[1] = new THREE.Vector3(1, 0, 0);
-        c[2] = new THREE.Vector3(0, 1, 0);
-        c[3] = new THREE.Vector3(0, 0, 1);
-        var psam = new THREE.Vector3(2, 2, 2);
-        var pnsam = new THREE.Vector3(2, 2, -2);        
-        console.assert(SameSide(c[0],c[1],c[2],c[3],psam));
-        console.assert(!SameSide(c[0],c[1],c[2],c[3],pnsam));
-        var small = new THREE.Vector3(2, 2, 2);
-        console.assert(SameSide(c[0],c[1],c[2],c[3],small));        
-    }
-    test_SameSide();
-    
-    
-    function pointIsInsideTetPnts(p, v1,v2,v3,v4) {
-        var A =  SameSide(v1, v2, v3, v4, p);
-        var B = SameSide(v2, v3, v4, v1, p);
-        var C = SameSide(v3, v4, v1, v2, p);
-        var D = SameSide(v4, v1, v2, v3, p);
-        return A && B && C && D;
-
-    }
-
-    function test_pointIsInsideTet() {
-        var c = [];
-        c[0] = new THREE.Vector3(0, 0, 0);
-        c[1] = new THREE.Vector3(1, 0, 0);
-        c[2] = new THREE.Vector3(0, 1, 0);
-        c[3] = new THREE.Vector3(0, 0, 1);
-        var pin = new THREE.Vector3(0.1, .1, 0.1);
-        var pout = new THREE.Vector3(2,2,2);        
-        
-        console.assert(pointIsInsideTetPnts(pin,c[0],c[1],c[2],c[3]));
-        
-        console.assert(!pointIsInsideTetPnts(pout,c[0],c[1],c[2],c[3]));        
-    }
-
-    function addDebugSphere(am,pos,color) {
-        if (!color) {
-            color = "yellow";
-        }
-        var mesh = createSphere(am.JOINT_RADIUS/5, pos, color);
-        mesh.castShadow = false;
-        mesh.receiveShadow = false;
-        mesh.debugObject = true;
-        am.scene.add(mesh);
-    }
-    function pointIsInsideTet(lpt, tc, params) {
-        var N = params.vertices.length - 1;
-        var prev = params.prev;
-        var vs = [];
-        vs[0] = params.vertices[prev[0]];
-        vs[1] = params.vertices[prev[1]];
-        vs[2] = params.vertices[prev[2]];
-        // This is the most recently added point.
-        vs[3] = params.vertices[prev[3]];
-        return pointIsInsideTetPnts(lpt,vs[0],vs[1],vs[2],vs[3]);
-    }
-    test_pointIsInsideTet();
-
-    // PARAMETRIC CURVE FUNCTIONALITY
-
-    // lpt is a Vector3. tc is the index
-    // return value if very weird here, since we have cases.
-    function nextParametricTet(lpt, tc,params) {
-        if (pointIsInsideTet(lpt, tc,params)) { return "INSIDECURRENT"; }
-        var debug = false;
-        if (debug) addDebugSphere(am,lpt,"white");
-        var prev = params.prev;
-        var vs = [];
-        vs[0] = params.vertices[prev[0]];
-        vs[1] = params.vertices[prev[1]];
-        vs[2] = params.vertices[prev[2]];
-        // This is the most recently added point.
-        vs[3] = params.vertices[prev[3]];
-
-        // Face and direction 0 are OPPOSITE vertex 0.
-        // Face and direction 3 are GOING BACKWARD.
-
-        var te = 1.0;
-        var valid = { v: true };        
-        var v0 = find_fourth_point_given_three_points_and_three_distances(
-            CHIRALITY_CCW,
-            vs[1], vs[2], vs[3],
-            te, te, te,
-            valid);
-        console.assert(valid.v);
-
-        if (debug) addDebugSphere(am,v0,"green");
-        
-        if (pointIsInsideTetPnts(lpt,v0,vs[1],vs[2],vs[3])) {
-            console.log("return",lpt,0);
-            return 0;
-        }
-
-        // I don't know why I need this chirality change, but I do.
-        var v1 = find_fourth_point_given_three_points_and_three_distances(
-            CHIRALITY_CCW,
-             vs[2],vs[0], vs[3],            
-            te, te, te,
-            valid);
-        console.assert(valid.v);
-        if (debug) addDebugSphere(am,v1,"blue");        
-        
-        if (pointIsInsideTetPnts(lpt,vs[0],v1,vs[2],vs[3])) {
-            console.log("return",lpt,1);            
-            return 1;
-        }
-        
-        var v2 = find_fourth_point_given_three_points_and_three_distances(
-            CHIRALITY_CCW,
-            vs[0], vs[1], vs[3],
-            te, te, te,
-            valid);
-        console.assert(valid.v);
-        
-        if (pointIsInsideTetPnts(lpt,vs[0],vs[1],v2,vs[3])) {
-            console.log("return",lpt,2);                        
-            return 2;
-        }
-
-        if (debug) addDebugSphere(am,v2,"red");                
-
-        var v3 = find_fourth_point_given_three_points_and_three_distances(
-            CHIRALITY_CCW,
-            vs[0], vs[1], vs[2],            
-            te, te, te,
-            valid);
-        console.assert(valid.v);
-
-        addDebugSphere(am,v3,"gray");
-        
-        if (pointIsInsideTetPnts(lpt,vs[0],vs[1],vs[2],v3)) {
-            console.log("CURVE WENT BACKWARD!");
-            return 3;
-        }
-        console.log("NORREACH",lpt);
-        // otherwise we can't reach it in one...
-        return "NOREACH";
-        
-    }
-
-
-    function test_nextParametricTet() {
-        var initialPt = new THREE.Vector3(0,0,0);
-        var offset = new THREE.Vector3(initialPt.x-0.5,
-                                       initialPt.y-(Math.sqrt(3) / 2)/2,
-                                       initialPt.z-0.2);
-        
-//        var wf = document.getElementById('wireframe').checked;
-        //        var bc = document.getElementById('blendcolor').checked;
-        var wf = true;
-        var bc = true;
-        var l = [];
-        for(var i = 0; i < 6; i++) {
-            l[i] = document.getElementById('l'+i).value || 1;
-        }
-
-        var params = initialParameters(offset,wf,bc,l);
-        add_vertex(am,0,3,params);
-        var prev = params.prev;
-        var vs = [];
-        console.log(prev);
-        console.log(params);
-        console.log(params.vertices);
-        vs[0] = params.vertices[prev[0]];
-        vs[1] = params.vertices[prev[1]];
-        vs[2] = params.vertices[prev[2]];
-        // This is the most recently added point.
-        vs[3] = params.vertices[prev[3]];
-
-        // A should be the midpoint of 2 and 3
-        var A = new THREE.Vector3(0,0,0);
-        A.add(vs[1]);
-        A.add(vs[2]);
-        A.multiplyScalar(0.5);
-        A.x += 0.0;
-        A.y += 0.1;
-        A.z += 0.2;                
-
-        addDebugSphere(am,A,"red");
-        console.log("vs[1],vs[2]",vs[1],vs[2]);
-        console.log("A",A);
-        var nt = nextParametricTet(A, 3 ,params);
-        console.log("nt",nt);
-        console.assert(0 == nt );        
-        // var B = new THREE.Vector3(0,0,0);
-        // console.assert(nextParametricTet(B, 3 ,params) );                 var C = new THREE.Vector3(0,0,0);
-        // console.assert(nextParametricTet(C, 3 ,params) );
-        clearAm();        
-    }
 })();
 
