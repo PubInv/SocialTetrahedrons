@@ -13,3 +13,8 @@ this is all due to Mark Frazier.
 
 Basically, this is a Three.js, all-browser, serverless implementation. We may add a durable
 database later.
+
+## Original Document
+
+Mark has written a short [explanation](https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx).
+
