@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    
+    <style>
+
+      /* Tabs*/
+section {
+    padding: 60px 0;
+}
+
+section .section-title {
+    text-align: center;
+    color: #007b5e;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+#tabs{
+	background: #007b5e;
+    color: #eee;
+}
+#tabs h6.section-title{
+    color: #eee;
+}
+
+#tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #f3f3f3;
+    background-color: transparent;
+    border-color: transparent transparent #f3f3f3;
+    border-bottom: 4px solid !important;
+    font-size: 20px;
+    font-weight: bold;
+}
+#tabs .nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    color: #eee;
+    font-size: 20px;
+}
+ 
+
+</style>
+
+<body>
+<br>
+<div class="container">
+
+  	<h6 class="section-title h1">Tabs</h6>
+		<div class="row">
+			<div class="col">
+				<nav>
+					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+						<a class="nav-item nav-link active" id="nav-create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="true">Create Social Tetrahedrons</a>
+						<a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#nav-social" role="tab" aria-controls="nav-show" aria-selected="false">Show Social Tetrahedrons</a>
+					</div>
+				</nav>
+				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+					<div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+Imagine a button panel full of projects here.
+					</div>
+					<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-show-tab">
+Real live persons go here.					
+					</div>
+				</div>
+			</div>
+                        
+			<div class="col">
+				<nav>
+					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+						<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Projects</a>
+						<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Persons</a>
+						<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Places</a>
+						<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">Tools</a>
+					</div>
+				</nav>
+				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+					<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+Imagine a button panel full of projects here.
+					</div>
+					<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+Real live persons go here.					
+					</div>
+					<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                          Places, virtual, or real, are needed for collaboration.
+								</div>
+					<div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                          Tools --- not sure what Mark wants here.
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+</div>
+
+
+   <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script>
+
+// Trying now to create a basic object model in JavaScript which can later be tied to
+// to a datamodel
+
+// OBJECTS
+// Effectively thise arrays represent an in-memory databes before we hook up Redis or Firebase or something.
+
+var PROJECTS = [];
+var PERSONS = [];
+var PLACES = [];
+var TOOLS = [];
+
+// Now some constructors to give these things some shapes
+
+function Project(name,source,url) {
+    this.name = name;
+    this.source = source;
+    this.url = url;
+}
+
+function Person(name,email) {
+    this.name = name;
+    this.email = email;
+}
+
+function Place(name,lat,lon) {
+    this.lat = lat;
+    this.lon = lon;
+    this.name = name;
+}
+
+function Tool(name,level) {
+    this.name = name;
+    this.level = level;
+}
+
+function TetType(type,A_name,B_name,C_name,D_name) {
+    this.type = type;
+    this.A_Name = A_name;
+    this.B_Name = B_name;
+    this.C_Name = C_name;
+    this.D_Name = D_name;
+}
+
+function MBSCTet() {
+    TetType.call(this,"MBSC","Mind","Body","Spirit","Comfort");
+}
+
+function Tetrahedron(key,type) {
+    this.key = key;
+    this.type = type;
+    // I'm assuming these are the four independent dimensions
+    // and that the type gives the names of these dimensions
+    this.A = 0;
+    this.B = 0;
+    this.C = 0;
+    this.D = 0;
+}
+
+// Now, before I will create a function to populate a test database....
+
+function InitDatabase() {
+    PROJECTS.push(new Project('Gluss (robotic truss)','Public Invention','https://pubinv.github.io/tetrobot/'));
+    PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
+
+    PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
+    
+    PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
+     
+    TOOLS.push(new Tool('JavaScript',4));
+                            
+                 
+    
+}
+
+function render() {
+    //actually, we need an Html element to add to here,
+    //but I will just do this.
+    PROJECTS.forEach(p => {
+        console.log(p.name);
+        $('#nav-home').html(p.name);
+    });
+}
+
+function main() {
+    InitDatabase();
+    render();
+}
+
+
+
+// A $( document ).ready() block.
+$( document ).ready(function() {
+    console.log( "ready!" );
+    main();
+});
+      </script>
+
+</body>
+</html>
