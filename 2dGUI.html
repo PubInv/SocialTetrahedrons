@@ -75,27 +75,36 @@ Real live persons go here.
 			<div class="col">
 				<nav>
 					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-						<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Projects</a>
-						<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Persons</a>
-						<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Places</a>
-						<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">Tools</a>
+						<a class="nav-item nav-link active" id="nav-projects-tab" data-toggle="tab" href="#nav-projects" role="tab" aria-controls="nav-projects" aria-selected="true">Projects</a>
+						<a class="nav-item nav-link" id="nav-persons-tab" data-toggle="tab" href="#nav-persons" role="tab" aria-controls="nav-persons" aria-selected="false">Persons</a>
+						<a class="nav-item nav-link" id="nav-places-tab" data-toggle="tab" href="#nav-places" role="tab" aria-controls="nav-places" aria-selected="false">Places</a>
+						<a class="nav-item nav-link" id="nav-tools-tab" data-toggle="tab" href="#nav-tools" role="tab" aria-controls="nav-tools" aria-selected="false">Tools</a>
 					</div>
 				</nav>
 				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-					<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-Imagine a button panel full of projects here.
+    <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
+
+<ul class="list-group" id="nav-projects-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
 					</div>
-					<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-Real live persons go here.					
+					<div class="tab-pane fade" id="nav-persons" role="tabpanel" aria-labelledby="nav-persons-tab">
+<ul class="list-group" id="nav-persons-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
+
 					</div>
-					<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                          Places, virtual, or real, are needed for collaboration.
+					<div class="tab-pane fade" id="nav-places" role="tabpanel" aria-labelledby="nav-places-tab">
+<ul class="list-group" id="nav-places-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
 								</div>
-					<div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                          Tools --- not sure what Mark wants here.
+					<div class="tab-pane fade" id="nav-tools" role="tabpanel" aria-labelledby="nav-tools-tab">
+<ul class="list-group" id="nav-tools-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
 					</div>
 				</div>
-			
 			</div>
 		</div>
 	</div>
@@ -173,32 +182,31 @@ function Tetrahedron(key,type) {
 function InitDatabase() {
     PROJECTS.push(new Project('Gluss (robotic truss)','Public Invention','https://pubinv.github.io/tetrobot/'));
     PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
-
     PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
-    
     PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
-     
     TOOLS.push(new Tool('JavaScript',4));
-                            
-                 
-    
 }
 
-function render() {
+function list_item(content) {
+    return '<li class="list-group-item">'+content+'</li>';
+}
+
+function render(groupid,array,f) {
     //actually, we need an Html element to add to here,
     //but I will just do this.
-    PROJECTS.forEach(p => {
-        console.log(p.name);
-        $('#nav-home').html(p.name);
+    $(groupid).empty();
+    array.forEach(p => {
+        $(groupid).append(list_item(f(p)));
     });
 }
 
 function main() {
     InitDatabase();
-    render();
+    render('#nav-projects-list',PROJECTS,(p => p.name));
+    render('#nav-persons-list',PERSONS,(p => p.name));
+    render('#nav-places-list',PLACES,(p => p.name));
+    render('#nav-tools-list',TOOLS,(p => p.name));        
 }
-
-
 
 // A $( document ).ready() block.
 $( document ).ready(function() {
