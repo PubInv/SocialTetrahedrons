@@ -5,12 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <link rel="stylesheet" href="./css/bootstrap-slider.css"></script>
     <style>
 
+#ex1Slider .slider-selection {
+	background: #BABABA;
+}
       /* Tabs*/
 section {
     padding: 60px 0;
@@ -45,7 +54,12 @@ section .section-title {
     color: #eee;
     font-size: 20px;
 }
- 
+
+canvas {
+    border: 1px solid black;
+    width: 100%;
+    height: 400px;
+}
 
 </style>
 
@@ -55,7 +69,7 @@ section .section-title {
 
   	<h6 class="section-title h1">Tabs</h6>
 		<div class="row">
-			<div class="col">
+    <div class="col">
 				<nav>
 					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
 						<a class="nav-item nav-link active" id="nav-create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="true">Create Social Tetrahedrons</a>
@@ -64,12 +78,22 @@ section .section-title {
 				</nav>
 				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
 					<div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
-Imagine a button panel full of projects here.
+    <div id="create-canvas">
+    <canvas id='createcanvasid'>
+    <\canvas>
+    </div>
 					</div>
 					<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-show-tab">
-Real live persons go here.					
+    <div id="social-canvas">
+    <canvas id='socialcanvasid'>
+    <\canvas>
+    </div>
 					</div>
-				</div>
+    </div>
+    <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>
+
+<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+    
 			</div>
                         
 			<div class="col">
@@ -117,6 +141,8 @@ Real live persons go here.
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
+    <script src="./js/bootstrap-slider.js"></script>
+    
     <script>
 
 // Trying now to create a basic object model in JavaScript which can later be tied to
@@ -191,6 +217,66 @@ function list_item(content) {
     return '<li class="list-group-item">'+content+'</li>';
 }
 
+function vph(h,y) { return (-y) + h/2; }
+function vpw(w,x) { return (x) + w/2; }
+function draw_triangle(ctx,w,h) {
+    // the triangle
+    ctx.beginPath();
+    
+    const TRIANGLE_WIDTH = 1;
+    const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
+    const SIDE_LENGTH_PIXEL = 100;
+    const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
+    const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
+    
+    ctx.moveTo(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE));
+    ctx.lineTo(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE));
+    ctx.lineTo(vpw(w,0),
+               vph(h,BASE+SIDE_LENGTH_HEIGHT));
+                 
+    ctx.closePath();
+ 
+// the outline
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#000000';
+    ctx.stroke();
+ 
+// the fill color
+    ctx.fillStyle = "#FFCC00";
+    ctx.fill();
+
+    ctx.fillStyle = "#FF0000";
+
+    ctx.fillRect(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
+    ctx.fillStyle = "#00FF00";
+    ctx.fillRect(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
+    
+    ctx.fillStyle = "#0000FF";
+    
+    ctx.fillRect(vpw(w,0),
+                 vph(h,BASE+SIDE_LENGTH_HEIGHT),
+                 2,2);
+}
+
+function render_canvases() {
+    var canvas = $("#createcanvasid");
+    w = canvas[0].width;
+    h = canvas[0].height;
+    console.log("w,h",w,h);
+    
+    var ctxc = canvas[0].getContext('2d');
+    
+//    ctxc.setTransform(1,0,0,1,w/2,h/2);    
+    draw_triangle(ctxc,w,h);
+    ctxc.fillStyle = "#0000FF";
+    ctxc.fillRect(0,0,2,2);
+
+    
+    var ctxs = $("#socialcanvasid")[0].getContext('2d');
+    ctxs.fillStyle = "#0000FF";
+    ctxs.fillRect(20, 20, 150, 100);
+
+}
 function render(groupid,array,f) {
     //actually, we need an Html element to add to here,
     //but I will just do this.
@@ -205,8 +291,32 @@ function main() {
     render('#nav-projects-list',PROJECTS,(p => p.name));
     render('#nav-persons-list',PERSONS,(p => p.name));
     render('#nav-places-list',PLACES,(p => p.name));
-    render('#nav-tools-list',TOOLS,(p => p.name));        
+    render('#nav-tools-list',TOOLS,(p => p.name));
+    render_canvases();
+
+    // With JQuery
+$("#ex4").slider({
+	reversed : true
+});
+
+    // Without JQuery
+// var slider = new Slider("#ex4", {
+// 	reversed : true
+// });
+
+
+    // With JQuery
+    console.log($('#ex1'));
+$('#ex1').slider({
+	formatter: function(value) {
+		return 'Current value: ' + value;
+	}
+});
+
+
 }
+
+
 
 // A $( document ).ready() block.
 $( document ).ready(function() {
