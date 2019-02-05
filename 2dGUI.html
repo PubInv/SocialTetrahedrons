@@ -77,11 +77,20 @@ canvas {
 					</div>
 				</nav>
 				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-					<div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+    <div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+
+ <div class="row">
+      <div class="col-2 col-sm-1">
+    <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>    
+      </div>
+      <div class="col-4 col-sm-11">
     <div id="create-canvas">
     <canvas id='createcanvasid'>
     <\canvas>
     </div>
+      </div>
+    </div>
+    
 					</div>
 					<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-show-tab">
     <div id="social-canvas">
@@ -90,9 +99,8 @@ canvas {
     </div>
 					</div>
     </div>
-    <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>
 
-<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+
     
 			</div>
                         
@@ -299,19 +307,6 @@ $("#ex4").slider({
 	reversed : true
 });
 
-    // Without JQuery
-// var slider = new Slider("#ex4", {
-// 	reversed : true
-// });
-
-
-    // With JQuery
-    console.log($('#ex1'));
-$('#ex1').slider({
-	formatter: function(value) {
-		return 'Current value: ' + value;
-	}
-});
 
 
 }
