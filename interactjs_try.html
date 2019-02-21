@@ -1,0 +1,703 @@
+<!--
+Copyright (C) 2019 by
+  Robert L. Read <read.robert@gmail.com>
+  
+  This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/interactjs@1.3/dist/interact.min.js"></script>
+
+  <link rel="stylesheet" href="./css/bootstrap-slider.css"></script>
+    <style>
+
+#ex1Slider .slider-selection {
+	background: #BABABA;
+}
+      /* Tabs*/
+section {
+    padding: 60px 0;
+}
+
+section .section-title {
+    text-align: center;
+    color: #007b5e;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+#tabs{
+	background: #007b5e;
+    color: #eee;
+}
+#tabs h6.section-title{
+    color: #eee;
+}
+
+#tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #f3f3f3;
+    background-color: transparent;
+    border-color: transparent transparent #f3f3f3;
+    border-bottom: 4px solid !important;
+    font-size: 20px;
+    font-weight: bold;
+}
+#tabs .nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    color: #eee;
+    font-size: 20px;
+}
+
+canvas {
+    border: 1px solid black;
+    width: 100%;
+    height: 400px;
+}
+
+    </style>
+
+    <style>
+      body { font-family: Helvetica, Arial, sans-serif; }
+
+.dropzone-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.dropzone {
+    overflow: hidden;
+    margin: .5em;
+    padding: 1em;
+    color: #666;
+    text-align: center;
+    background: #ccc;
+    line-height: 8em;
+    border: 4px dashed transparent;
+    transition: background .15s linear, border-color .15s linear;
+}
+
+.dropzone.-drop-possible { border-color: #666; }
+
+.dropzone.-drop-over {
+    background: #666;
+    color: #fff;
+}
+
+.draggable {
+    position: relative;
+    z-index: 10;
+    width: 200px;
+    margin: .25em;
+    padding: 1em 2em;
+    background-color: #29e;
+    color: #fff;
+    text-align: center;
+
+    -ms-touch-action: none;
+        touch-action: none;
+}
+
+.draggable.-drop-possible { background-color: #42bd41; }
+
+      </style>
+
+<body>
+<br>
+<div class="container">
+
+  	<h6 class="section-title h1">Tabs</h6>
+		<div class="row">
+    <div class="col">
+				<nav>
+					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+						<a class="nav-item nav-link active" id="nav-create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="true">Create Social Tetrahedrons</a>
+						<a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#nav-social" role="tab" aria-controls="nav-show" aria-selected="false">Show Social Tetrahedrons</a>
+					</div>
+				</nav>
+				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+
+ <div class="row">
+      <div class="col-2 col-sm-1">
+    <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>    
+      </div>
+      <div class="col-4 col-sm-11">
+    <div id="create-canvas">
+    <canvas id='createcanvasid' id="drop1"  class="dropzone js-drop">
+    <\canvas>
+    </div>
+      </div>
+    </div>
+    
+					</div>
+					<div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-show-tab">
+    <div id="social-canvas">
+    <canvas id='socialcanvasid'>
+    <\canvas>
+    </div>
+					</div>
+    </div>
+
+
+    
+			</div>
+                        
+			<div class="col">
+				<nav>
+					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+						<a class="nav-item nav-link active" id="nav-projects-tab" data-toggle="tab" href="#nav-projects" role="tab" aria-controls="nav-projects" aria-selected="true">Projects</a>
+						<a class="nav-item nav-link" id="nav-persons-tab" data-toggle="tab" href="#nav-persons" role="tab" aria-controls="nav-persons" aria-selected="false">Persons</a>
+						<a class="nav-item nav-link" id="nav-places-tab" data-toggle="tab" href="#nav-places" role="tab" aria-controls="nav-places" aria-selected="false">Places</a>
+						<a class="nav-item nav-link" id="nav-tools-tab" data-toggle="tab" href="#nav-tools" role="tab" aria-controls="nav-tools" aria-selected="false">Tools</a>
+					</div>
+				</nav>
+				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
+
+<ul class="list-group" id="nav-projects-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
+					</div>
+					<div class="tab-pane fade" id="nav-persons" role="tabpanel" aria-labelledby="nav-persons-tab">
+<ul class="list-group" id="nav-persons-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
+
+					</div>
+					<div class="tab-pane fade" id="nav-places" role="tabpanel" aria-labelledby="nav-places-tab">
+<ul class="list-group" id="nav-places-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
+								</div>
+					<div class="tab-pane fade" id="nav-tools" role="tabpanel" aria-labelledby="nav-tools-tab">
+<ul class="list-group" id="nav-tools-list">
+  <li class="list-group-item active">Cras justo odio</li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="drag1" class="draggable js-drag">Drag me…</div>
+<div id="drag2" class="draggable js-drag">Drag me…</div>
+<div id="drag3" class="draggable js-drag">Drag me…</div>
+<div id="drag4" class="draggable js-drag">Drag me…</div>
+
+<div class="dropzone-wrapper">
+
+<!--    <div id="drop1" class="dropzone js-drop">Dropzone</div> -->
+<!--     <svg id="drop1"  class="dropzone js-drop" height="210" width="500"> -->
+  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
+</svg>
+</div>
+
+   <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script src="./js/bootstrap-slider.js"></script>
+    
+    <script>
+
+// Trying now to create a basic object model in JavaScript which can later be tied to
+// to a datamodel
+
+// OBJECTS
+// Effectively thise arrays represent an in-memory databes before we hook up Redis or Firebase or something.
+
+var PROJECTS = [];
+var PERSONS = [];
+var PLACES = [];
+var TOOLS = [];
+
+// Now some constructors to give these things some shapes
+
+function Project(name,source,url) {
+    this.name = name;
+    this.source = source;
+    this.url = url;
+}
+
+function Person(name,email) {
+    this.name = name;
+    this.email = email;
+}
+
+function Place(name,lat,lon) {
+    this.lat = lat;
+    this.lon = lon;
+    this.name = name;
+}
+
+function Tool(name,level) {
+    this.name = name;
+    this.level = level;
+}
+
+function TetType(type,A_name,B_name,C_name,D_name) {
+    this.type = type;
+    this.A_Name = A_name;
+    this.B_Name = B_name;
+    this.C_Name = C_name;
+    this.D_Name = D_name;
+}
+
+function MBSCTet() {
+    TetType.call(this,"MBSC","Mind","Body","Spirit","Comfort");
+}
+
+function Tetrahedron(key,type) {
+    this.key = key;
+    this.type = type;
+    // I'm assuming these are the four independent dimensions
+    // and that the type gives the names of these dimensions
+    this.A = 0;
+    this.B = 0;
+    this.C = 0;
+    this.D = 0;
+}
+
+// Now, before I will create a function to populate a test database....
+
+function InitDatabase() {
+    PROJECTS.push(new Project('Gluss (robotic truss)','Public Invention','https://pubinv.github.io/tetrobot/'));
+    PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
+    PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
+    PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
+    TOOLS.push(new Tool('JavaScript',4));
+}
+
+function list_item(content) {
+    return '<li class="list-group-item">'+content+'</li>';
+}
+
+// These function convert my abstract coordinates
+// to canvas coordinates.
+function vph(h,y) { return (-y) + h/2; }
+function vpw(w,x) { return (x) + w/2; }
+function draw_triangle(ctx,w,h) {
+    // the triangle
+    ctx.beginPath();
+    
+    const TRIANGLE_WIDTH = 1;
+    const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
+    const SIDE_LENGTH_PIXEL = 100;
+    const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
+    const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
+    
+    ctx.moveTo(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE));
+    ctx.lineTo(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE));
+    ctx.lineTo(vpw(w,0),
+               vph(h,BASE+SIDE_LENGTH_HEIGHT));
+                 
+    ctx.closePath();
+ 
+// the outline
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#000000';
+    ctx.stroke();
+ 
+// the fill color
+    ctx.fillStyle = "#FFCC00";
+    ctx.fill();
+
+    ctx.fillStyle = "#FF0000";
+
+    ctx.fillRect(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
+    ctx.fillStyle = "#00FF00";
+    ctx.fillRect(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
+    
+    ctx.fillStyle = "#0000FF";
+    
+    ctx.fillRect(vpw(w,0),
+                 vph(h,BASE+SIDE_LENGTH_HEIGHT),
+                 2,2);
+}
+
+function render_canvases() {
+    var canvas = $("#createcanvasid");
+    w = canvas[0].width;
+    h = canvas[0].height;
+    console.log("w,h",w,h);
+    
+    var ctxc = canvas[0].getContext('2d');
+    
+//    ctxc.setTransform(1,0,0,1,w/2,h/2);    
+    draw_triangle(ctxc,w,h);
+    ctxc.fillStyle = "#0000FF";
+    ctxc.fillRect(0,0,2,2);
+
+    
+    var ctxs = $("#socialcanvasid")[0].getContext('2d');
+    ctxs.fillStyle = "#0000FF";
+    ctxs.fillRect(20, 20, 150, 100);
+
+}
+function render(groupid,array,f) {
+    //actually, we need an Html element to add to here,
+    //but I will just do this.
+    $(groupid).empty();
+    array.forEach(p => {
+        $(groupid).append(list_item(f(p)));
+    });
+}
+
+function main() {
+    InitDatabase();
+    render('#nav-projects-list',PROJECTS,(p => p.name));
+    render('#nav-persons-list',PERSONS,(p => p.name));
+    render('#nav-places-list',PLACES,(p => p.name));
+    render('#nav-tools-list',TOOLS,(p => p.name));
+    render_canvases();
+
+    // With JQuery
+$("#ex4").slider({
+	reversed : true
+});
+
+
+
+}
+
+
+// A $( document ).ready() block.
+$( document ).ready(function() {
+    console.log( "ready!" );
+    main();
+                            });
+
+// This code from the internet...http://jsfiddle.net/m1erickson/qm9Eb/
+
+// get canvas related references
+var canvas = document.getElementById("createcanvasid");
+var ctx = canvas.getContext("2d");
+var BB = canvas.getBoundingClientRect();
+var offsetX = BB.left;
+var offsetY = BB.top;
+var WIDTH = canvas.width;
+var HEIGHT = canvas.height;
+
+// drag related variables
+var dragok = false;
+var startX;
+var startY;
+
+// an array of objects that define different rectangles
+var rects = [];
+rects.push({
+    x: 75 - 15,
+    y: 50 - 15,
+    width: 30,
+    height: 30,
+    fill: "#444444",
+    isDragging: false
+});
+rects.push({
+    x: 75 - 25,
+    y: 50 - 25,
+    width: 30,
+    height: 30,
+    fill: "#ff550d",
+    isDragging: false
+});
+rects.push({
+    x: 75 - 35,
+    y: 50 - 35,
+    width: 30,
+    height: 30,
+    fill: "#800080",
+    isDragging: false
+});
+rects.push({
+    x: 75 - 45,
+    y: 50 - 45,
+    width: 30,
+    height: 30,
+    fill: "#0c64e8",
+    isDragging: false
+});
+
+// listen for mouse events
+canvas.onmousedown = myDown;
+canvas.onmouseup = myUp;
+canvas.onmousemove = myMove;
+
+// call to draw the scene
+draw();
+
+// draw a single rect
+function rect(x, y, w, h) {
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.closePath();
+    ctx.fill();
+}
+
+// clear the canvas
+function clear() {
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+}
+
+// redraw the scene
+function draw() {
+    console.log("START DRAW");
+    clear();
+    ctx.fillStyle = "#FAF7F8";
+    rect(0, 0, WIDTH, HEIGHT);
+    // redraw each rect in the rects[] array
+    for (var i = 0; i < rects.length; i++) {
+        var r = rects[i];
+        ctx.fillStyle = r.fill;
+        rect(r.x, r.y, r.width, r.height);
+    }
+}
+
+
+// handle mousedown events
+function myDown(e) {
+
+    // tell the browser we're handling this mouse event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // get the current mouse position
+    var mx = parseInt(e.clientX - offsetX);
+    var my = parseInt(e.clientY - offsetY);
+
+    // test each rect to see if mouse is inside
+    dragok = false;
+    console.log(mx,my);
+    for (var i = 0; i < rects.length; i++) {
+        var r = rects[i];
+        console.log(r.x, r.x + r.width, r.y, r.y + r.height);
+        if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
+            // if yes, set that rects isDragging=true
+            dragok = true;
+            r.isDragging = true;
+        }
+    }
+    // save the current mouse position
+    startX = mx;
+    startY = my;
+    console.log("done DOWN");    
+}
+
+
+// handle mouseup events
+function myUp(e) {  
+    // tell the browser we're handling this mouse event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // clear all the dragging flags
+    dragok = false;
+    for (var i = 0; i < rects.length; i++) {
+        rects[i].isDragging = false;
+    }
+    console.log("done UP");
+}
+
+
+// handle mouse moves
+function myMove(e) {
+    console.log("START MOVE",dragok);        
+    // if we're dragging anything...
+    if (dragok) {
+
+        // tell the browser we're handling this mouse event
+        e.preventDefault();
+        e.stopPropagation();
+
+        // get the current mouse position
+        var mx = parseInt(e.clientX - offsetX);
+        var my = parseInt(e.clientY - offsetY);
+
+        // calculate the distance the mouse has moved
+        // since the last mousemove
+        var dx = mx - startX;
+        var dy = my - startY;
+
+        // move each rect that isDragging 
+        // by the distance the mouse has moved
+        // since the last mousemove
+        for (var i = 0; i < rects.length; i++) {
+            var r = rects[i];
+            if (r.isDragging) {
+                r.x += dx;
+                r.y += dy;
+            }
+        }
+
+        // redraw the scene with the new rect positions
+        draw();
+
+        // reset the starting mouse position for the next mousemove
+        startX = mx;
+        startY = my;
+
+    }
+                            }
+
+let transformProp;
+
+interact.maxInteractions(Infinity);
+
+// setup draggable elements.
+interact('.js-drag')
+  .draggable({
+    max: Infinity,
+//    snap: {
+//      targets: [interact.createSnapGrid({ x: 100, y: 100 })],
+//      relativePoints: [{ x: 0.5, y: 0.5 }],
+//    },
+  })
+  .on('dragstart', function (event) {
+    event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
+    event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+  })
+  .on('dragmove', function (event) {
+    event.interaction.x += event.dx;
+    event.interaction.y += event.dy;
+
+    if (transformProp) {
+      event.target.style[transformProp] =
+        'translate(' + event.interaction.x + 'px, ' + event.interaction.y + 'px)';
+    }
+    else {
+      event.target.style.left = event.interaction.x + 'px';
+      event.target.style.top  = event.interaction.y + 'px';
+    }
+  })
+  .on('dragend', function (event) {
+    event.target.setAttribute('data-x', event.interaction.x);
+    event.target.setAttribute('data-y', event.interaction.y);
+  });
+
+// setup drop areas.
+// dropzone #1 accepts draggable #1
+setupDropzone('#drop1', '#drag1');
+setupDropzone('#createcanvasid', '#drag1');
+// dropzone #2 accepts draggable #1 and #2
+setupDropzone('#drop2', '#drag1, #drag2');
+// every dropzone accepts draggable #3
+setupDropzone('.js-drop', '#drag3');
+
+/**
+ * Setup a given element as a dropzone.
+ *
+ * @param {HTMLElement|String} el
+ * @param {String} accept
+ */
+function setupDropzone (el, accept) {
+  interact(el)
+    .on('dropactivate', e => { console.log(e.type); e.reject(); })
+    .dropzone({
+      accept: accept,
+      ondropactivate: function (event) {
+        addClass(event.relatedTarget, '-drop-possible');
+      },
+      ondropdeactivate: function (event) {
+        removeClass(event.relatedTarget, '-drop-possible');
+      },
+    })
+    .on('dropactivate', function (event) {
+      const active = event.target.getAttribute('active')|0;
+
+      // change style if it was previously not active
+      if (active === 0) {
+        addClass(event.target, '-drop-possible');
+        event.target.textContent = 'Drop me here!';
+      }
+
+      event.target.setAttribute('active', active + 1);
+    })
+    .on('dropdeactivate', function (event) {
+      const active = event.target.getAttribute('active')|0;
+
+      // change style if it was previously active
+      // but will no longer be active
+      if (active === 1) {
+        removeClass(event.target, '-drop-possible');
+        event.target.textContent = 'Dropzone';
+      }
+
+      event.target.setAttribute('active', active - 1);
+    })
+    .on('dragenter', function (event) {
+      addClass(event.target, '-drop-over');
+      event.relatedTarget.textContent = 'I\'m in';
+    })
+    .on('dragleave', function (event) {
+      removeClass(event.target, '-drop-over');
+      event.relatedTarget.textContent = 'Drag me…';
+    })
+    .on('drop', function (event) {
+      removeClass(event.target, '-drop-over');
+      event.relatedTarget.textContent = 'Dropped';
+    });
+}
+
+function addClass (element, className) {
+  if (element.classList) {
+    return element.classList.add(className);
+  }
+  else {
+    element.className += ' ' + className;
+  }
+}
+
+function removeClass (element, className) {
+  if (element.classList) {
+    return element.classList.remove(className);
+  }
+  else {
+    element.className = element.className.replace(new RegExp(className + ' *', 'g'), '');
+  }
+}
+
+interact(document).on('ready', function () {
+  transformProp = 'transform' in document.body.style
+    ? 'transform': 'webkitTransform' in document.body.style
+      ? 'webkitTransform': 'mozTransform' in document.body.style
+        ? 'mozTransform': 'oTransform' in document.body.style
+          ? 'oTransform': 'msTransform' in document.body.style
+            ? 'msTransform': null;
+});
+
+                            
+      </script>
+
+</body>
+</html>
