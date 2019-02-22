@@ -149,10 +149,13 @@ canvas {
       <div class="col-2 col-sm-1">
     <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>    
       </div>
-      <div class="col-4 col-sm-11">
+    <div class="col-4 col-sm-11">
+    
     <div id="create-canvas">
-    <canvas id='createcanvasid' id="drop1"  class="dropzone js-drop">
-    <\canvas>
+<!-- <div class="dropzone-wrapper"> -->
+  <svg id="create_svg"  class="dropzone js-drop" height="500" width="500" viewbox="-250 -250 500 500"> 
+</svg>
+<!-- </div> -->
     </div>
       </div>
     </div>
@@ -208,18 +211,13 @@ canvas {
 	</div>
 </div>
 
+<!-- 
 <div id="drag1" class="draggable js-drag">Drag me…</div>
 <div id="drag2" class="draggable js-drag">Drag me…</div>
 <div id="drag3" class="draggable js-drag">Drag me…</div>
-<div id="drag4" class="draggable js-drag">Drag me…</div>
+    <div id="drag4" class="draggable js-drag">Drag me…</div>
+    -->
 
-<div class="dropzone-wrapper">
-
-<!--    <div id="drop1" class="dropzone js-drop">Dropzone</div> -->
-<!--     <svg id="drop1"  class="dropzone js-drop" height="210" width="500"> -->
-  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
-</svg>
-</div>
 
    <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -302,76 +300,77 @@ function InitDatabase() {
 function list_item(content) {
     return '<li class="list-group-item">'+content+'</li>';
 }
-
+function list_item_draggable(content) {
+    return '<li class="list-group-item draggable js-drag">'+content+'</li>';    
+        // <div id="drag1" class="draggable js-drag">Drag me…</div>
+        // <div id="drag2" class="draggable js-drag">Drag me…</div>
+        // <div id="drag3" class="draggable js-drag">Drag me…</div>
+        // <div id="drag4" class="draggable js-drag">Drag me…</div>
+}
 // These function convert my abstract coordinates
 // to canvas coordinates.
-function vph(h,y) { return (-y) + h/2; }
-function vpw(w,x) { return (x) + w/2; }
-function draw_triangle(ctx,w,h) {
-    // the triangle
-    ctx.beginPath();
-    
+function vph(h,y) { return (-y); }
+function vpw(w,x) { return (x); }
+
+var ADDED_TET_POS;
+
+function render_create_svg(ctx) {
+    var svg = $("#create_svg")[0];
+    $("#create_svg").empty();
+    var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(polygon);
+
     const TRIANGLE_WIDTH = 1;
     const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
-    const SIDE_LENGTH_PIXEL = 100;
+    const SIDE_LENGTH_PIXEL = 400;
     const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
     const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
-    
-    ctx.moveTo(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE));
-    ctx.lineTo(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE));
-    ctx.lineTo(vpw(w,0),
-               vph(h,BASE+SIDE_LENGTH_HEIGHT));
-                 
-    ctx.closePath();
- 
-// the outline
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000000';
-    ctx.stroke();
- 
-// the fill color
-    ctx.fillStyle = "#FFCC00";
-    ctx.fill();
 
-    ctx.fillStyle = "#FF0000";
+    const w = 500;
+    const h = 500;
 
-    ctx.fillRect(vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
-    ctx.fillStyle = "#00FF00";
-    ctx.fillRect(vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE),2,2);
+    var array = arr = [ [ vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE) ], 
+                        [ vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE) ],
+                        [ vpw(w,0),vph(h,BASE+SIDE_LENGTH_HEIGHT) ] ];
     
-    ctx.fillStyle = "#0000FF";
-    
-    ctx.fillRect(vpw(w,0),
-                 vph(h,BASE+SIDE_LENGTH_HEIGHT),
-                 2,2);
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.style.fill='pink';
+
+    if (ADDED_TET_POS) {
+        var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        svg.appendChild(polygon);
+        var F = 0.05;
+    var array = arr = [ [ vpw(w,F*-SIDE_LENGTH_PIXEL/2),vph(h,F*BASE) ], 
+                        [ vpw(w,F*SIDE_LENGTH_PIXEL/2),vph(h,F*BASE) ],
+                        [ vpw(w,0),vph(h,F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.style.fill='gold';
+    svg.appendChild(polygon);
+        
+    }
 }
 
-function render_canvases() {
-    var canvas = $("#createcanvasid");
-    w = canvas[0].width;
-    h = canvas[0].height;
-    console.log("w,h",w,h);
-    
-    var ctxc = canvas[0].getContext('2d');
-    
-//    ctxc.setTransform(1,0,0,1,w/2,h/2);    
-    draw_triangle(ctxc,w,h);
-    ctxc.fillStyle = "#0000FF";
-    ctxc.fillRect(0,0,2,2);
-
-    
-    var ctxs = $("#socialcanvasid")[0].getContext('2d');
-    ctxs.fillStyle = "#0000FF";
-    ctxs.fillRect(20, 20, 150, 100);
-
-}
 function render(groupid,array,f) {
     //actually, we need an Html element to add to here,
     //but I will just do this.
     $(groupid).empty();
     array.forEach(p => {
-        $(groupid).append(list_item(f(p)));
+        $(groupid).append(list_item_draggable(f(p)));
     });
+}
+
+function render_svgs() {
+    render_create_svg();
 }
 
 function main() {
@@ -380,14 +379,13 @@ function main() {
     render('#nav-persons-list',PERSONS,(p => p.name));
     render('#nav-places-list',PLACES,(p => p.name));
     render('#nav-tools-list',TOOLS,(p => p.name));
-    render_canvases();
+//    render_canvases();
+    render_svgs();
 
     // With JQuery
 $("#ex4").slider({
 	reversed : true
 });
-
-
 
 }
 
@@ -398,186 +396,22 @@ $( document ).ready(function() {
     main();
                             });
 
-// This code from the internet...http://jsfiddle.net/m1erickson/qm9Eb/
-
-// get canvas related references
-var canvas = document.getElementById("createcanvasid");
-var ctx = canvas.getContext("2d");
-var BB = canvas.getBoundingClientRect();
-var offsetX = BB.left;
-var offsetY = BB.top;
-var WIDTH = canvas.width;
-var HEIGHT = canvas.height;
-
-// drag related variables
-var dragok = false;
-var startX;
-var startY;
-
-// an array of objects that define different rectangles
-var rects = [];
-rects.push({
-    x: 75 - 15,
-    y: 50 - 15,
-    width: 30,
-    height: 30,
-    fill: "#444444",
-    isDragging: false
-});
-rects.push({
-    x: 75 - 25,
-    y: 50 - 25,
-    width: 30,
-    height: 30,
-    fill: "#ff550d",
-    isDragging: false
-});
-rects.push({
-    x: 75 - 35,
-    y: 50 - 35,
-    width: 30,
-    height: 30,
-    fill: "#800080",
-    isDragging: false
-});
-rects.push({
-    x: 75 - 45,
-    y: 50 - 45,
-    width: 30,
-    height: 30,
-    fill: "#0c64e8",
-    isDragging: false
-});
-
-// listen for mouse events
-canvas.onmousedown = myDown;
-canvas.onmouseup = myUp;
-canvas.onmousemove = myMove;
-
-// call to draw the scene
-draw();
-
-// draw a single rect
-function rect(x, y, w, h) {
-    ctx.beginPath();
-    ctx.rect(x, y, w, h);
-    ctx.closePath();
-    ctx.fill();
-}
-
-// clear the canvas
-function clear() {
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
-}
-
-// redraw the scene
-function draw() {
-    console.log("START DRAW");
-    clear();
-    ctx.fillStyle = "#FAF7F8";
-    rect(0, 0, WIDTH, HEIGHT);
-    // redraw each rect in the rects[] array
-    for (var i = 0; i < rects.length; i++) {
-        var r = rects[i];
-        ctx.fillStyle = r.fill;
-        rect(r.x, r.y, r.width, r.height);
-    }
-}
-
-
-// handle mousedown events
-function myDown(e) {
-
-    // tell the browser we're handling this mouse event
-    e.preventDefault();
-    e.stopPropagation();
-
-    // get the current mouse position
-    var mx = parseInt(e.clientX - offsetX);
-    var my = parseInt(e.clientY - offsetY);
-
-    // test each rect to see if mouse is inside
-    dragok = false;
-    console.log(mx,my);
-    for (var i = 0; i < rects.length; i++) {
-        var r = rects[i];
-        console.log(r.x, r.x + r.width, r.y, r.y + r.height);
-        if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
-            // if yes, set that rects isDragging=true
-            dragok = true;
-            r.isDragging = true;
-        }
-    }
-    // save the current mouse position
-    startX = mx;
-    startY = my;
-    console.log("done DOWN");    
-}
-
-
-// handle mouseup events
-function myUp(e) {  
-    // tell the browser we're handling this mouse event
-    e.preventDefault();
-    e.stopPropagation();
-
-    // clear all the dragging flags
-    dragok = false;
-    for (var i = 0; i < rects.length; i++) {
-        rects[i].isDragging = false;
-    }
-    console.log("done UP");
-}
-
-
-// handle mouse moves
-function myMove(e) {
-    console.log("START MOVE",dragok);        
-    // if we're dragging anything...
-    if (dragok) {
-
-        // tell the browser we're handling this mouse event
-        e.preventDefault();
-        e.stopPropagation();
-
-        // get the current mouse position
-        var mx = parseInt(e.clientX - offsetX);
-        var my = parseInt(e.clientY - offsetY);
-
-        // calculate the distance the mouse has moved
-        // since the last mousemove
-        var dx = mx - startX;
-        var dy = my - startY;
-
-        // move each rect that isDragging 
-        // by the distance the mouse has moved
-        // since the last mousemove
-        for (var i = 0; i < rects.length; i++) {
-            var r = rects[i];
-            if (r.isDragging) {
-                r.x += dx;
-                r.y += dy;
-            }
-        }
-
-        // redraw the scene with the new rect positions
-        draw();
-
-        // reset the starting mouse position for the next mousemove
-        startX = mx;
-        startY = my;
-
-    }
-                            }
 
 let transformProp;
 
 interact.maxInteractions(Infinity);
 
+var ORIG_CUR_POS;
+var startPos;
+var CUR_WIDTH;
+var CUR_HEIGHT;
+var CUR_FONT_SIZE;
+var CUR_TEXT;
+
 // setup draggable elements.
 interact('.js-drag')
   .draggable({
-    max: Infinity,
+      max: Infinity,
 //    snap: {
 //      targets: [interact.createSnapGrid({ x: 100, y: 100 })],
 //      relativePoints: [{ x: 0.5, y: 0.5 }],
@@ -585,7 +419,35 @@ interact('.js-drag')
   })
   .on('dragstart', function (event) {
     event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
-    event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+      event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+      if (!startPos) {
+          var rect = interact.getElementRect(event.target);
+
+          // record center point when starting the very first a drag
+          startPos = {
+              x: rect.left + rect.width  / 2,
+              y: rect.top  + rect.height / 2
+          }
+        CUR_WIDTH = event.target.style.width;
+        CUR_HEIGHT = event.target.style.height;
+        CUR_FONT_SIZE = event.target.style.fontSize;
+          CUR_TEXT = event.target.textContent;
+          console.log("CUR_TEXT",CUR_TEXT);
+          console.log("startPos",startPos);
+      };
+      console.log("START",event.target.getAttribute('data-x'),event.target.getAttribute('data-y'));
+  })
+    .on('dragend',function (event) {
+        console.log("END",event.target);
+        console.log("END",event.target.getAttribute('data-x'),event.target.getAttribute('data-y'));        
+        event.target.style.width = CUR_WIDTH;
+        event.target.style.height = CUR_HEIGHT;
+        event.target.style.fontSize = CUR_FONT_SIZE;
+        event.target.textContent = CUR_TEXT;        
+        event.target.style.left = "" + 0 + "px";
+        event.target.style.top = "" + 0 + "px";
+        startPos = null;
+        render_svgs();
   })
   .on('dragmove', function (event) {
     event.interaction.x += event.dx;
@@ -600,6 +462,16 @@ interact('.js-drag')
       event.target.style.top  = event.interaction.y + 'px';
     }
   })
+ .on('dragleave', function (event) {
+        event.draggable.snap(false);
+
+        // when leaving a dropzone, snap to the start position
+        event.draggable.snap({ anchors: [startPos] });
+
+        // remove the drop feedback style
+        event.target.classList.remove('drop-target');
+        event.relatedTarget.classList.remove('can-drop');
+    })
   .on('dragend', function (event) {
     event.target.setAttribute('data-x', event.interaction.x);
     event.target.setAttribute('data-y', event.interaction.y);
@@ -607,12 +479,14 @@ interact('.js-drag')
 
 // setup drop areas.
 // dropzone #1 accepts draggable #1
-setupDropzone('#drop1', '#drag1');
-setupDropzone('#createcanvasid', '#drag1');
+// setupDropzone('#create_svg', '#drag1');
+// setupDropzone('#create_svg', '#drag1');
 // dropzone #2 accepts draggable #1 and #2
-setupDropzone('#drop2', '#drag1, #drag2');
+// setupDropzone('#create_svg', '#drag1, #drag2');
 // every dropzone accepts draggable #3
-setupDropzone('.js-drop', '#drag3');
+setupDropzone('.js-drop', '.js-drag');
+
+
 
 /**
  * Setup a given element as a dropzone.
@@ -656,16 +530,36 @@ function setupDropzone (el, accept) {
       event.target.setAttribute('active', active - 1);
     })
     .on('dragenter', function (event) {
-      addClass(event.target, '-drop-over');
-      event.relatedTarget.textContent = 'I\'m in';
+        addClass(event.target, '-drop-over');
+        event.relatedTarget.textContent = 'I\'m in';
+        event.relatedTarget.style.width = "50px";
+        event.relatedTarget.style.height = "30px";
+        event.relatedTarget.style.fontSize = "xx-small";
     })
     .on('dragleave', function (event) {
       removeClass(event.target, '-drop-over');
       event.relatedTarget.textContent = 'Drag me…';
     })
     .on('drop', function (event) {
+        console.log("drop event",event);
       removeClass(event.target, '-drop-over');
-      event.relatedTarget.textContent = 'Dropped';
+        event.relatedTarget.textContent = 'Dropped';
+        var element = event.relatedTarget;
+        console.log("element",element.offsetLeft,element.offsetTop);
+        console.log("this", event.target.offsetLeft,event.target.offsetTop);
+        var draggedBox = element.getBoundingClientRect();
+        var droppableBox = event.target.getBoundingClientRect();
+        console.log("bounding",
+                    event.target.getBoundingClientRect());
+        console.log("bounding",
+                    draggedBox);
+        var y = draggedBox.y - droppableBox.y;
+        var x = draggedBox.x - droppableBox.x;
+        var yc = y + -250;
+        var xc = x + -250;
+        console.log("Y",yc);
+        console.log("X",xc);
+        ADDED_TET_POS = {x: xc,y: yc};
     });
 }
 
