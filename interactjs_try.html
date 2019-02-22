@@ -314,7 +314,7 @@ function vpw(w,x) { return (x); }
 
 var ADDED_TET_POS;
 
-function render_create_svg(ctx) {
+function render_create_svg() {
     var svg = $("#create_svg")[0];
     $("#create_svg").empty();
     var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -345,16 +345,19 @@ function render_create_svg(ctx) {
         var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         svg.appendChild(polygon);
         var F = 0.05;
-    var array = arr = [ [ vpw(w,F*-SIDE_LENGTH_PIXEL/2),vph(h,F*BASE) ], 
-                        [ vpw(w,F*SIDE_LENGTH_PIXEL/2),vph(h,F*BASE) ],
-                        [ vpw(w,0),vph(h,F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
+//        ADDED_TET_POS = {x: -100, y:100};
+
+        var array = arr = [ [ vpw(w,ADDED_TET_POS.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ], 
+                        [ vpw(w,ADDED_TET_POS.x + F*SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ],
+                        [ vpw(w,ADDED_TET_POS.x + 0),vph(h,ADDED_TET_POS.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
     for (value of array) {
         var point = svg.createSVGPoint();
         point.x = value[0];
         point.y = value[1];
         polygon.points.appendItem(point);
-    }
-    polygon.style.fill='gold';
+}
+console.log("ARRAY",array);
+    polygon.style.fill='blue';
     svg.appendChild(polygon);
         
     }
@@ -548,18 +551,25 @@ function setupDropzone (el, accept) {
         console.log("element",element.offsetLeft,element.offsetTop);
         console.log("this", event.target.offsetLeft,event.target.offsetTop);
         var draggedBox = element.getBoundingClientRect();
+        element.textContent = CUR_TEXT;                
         var droppableBox = event.target.getBoundingClientRect();
         console.log("bounding",
                     event.target.getBoundingClientRect());
         console.log("bounding",
                     draggedBox);
-        var y = draggedBox.y - droppableBox.y;
-        var x = draggedBox.x - droppableBox.x;
-        var yc = y + -250;
+        var xc = event.dragEvent.clientX;
+        var yc = event.dragEvent.clientY;
+        console.log("xc,yc",xc,yc);
+        var y = yc - droppableBox.y;
+        var x = xc - droppableBox.x;
+        // we need to convert this to "world" coordinates, not viewport...
+        var yc = -(y + -250);
         var xc = x + -250;
         console.log("Y",yc);
         console.log("X",xc);
         ADDED_TET_POS = {x: xc,y: yc};
+        console.log("setting ADDED_TET_POS",ADDED_TET_POS);
+        render_svgs();
     });
 }
 
