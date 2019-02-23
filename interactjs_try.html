@@ -24,7 +24,10 @@ Copyright (C) 2019 by
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
+
+    <script src="./js/three.js"></script>
+    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
@@ -314,6 +317,17 @@ function vpw(w,x) { return (x); }
 
 var ADDED_TET_POS;
 
+function append_text(svg,x,y,text) {
+    var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    newText.setAttributeNS(null,"x",x);      
+    newText.setAttributeNS(null,"y",y);   
+    var textNode = document.createTextNode(text);
+    newText.appendChild(textNode);
+    svg.appendChild(newText);
+}
+
+var WORLD_TRIANGLE_COORDS;
+
 function render_create_svg() {
     var svg = $("#create_svg")[0];
     $("#create_svg").empty();
@@ -329,9 +343,14 @@ function render_create_svg() {
     const w = 500;
     const h = 500;
 
-    var array = arr = [ [ vpw(w,-SIDE_LENGTH_PIXEL/2),vph(h,BASE) ], 
-                        [ vpw(w,SIDE_LENGTH_PIXEL/2),vph(h,BASE) ],
-                        [ vpw(w,0),vph(h,BASE+SIDE_LENGTH_HEIGHT) ] ];
+    WORLD_TRIANGLE_COORDS = [[-SIDE_LENGTH_PIXEL/2,BASE],
+                             [SIDE_LENGTH_PIXEL/2,BASE],
+                             [0,BASE+SIDE_LENGTH_HEIGHT]];
+    let wtc = WORLD_TRIANGLE_COORDS;
+
+    var array = [ [ vpw(w,wtc[0][0]),vph(h,wtc[0][1]) ], 
+                  [ vpw(w,wtc[1][0]),vph(h,wtc[1][1]) ],
+                  [ vpw(w,wtc[2][0]),vph(h,wtc[2][1]) ] ];
     
     for (value of array) {
         var point = svg.createSVGPoint();
@@ -340,6 +359,28 @@ function render_create_svg() {
         polygon.points.appendItem(point);
     }
     polygon.style.fill='pink';
+
+
+    // These are ugly, they should really be computed from the text.
+    // In fact, since this does not change, the whole thing could go into
+    // HTML and css more profitably.
+    append_text(svg,array[2][0]-20,array[2][1]-5,"Spirit");
+    append_text(svg,array[0][0]-40,array[0][1]+20,"Mind");
+    append_text(svg,array[1][0],array[1][1]+20,"Body");
+    
+    var circle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+    circle.setAttributeNS(null, 'cx', vpw(w,0));
+    circle.setAttributeNS(null, 'cy', vph(h,0));
+    circle.setAttributeNS(null, 'r', 2);
+    circle.setAttributeNS(null, 'style', 'fill: blue; stroke: blue; stroke-width: 1px;' );
+    svg.appendChild(circle);
+    
+    // var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    // newText.setAttributeNS(null,"x",array[2][0]);      
+    // newText.setAttributeNS(null,"y",array[2][1]);   
+    // var textNode = document.createTextNode("Mind");
+    // newText.appendChild(textNode);
+    // svg.appendChild(newText);
 
     if (ADDED_TET_POS) {
         var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -451,6 +492,10 @@ interact('.js-drag')
         event.target.style.top = "" + 0 + "px";
         startPos = null;
         render_svgs();
+        event.interaction.x = 0;
+        event.interaction.y = 0;        
+        event.target.setAttribute('data-x', event.interaction.x);
+    event.target.setAttribute('data-y', event.interaction.y);
   })
   .on('dragmove', function (event) {
     event.interaction.x += event.dx;
@@ -474,11 +519,7 @@ interact('.js-drag')
         // remove the drop feedback style
         event.target.classList.remove('drop-target');
         event.relatedTarget.classList.remove('can-drop');
-    })
-  .on('dragend', function (event) {
-    event.target.setAttribute('data-x', event.interaction.x);
-    event.target.setAttribute('data-y', event.interaction.y);
-  });
+    });
 
 // setup drop areas.
 // dropzone #1 accepts draggable #1
@@ -489,7 +530,83 @@ interact('.js-drag')
 // every dropzone accepts draggable #3
 setupDropzone('.js-drop', '.js-drag');
 
+// This code from here: https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
+function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
+{
+    var ro = new THREE.Vector2(rayOrigin.x,rayOrigin.y);
+    var rd = new THREE.Vector2(rayDirection.x,rayDirection.y);    
+    var p1 = new THREE.Vector2(point1.x,point1.y);
+    var p2 = new THREE.Vector2(point2.x,point2.y);
 
+    var v1 = new THREE.Vector2().subVectors(ro,p1);
+    
+    //    var v1 = rayOrigin - point1;
+    var v2 = new THREE.Vector2().subVectors(p2,p1);    
+    //        var v2 = point2 - point1;
+
+    var v3 = new THREE.Vector2(-rd.y,rd.x);
+//        var v3 = new Vector(-rayDirection.Y, rayDirection.X);
+    var dot = v2.dot(v3);
+
+//        var dot = v2 * v3;
+        if (Math.abs(dot) < 0.000001)
+            return null;
+
+    //        var t1 = Vector.CrossProduct(v2, v1) / dot;
+    var t1 = v2.cross(v1) /dot;
+    
+    //        var t2 = (v1 * v3) / dot;
+    var t2 = v1.cross(v3) /dot;
+
+    if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)) {
+        rd.multiplyScalar(t1);
+        return ro.add(rd);
+    }
+    return null;
+}
+function testGetRayToLineSegmentIntersection() {
+    let ro = new THREE.Vector2(0,0);
+    let rd = new THREE.Vector2(1,1);
+    let p1 = new THREE.Vector2(0,10);
+    let p2 = new THREE.Vector2(10,0);
+    var r = GetRayToLineSegmentIntersection(ro,rd,p1,p2);
+    console.log(r);
+    console.assert(r.x == r.y);
+    
+}
+
+function distance(x0,y0,x1,y1) {
+    return Math.sqrt((x0 - x1)**2 + (y0 - y1)**2);
+}
+function Frazier2to3(obj,wtc) {
+    let x = obj.x;
+    let y = obj.y;
+    let d0 = distance(x,y,wtc[0][0],wtc[0][1]);
+    let d1 = distance(x,y,wtc[1][0],wtc[1][1]);
+    let d2 = distance(x,y,wtc[2][0],wtc[2][1]);
+    console.log("x,y",x,y);
+    console.log(wtc[0],wtc[1],wtc[2]);
+    console.log("distances",d0,d1,d2);
+    let d0i = 1/d0;
+    let d1i = 1/d1;
+    let d2i = 1/d2;
+    let d = Math.sqrt(d0i**2 + d1i**2 + d2i**2);
+    let v = [d0i/d,d1i/d,d2i/d];
+    let dc = Math.sqrt(v[0]**2 + v[1]**2 + v[2]**2);
+    console.log("dc",dc);
+    return v;
+}
+
+// This is an attempt to define a new mathematical function.
+// We find the intersection with the triangle edge in order
+// to compute the inner distance and the outerdistance.
+// The become weights, with the outerdistance the weight of a
+// balanced MBS vector.
+// The innder distance is the weight of a vector based on
+// the angle.
+function Frazier2to3aux(obj,wtc) {
+    
+}
 
 /**
  * Setup a given element as a dropzone.
@@ -569,6 +686,9 @@ function setupDropzone (el, accept) {
         console.log("X",xc);
         ADDED_TET_POS = {x: xc,y: yc};
         console.log("setting ADDED_TET_POS",ADDED_TET_POS);
+        // now for fun I will attempt to convert this 2D "Frazier Coordinate" to
+        // a three-D MBS vector.
+        console.log("FRAZIER",ADDED_TET_POS,Frazier2to3(ADDED_TET_POS,WORLD_TRIANGLE_COORDS));
         render_svgs();
     });
 }
@@ -600,6 +720,8 @@ interact(document).on('ready', function () {
             ? 'msTransform': null;
 });
 
+
+testGetRayToLineSegmentIntersection();
                             
       </script>
 
