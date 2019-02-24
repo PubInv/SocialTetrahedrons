@@ -327,6 +327,21 @@ function append_text(svg,x,y,text) {
 }
 
 var WORLD_TRIANGLE_COORDS;
+const w = 500;
+const h = 500;
+
+const TRIANGLE_WIDTH = 1;
+const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
+const SIDE_LENGTH_PIXEL = 400;
+const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
+const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
+
+function get_world_triangle() {
+     let wtc = [[-SIDE_LENGTH_PIXEL/2,BASE],
+                             [SIDE_LENGTH_PIXEL/2,BASE],
+               [0,BASE+SIDE_LENGTH_HEIGHT]];
+    return wtc;
+}
 
 function render_create_svg() {
     var svg = $("#create_svg")[0];
@@ -334,18 +349,6 @@ function render_create_svg() {
     var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
     svg.appendChild(polygon);
 
-    const TRIANGLE_WIDTH = 1;
-    const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
-    const SIDE_LENGTH_PIXEL = 400;
-    const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
-    const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
-
-    const w = 500;
-    const h = 500;
-
-    WORLD_TRIANGLE_COORDS = [[-SIDE_LENGTH_PIXEL/2,BASE],
-                             [SIDE_LENGTH_PIXEL/2,BASE],
-                             [0,BASE+SIDE_LENGTH_HEIGHT]];
     let wtc = WORLD_TRIANGLE_COORDS;
 
     var array = [ [ vpw(w,wtc[0][0]),vph(h,wtc[0][1]) ], 
@@ -531,10 +534,12 @@ interact('.js-drag')
 setupDropzone('.js-drop', '.js-drag');
 
 // This code from here: https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
+// Note this routine seems to depend on the chirality of the points; possibly it only counts an approach from one side.
 function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
 {
     var ro = new THREE.Vector2(rayOrigin.x,rayOrigin.y);
-    var rd = new THREE.Vector2(rayDirection.x,rayDirection.y);    
+    var rd = new THREE.Vector2(rayDirection.x,rayDirection.y);
+    rd.normalize();
     var p1 = new THREE.Vector2(point1.x,point1.y);
     var p2 = new THREE.Vector2(point2.x,point2.y);
 
@@ -560,8 +565,16 @@ function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
 
     if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)) {
         rd.multiplyScalar(t1);
-        return ro.add(rd);
+        return [ro.add(rd),t1];
     }
+    return null;
+}
+// This is a crummy hack because the above code doesn't work when the segment points are in a particular order.
+function GetRayToLineSegmentInt(rayOrigin,rayDirection,p1,p2) {
+    var r0 = GetRayToLineSegmentIntersection(rayOrigin,rayDirection,p1,p2);
+    if (r0) return r0;
+    var r1 = GetRayToLineSegmentIntersection(rayOrigin,rayDirection,p2,p1);
+    if (r1) return r1;
     return null;
 }
 function testGetRayToLineSegmentIntersection() {
@@ -569,7 +582,10 @@ function testGetRayToLineSegmentIntersection() {
     let rd = new THREE.Vector2(1,1);
     let p1 = new THREE.Vector2(0,10);
     let p2 = new THREE.Vector2(10,0);
-    var r = GetRayToLineSegmentIntersection(ro,rd,p1,p2);
+    var r = GetRayToLineSegmentInt(ro,rd,p1,p2)[0];
+    console.log(r);
+    console.assert(r.x == r.y);
+    var r = GetRayToLineSegmentInt(ro,rd,p2,p1)[0];
     console.log(r);
     console.assert(r.x == r.y);
     
@@ -597,16 +613,89 @@ function Frazier2to3(obj,wtc) {
     return v;
 }
 
-// This is an attempt to define a new mathematical function.
-// We find the intersection with the triangle edge in order
-// to compute the inner distance and the outerdistance.
-// The become weights, with the outerdistance the weight of a
-// balanced MBS vector.
-// The innder distance is the weight of a vector based on
-// the angle.
-function Frazier2to3aux(obj,wtc) {
+// This is the fundamental math behind a TriBalance Diagram.
+// I will probably put this in LaTeX soon.
+// A balance diagram is a way of choosing a unit vector
+// of n dimensions (most usefully 3) from a n-gon.
+// If n > 3, it is not possible to complete map all points.
+// The fundamental math of a TriBalance diagram is to convert
+// between a point on the 2-dimensional n-gon (the "representation") from
+// the "balance" -- a n-dimensional vector.
+// Call the function that produces the repesentation from a unit vector
+// "r" and the function that produces the balance vector from the respresentation "b".
+// Desiderator of these functions are:
+// We want them to be inversions of each other.
+// We want the center of the representation to map to a balanced vector.
+// A representation at the vertex is a vector having a single 1 and the rest zeros.
+// As we change the angle betwen the origin and the point in a representation toward a vertex,
+// the value of that vertex should increase.
+// As we move along such a line, we should not change the relative proportion of the
+// other values. (this is vague).
+// It should be easy to compute and explain (at least geometrically.)
+function TriBalance2to3(obj,wtc) {
+    // First, let's set everything up in THREE.js so we can use vector math...
+    let WTC = [new THREE.Vector2(wtc[0][0],wtc[0][1]),
+               new THREE.Vector2(wtc[1][0],wtc[1][1]),
+               new THREE.Vector2(wtc[2][0],wtc[2][1])];
+    let ro = new THREE.Vector2(0,0);
+    
+    let p = new THREE.Vector2(obj.x,obj.y);
+    // Now we want to do a linear interpolation of how far we are from an edge,
+    // but also how far the projection to the edge is between the vertices.
+    // We must first decide which edges the line form the orign to p intersects.
+    // If it intersects two segments, then are aimed at a vertex.
+    var first;
+    var first_idx = -1;
+    for(var i = 0; i < 3; i++) {
+        var r = GetRayToLineSegmentInt(ro,p,WTC[i],WTC[(i +1) %3]);
+        if (r != null) {
+            first_idx = i;
+            first = r;
+        }
+    }
+    console.assert(first != null);
+    // now first tells us an edge struck by the ray. We will now
+    // compute the distances...
+    // This is the distance to the edge...
+    let total_distance_to_edge = ro.distanceTo(first[0]);
+    p.clampLength(0,total_distance_to_edge);
+    var p_to_edge = p.distanceTo(first[0])/ro.distanceTo(first[0]);
+    let BAL = new THREE.Vector3(1,1,1);
+    BAL.normalize();
+    BAL.multiplyScalar(p_to_edge);
+
+    // Now the remainder of the contribution
+    // to the unit vector should come from the two
+    // points on the edge, in linear proportion.
+    // These coordinates are first_idx and (first_idx+1) % 3.
+    var d1 = WTC[first_idx].distanceTo(first[0]);
+    var d2 = WTC[(first_idx+1)%3].distanceTo(first[0]);
+    let vs = [0,0,0];
+    vs[first_idx] = d1;
+    vs[(first_idx+1) % 3] = d2;
+    let IMB = new THREE.Vector3(vs[0],vs[1],vs[2]);
+    IMB.normalize();
+    IMB.multiplyScalar(1-p_to_edge);
+    console.log("BAL, IMB",BAL,IMB);
+    // now construct a balanced vector proportional
+    // to the length from the edge to the p towards the axis
+    // so that this be a unit vector if p is the origin.
+    let result = new THREE.Vector3();
+    result.add(IMB);
+    result.add(BAL);
+    console.log("RESULT",result,result.length());
+    return result;
     
 }
+
+function testTriBalance2to3() {
+    let p = new THREE.Vector2(30000,30);    
+    TriBalance2to3(p,WORLD_TRIANGLE_COORDS);
+    let py = new THREE.Vector2(0,WORLD_TRIANGLE_COORDS[2][1]);
+    TriBalance2to3(py,WORLD_TRIANGLE_COORDS);    
+}
+
+
 
 /**
  * Setup a given element as a dropzone.
@@ -720,9 +809,11 @@ interact(document).on('ready', function () {
             ? 'msTransform': null;
 });
 
+WORLD_TRIANGLE_COORDS = get_world_triangle();
 
 testGetRayToLineSegmentIntersection();
-                            
+testTriBalance2to3();
+
       </script>
 
 </body>
