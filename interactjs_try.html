@@ -214,6 +214,15 @@ canvas {
 	</div>
 </div>
 
+    <label for="mind">Mind </label>
+    <span type="text" id="mind"></span><br>
+    
+    <label for="body">Body: </label>
+    <span type="text" id="body"></span><br>
+    
+    <label for="spirit">Spirit: </label>
+    <span type="text" id="spirit"></span><br><br>
+    
 <!-- 
 <div id="drag1" class="draggable js-drag">Drag me…</div>
 <div id="drag2" class="draggable js-drag">Drag me…</div>
@@ -558,10 +567,12 @@ function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
             return null;
 
     //        var t1 = Vector.CrossProduct(v2, v1) / dot;
+    // According to one post, we shoudl take the absoutle value here.
     var t1 = v2.cross(v1) /dot;
     
     //        var t2 = (v1 * v3) / dot;
-    var t2 = v1.cross(v3) /dot;
+    //    var t2 = v1.cross(v3) /dot;
+    var t2 = v1.dot(v3) /dot;    
 
     if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)) {
         rd.multiplyScalar(t1);
@@ -588,6 +599,15 @@ function testGetRayToLineSegmentIntersection() {
     var r = GetRayToLineSegmentInt(ro,rd,p2,p1)[0];
     console.log(r);
     console.assert(r.x == r.y);
+
+    var rd1 = new THREE.Vector2(94.1015625,-36.36328125);
+//    var rd1 = new THREE.Vector2(94.1015625,0);    
+    let c0 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[0][0],WORLD_TRIANGLE_COORDS[0][1]);
+    let c1 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[1][0],WORLD_TRIANGLE_COORDS[1][1]);
+    let c2 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[2][0],WORLD_TRIANGLE_COORDS[2][1]);        
+
+    var r12 = GetRayToLineSegmentInt(ro,rd1,c1,c2);
+    console.assert(r12 != null);
     
 }
 
@@ -654,6 +674,9 @@ function TriBalance2to3(obj,wtc) {
         }
     }
     console.assert(first != null);
+    if (first == null) {
+        console.log("UNABLE TO FIND",obj);
+    }
     // now first tells us an edge struck by the ray. We will now
     // compute the distances...
     // This is the distance to the edge...
@@ -671,8 +694,8 @@ function TriBalance2to3(obj,wtc) {
     var d1 = WTC[first_idx].distanceTo(first[0]);
     var d2 = WTC[(first_idx+1)%3].distanceTo(first[0]);
     let vs = [0,0,0];
-    vs[first_idx] = d1;
-    vs[(first_idx+1) % 3] = d2;
+    vs[first_idx] = d2;
+    vs[(first_idx+1) % 3] = d1;
     let IMB = new THREE.Vector3(vs[0],vs[1],vs[2]);
     IMB.normalize();
     IMB.multiplyScalar(1-p_to_edge);
@@ -778,6 +801,15 @@ function setupDropzone (el, accept) {
         // now for fun I will attempt to convert this 2D "Frazier Coordinate" to
         // a three-D MBS vector.
         console.log("FRAZIER",ADDED_TET_POS,Frazier2to3(ADDED_TET_POS,WORLD_TRIANGLE_COORDS));
+
+        let bal = TriBalance2to3(ADDED_TET_POS,WORLD_TRIANGLE_COORDS);
+        
+        console.log("BALANCE",bal);
+
+        $( "#mind" ).text( (bal.x * 100).toFixed(2) +  "%" );
+        $( "#body" ).text( (bal.y * 100).toFixed(2) +  "%" );
+        $( "#spirit" ).text( (bal.z * 100).toFixed(2) +  "%" );        
+        
         render_svgs();
     });
 }
