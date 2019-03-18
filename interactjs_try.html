@@ -241,6 +241,13 @@ canvas {
     
     <script>
 
+// TODOS:
+// Make the drag and drop be more targeted.
+// Make the data persist.
+// Make the 4th dimesion work
+// Separate out the MBS triangle into literate project
+// 
+
 // Trying now to create a basic object model in JavaScript which can later be tied to
 // to a datamodel
 
@@ -300,9 +307,55 @@ function Tetrahedron(key,type) {
 }
 
 // Now, before I will create a function to populate a test database....
-
+function InitProjects() {
+    PROJECTS.push(new Project('Project #16: "Gluss", A Robotic Truss','Public Invention',''));
+    PROJECTS.push(new Project('Project #3, Human-powered Rotary Lawn Mower','Public Invention',''));
+    PROJECTS.push(new Project('Project #28: Develop toolkit for the design of easily constructable CMS joints','Public Invention',''));
+    PROJECTS.push(new Project('Project #34: Ferrofluid based actuator','Public Invention',''));
+    PROJECTS.push(new Project('Project #12: Magnetic Bearing for Cam-and-Following System','Public Invention',''));
+    PROJECTS.push(new Project('Project #13: "Changing Slope" Continuously Variable Transmission','Public Invention',''));
+    PROJECTS.push(new Project('Project #29: Continuously variable linkage with linear motor member','Public Invention',''));
+    PROJECTS.push(new Project('Project #36: Motile Ferrofluid Snail','Public Invention',''));
+    PROJECTS.push(new Project('Project #4: Maximum work from an Adiabatic Expansion of a Piston','Public Invention',''));
+    PROJECTS.push(new Project('Project #6: "Air Treader", resistance-based flight','Public Invention',''));
+    PROJECTS.push(new Project('Project #5: More Efficient Pot for Heating Water','Public Invention',''));
+    PROJECTS.push(new Project('Project #8: Power-of-2 Square Gas Compression Chamber','Public Invention',''));
+    PROJECTS.push(new Project('Project #11: Control Heat Engine or ICE with Cam-Follower rather than Crank Shaft','Public Invention',''));
+    PROJECTS.push(new Project('Project #24: Very simple heat engine with bistable magnetic device','Public Invention',''));
+    PROJECTS.push(new Project('Project #41: Rapid coliform presence detector','Public Invention',''));
+    PROJECTS.push(new Project('Project #21: Interactive Model of Inputs and Outputs in Waste Treatment','Public Invention',''));
+    PROJECTS.push(new Project('Project #9: Human Waste Sanitation Through Thermal DepolymerizationImmature Ideas','Public Invention',''));
+    PROJECTS.push(new Project('Project #23: Pyrolysis Toilet','Public Invention',''));
+    PROJECTS.push(new Project('Project #25: In-pipe fan with gas sensor for EWB','Public Invention',''));
+    PROJECTS.push(new Project('Project #14: In-situ Brush Pile to Biochar Converter','Public Invention',''));
+    PROJECTS.push(new Project('Project #15: Stovetop Micro-Retort For Experimentation','Public Invention',''));
+    PROJECTS.push(new Project('Project #19: Single-chamber biochar producer and stove','Public Invention',''));
+    PROJECTS.push(new Project('Project #40: For oil painting, a wheel for very thin lines','Public Invention',''));
+    PROJECTS.push(new Project('Project #38: 3D-printable variable length snap line','Public Invention',''));
+    PROJECTS.push(new Project('Project #17: Grow Wooden Objects Directly','Public Invention',''));
+    PROJECTS.push(new Project('Project #37: Solar-ice','Public Invention',''));
+    PROJECTS.push(new Project('Project #20: Personal Stool Analysis','Public Invention',''));
+    PROJECTS.push(new Project('Project #43: Software to compute helix from repeated object stacking','Public Invention',''));
+    PROJECTS.push(new Project('Project #1: "Little Free Library" mobile app','Public Invention',''));
+    PROJECTS.push(new Project('Project #10, Free Transparent Public Accounting','Public Invention',''));
+    PROJECTS.push(new Project('Project #22: Abstract Data Type: Conserved Quantities','Public Invention',''));
+    PROJECTS.push(new Project('Project #31: Oracular Graph Paper','Public Invention',''));
+    PROJECTS.push(new Project('Project #32: Computational Theory Based on Progressive Refinement of Inputs','Public Invention',''));
+    PROJECTS.push(new Project('Project #30: Build a map of common irrational combinations','Public Invention',''));
+    PROJECTS.push(new Project('Project #2: Lovecraft, The Programming Language','Public Invention',''));
+    PROJECTS.push(new Project('Project #35: Develop new view of the expansion of e-to-the-x','Public Invention',''));
+    PROJECTS.push(new Project('Project #42: Volumetric Colony Counting','Public Invention',''));
+    PROJECTS.push(new Project('Project #39: Botanical Embedded Chemical Sensor','Public Invention',''));
+    PROJECTS.push(new Project('Project #18: Virtual Soundscape Recorder and Wildlife Locator','Public Invention',''));
+    PROJECTS.push(new Project('Project #7: Color-block-based Writing System','Public Invention',''));
+    PROJECTS.push(new Project('Project #33: Use PVA to 3D print dissolvable molds for fluids','Public Invention',''));
+    PROJECTS.push(new Project('Project #27: Space Propulsion via throwing and catching projectiles','Public Invention',''));
+    PROJECTS.push(new Project('Project #44: Social Tetrahedrons','Public Invention',''));
+    PROJECTS.push(new Project('Project #45: Segmented Helices generated by chains of Repeated Units','Public Invention',''));
+}
 function InitDatabase() {
-    PROJECTS.push(new Project('Gluss (robotic truss)','Public Invention','https://pubinv.github.io/tetrobot/'));
+    InitProjects();
+    PROJECTS.push(new Project('Gluss (robotic truss))','Public Invention','https://pubinv.github.io/tetrobot/'));
     PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
     PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
     PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
@@ -324,7 +377,7 @@ function list_item_draggable(content) {
 function vph(h,y) { return (-y); }
 function vpw(w,x) { return (x); }
 
-var ADDED_TET_POS;
+var ADDED_TET_PROJs = [];;
 
 function append_text(svg,x,y,text) {
     var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -394,26 +447,27 @@ function render_create_svg() {
     // newText.appendChild(textNode);
     // svg.appendChild(newText);
 
-    if (ADDED_TET_POS) {
-        var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        svg.appendChild(polygon);
-        var F = 0.05;
-//        ADDED_TET_POS = {x: -100, y:100};
+    ADDED_TET_PROJs.forEach( ADDED_TET_POS => {
+        if (ADDED_TET_POS) {
+            var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            svg.appendChild(polygon);
+            var F = 0.05;
 
-        var array = arr = [ [ vpw(w,ADDED_TET_POS.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ], 
-                        [ vpw(w,ADDED_TET_POS.x + F*SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ],
-                        [ vpw(w,ADDED_TET_POS.x + 0),vph(h,ADDED_TET_POS.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
-    for (value of array) {
-        var point = svg.createSVGPoint();
-        point.x = value[0];
-        point.y = value[1];
-        polygon.points.appendItem(point);
-}
-//console.log("ARRAY",array);
-    polygon.style.fill='blue';
-    svg.appendChild(polygon);
-        
-    }
+            var array = arr = [ [ vpw(w,ADDED_TET_POS.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ], 
+                                [ vpw(w,ADDED_TET_POS.x + F*SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ],
+                                [ vpw(w,ADDED_TET_POS.x + 0),vph(h,ADDED_TET_POS.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
+            for (value of array) {
+                var point = svg.createSVGPoint();
+                point.x = value[0];
+                point.y = value[1];
+                polygon.points.appendItem(point);
+            }
+            //console.log("ARRAY",array);
+            polygon.style.fill='blue';
+            svg.appendChild(polygon);
+            
+        }
+    });
 }
 
 function render(groupid,array,f) {
@@ -476,8 +530,14 @@ interact('.js-drag')
   .on('dragstart', function (event) {
     event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
       event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+      console.log("X Y",event.interaction.x,event.interaction.y);
+      console.log("EVENT",event);
       if (!startPos) {
           var rect = interact.getElementRect(event.target);
+          console.log("RECT",rect);
+          CUR_POS_X = event.clientX - rect.left;
+          CUR_POS_Y = event.clientY - rect.top;
+          console.log("CUR POS",CUR_POS_X,CUR_POS_Y);
 
           // record center point when starting the very first a drag
           startPos = {
@@ -494,8 +554,6 @@ interact('.js-drag')
       console.log("START",event.target.getAttribute('data-x'),event.target.getAttribute('data-y'));
   })
     .on('dragend',function (event) {
-        console.log("END",event.target);
-        console.log("END",event.target.getAttribute('data-x'),event.target.getAttribute('data-y'));        
         event.target.style.width = CUR_WIDTH;
         event.target.style.height = CUR_HEIGHT;
         event.target.style.fontSize = CUR_FONT_SIZE;
@@ -517,9 +575,11 @@ interact('.js-drag')
       event.target.style[transformProp] =
         'translate(' + event.interaction.x + 'px, ' + event.interaction.y + 'px)';
     }
-    else {
-      event.target.style.left = event.interaction.x + 'px';
-      event.target.style.top  = event.interaction.y + 'px';
+      else {
+          var lw = -20; // this is the width of the draggable element
+          var lh = -10; // this is the width of the draggable element          
+      event.target.style.left = CUR_POS_X+ lw + event.interaction.x + 'px';
+      event.target.style.top  = CUR_POS_Y+ lh + event.interaction.y + 'px';
     }
   })
  .on('dragleave', function (event) {
@@ -581,7 +641,6 @@ function testGetRayToLineSegmentIntersection() {
     let p1 = new THREE.Vector2(0,10);
     let p2 = new THREE.Vector2(10,0);
     var r = GetRayToLineSegmentInt(ro,rd,p1,p2)[0];
-    console.log(r);
     console.assert(r.x == r.y);
     var r = GetRayToLineSegmentInt(ro,rd,p2,p1)[0];
     console.log(r);
@@ -709,15 +768,12 @@ function TriBalance2to3(obj,wtc,normalize = L2NORM) {
     BAL.multiplyScalar(p_to_edge);
     normalize(IMB);
     IMB.multiplyScalar(1-p_to_edge);
-    console.log("P_to_edge weights",p_to_edge,1-p_to_edge),
-    console.log("BAL, IMB",BAL,IMB);
     // now construct a balanced vector proportional
     // to the length from the edge to the p towards the axis
     // so that this be a unit vector if p is the origin.
     let result = new THREE.Vector3();
     result.add(IMB);
     result.add(BAL);
-    console.log("RESULT",result,result.length());
     return result;
     
 }
@@ -733,7 +789,6 @@ function invertTriBalance2to3(vec,wtc,normAndLen = L2) {
     let imb = new THREE.Vector3(vec.x - min, vec.y - min, vec.z - min);
     let bal = vec.clone();
     bal.sub(imb);
-    console.log("IMB,VC",imb,bal);
     // Now that we have balance, we need to compute it's length---unfortuantely,
     // This length is dependent on the norm we chose!
     let length = normAndLen[1];
@@ -887,9 +942,10 @@ function setupDropzone (el, accept) {
         var yc = -(y + -250);
         var xc = x + -250;
         console.log("X,Y",xc,yc);
-        ADDED_TET_POS = {x: xc,y: yc};
+        var atp = {x: xc,y: yc};
+        ADDED_TET_PROJs.push(atp);
 
-        let bal = TriBalance2to3(ADDED_TET_POS,WORLD_TRIANGLE_COORDS,L1NORM);
+        let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,L1NORM);
         
         console.log("BALANCE",bal);
 
