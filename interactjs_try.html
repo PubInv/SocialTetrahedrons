@@ -358,6 +358,7 @@ function InitDatabase() {
     PROJECTS.push(new Project('Gluss (robotic truss))','Public Invention','https://pubinv.github.io/tetrobot/'));
     PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
     PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
+    PERSONS.push(new Person('Mark Frazier','yadayada@gmail.com'));    
     PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
     TOOLS.push(new Tool('JavaScript',4));
 }
@@ -377,7 +378,10 @@ function list_item_draggable(content) {
 function vph(h,y) { return (-y); }
 function vpw(w,x) { return (x); }
 
-var ADDED_TET_PROJs = [];;
+var ADDED_TET_PROJs = [];
+var ADDED_TET_PERSs = [];
+var ADDED_TET_PLACs = [];
+var ADDED_TET_TOOLs = [];
 
 function append_text(svg,x,y,text) {
     var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -446,28 +450,30 @@ function render_create_svg() {
     // var textNode = document.createTextNode("Mind");
     // newText.appendChild(textNode);
     // svg.appendChild(newText);
-
-    ADDED_TET_PROJs.forEach( ADDED_TET_POS => {
-        if (ADDED_TET_POS) {
+    function add_triangle(tri,c) {
+        if (tri) {
             var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
             svg.appendChild(polygon);
             var F = 0.05;
 
-            var array = arr = [ [ vpw(w,ADDED_TET_POS.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ], 
-                                [ vpw(w,ADDED_TET_POS.x + F*SIDE_LENGTH_PIXEL/2),vph(h,ADDED_TET_POS.y + F*BASE) ],
-                                [ vpw(w,ADDED_TET_POS.x + 0),vph(h,ADDED_TET_POS.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
+            var array = arr = [ [ vpw(w,tri.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ], 
+                                [ vpw(w,tri.x + F*SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ],
+                                [ vpw(w,tri.x + 0),vph(h,tri.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
             for (value of array) {
                 var point = svg.createSVGPoint();
                 point.x = value[0];
                 point.y = value[1];
                 polygon.points.appendItem(point);
             }
-            //console.log("ARRAY",array);
-            polygon.style.fill='blue';
+            polygon.style.fill=c;
             svg.appendChild(polygon);
-            
         }
-    });
+    }
+
+    ADDED_TET_PROJs.forEach( atp => add_triangle(atp,"blue"));
+    ADDED_TET_PERSs.forEach( atp => add_triangle(atp,"red"));
+    ADDED_TET_PLACs.forEach( atp => add_triangle(atp,"green"));
+    ADDED_TET_TOOLs.forEach( atp => add_triangle(atp,"orange"));            
 }
 
 function render(groupid,array,f) {
@@ -544,9 +550,9 @@ interact('.js-drag')
               x: rect.left + rect.width  / 2,
               y: rect.top  + rect.height / 2
           }
-        CUR_WIDTH = event.target.style.width;
-        CUR_HEIGHT = event.target.style.height;
-        CUR_FONT_SIZE = event.target.style.fontSize;
+          CUR_WIDTH = event.target.style.width;
+          CUR_HEIGHT = event.target.style.height;
+          CUR_FONT_SIZE = event.target.style.fontSize;
           CUR_TEXT = event.target.textContent;
           console.log("CUR_TEXT",CUR_TEXT);
           console.log("startPos",startPos);
@@ -653,7 +659,6 @@ function testGetRayToLineSegmentIntersection() {
 
     var r12 = GetRayToLineSegmentInt(ro,rd1,c1,c2);
     console.assert(r12 != null);
-    
 }
 
 function distance(x0,y0,x1,y1) {
@@ -943,7 +948,23 @@ function setupDropzone (el, accept) {
         var xc = x + -250;
         console.log("X,Y",xc,yc);
         var atp = {x: xc,y: yc};
-        ADDED_TET_PROJs.push(atp);
+
+        // this is sort of any ugly way to do this
+        if ($('#nav-projects.tab-pane.fade.show.active').length) {
+            ADDED_TET_PROJs.push(atp);            
+        }
+        if ($('#nav-persons.tab-pane.fade.show.active').length) {
+            ADDED_TET_PERSs.push(atp);                        
+        }
+        if ($('#nav-places.tab-pane.fade.show.active').length) {
+            ADDED_TET_PLACs.push(atp);                        
+        }
+        if ($('#nav-tools.tab-pane.fade.show.active').length) {
+            ADDED_TET_TOOLs.push(atp);                        
+        }
+
+        
+
 
         let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,L1NORM);
         
