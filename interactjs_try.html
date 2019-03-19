@@ -117,7 +117,8 @@ canvas {
 .draggable {
     position: relative;
     z-index: 10;
-    width: 200px;
+    width: 400px;
+
     margin: .25em;
     padding: 1em 2em;
     background-color: #29e;
@@ -128,7 +129,12 @@ canvas {
         touch-action: none;
 }
 
-.draggable.-drop-possible { background-color: #42bd41; }
+    .draggable.-drop-possible { background-color: #42bd41; }
+
+#nav-tabContent {
+    overflow-y: scroll;
+    height: 500px;
+}
 
       </style>
 
@@ -136,7 +142,7 @@ canvas {
 <br>
 <div class="container">
 
-  	<h6 class="section-title h1">Tabs</h6>
+  	<h6 class="section-title h1">Social Tetrahedra</h6>
 		<div class="row">
     <div class="col">
 				<nav>
@@ -185,10 +191,10 @@ canvas {
 						<a class="nav-item nav-link" id="nav-tools-tab" data-toggle="tab" href="#nav-tools" role="tab" aria-controls="nav-tools" aria-selected="false">Tools</a>
 					</div>
 				</nav>
-				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent" >
     <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
 
-<ul class="list-group" id="nav-projects-list">
+<ul class="list-group" id="nav-projects-list" >
   <li class="list-group-item active">Cras justo odio</li>
 </ul>
 					</div>
@@ -210,10 +216,8 @@ canvas {
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</div>
-
+    </div>
+    <section>
     <label for="mind">Mind </label>
     <span type="text" id="mind"></span><br>
     
@@ -225,7 +229,31 @@ canvas {
     
     <label for="fourth">Fourth: </label>
     <span type="text" id="fourth"></span><br><br>
+    </section>
     
+    
+
+
+    <section>
+    <h1>
+    Social Tetrahedra
+</h1>
+    <p>
+    This is an <a href="">open source demonstration project</a> of <a href="https://pubinv.github.io/PubInv/">Public Invention</a>
+    based on downloadable <a href-"https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx">ideas</a> by Mark Frazier.
+    </p>
+    <h2>Usage</h2>
+    This system doesn't do much, but to see it, drag a project or purpose onto the 
+    <h2>Purpose</h2>
+    <p>The ultimate purpose is match needs with offers, for example to work on technical projects, base on an interpretation
+of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
+captures, for example, the Mind/Body/Spirt and Condition situation, and might then be matched with projects that 
+are suited to them. Exactly how this will be done is still being worked out; this is a step.
+</p>
+    </section>
+    </div>
+
+</div>
 <!-- 
 <div id="drag1" class="draggable js-drag">Drag me…</div>
 <div id="drag2" class="draggable js-drag">Drag me…</div>
@@ -245,9 +273,9 @@ canvas {
     <script>
 
 // TODOS:
-// Make the drag and drop be more targeted.
-// Make the data persist.
-// Make the 4th dimesion work
+// Make the drag and drop be more targeted. - done
+// Make the data persist. - done (only on page)
+// Make the 4th dimesion work 
 // Separate out the MBS triangle into literate project
 // 
 
@@ -974,13 +1002,30 @@ function setupDropzone (el, accept) {
             ADDED_TET_TOOLs.push(atp);                        
         }
 
-        let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,L1NORM);
+        let d4 = RSLIDER.getValue()/100;
+        console.log("RSLIDER.getValue()",d4);
+        // Our basic idea here is that the fourth dimension
+        // is fixed by the slider, so the others scale to match it.
+        // The way it balances depends on our norm.
+
+        var norm_to_use = L1NORM;
+
+        let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
         
         console.log("BALANCE",bal);
 
-        let d4 = RSLIDER.getValue()/100;
+        // Now balance needs be scaled ...
+        // If we are using the L1NORM, it is linear.
+        // If we are using the L2NORM, c = sqrt(1 - a^2).
+        var c;
+        // one can conjecture here that c = (1 - d4**n)**(1/n) for other norms
+        if (norm_to_use == L1NORM) {
+            c = 1 - d4;
+        } else {
+            c = Math.sqrt( 1 - d4**2);
+        }
+        bal.multiplyScalar(c);
 
-        console.log("RSLIDER.getValue()",d4);                
 
         $( "#mind" ).text( (bal.x * 100).toFixed(0) +  "%" );
         $( "#body" ).text( (bal.y * 100).toFixed(0) +  "%" );
