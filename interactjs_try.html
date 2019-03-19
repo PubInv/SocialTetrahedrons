@@ -31,7 +31,7 @@ Copyright (C) 2019 by
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/interactjs@1.3/dist/interact.min.js"></script>
@@ -142,8 +142,23 @@ canvas {
 <br>
 <div class="container">
 
-  	<h6 class="section-title h1">Social Tetrahedra</h6>
-		<div class="row">
+    <h1 class="section-title h1">Social Tetrahedra</h1>
+  <fieldset>
+    <legend>Balance Fourth Dimension: </legend>
+    <label for="balancefourth">Balance fourth with Norm:</label>
+    <input type="checkbox" name="balancefourth" id="balancefourth">
+    </fieldset>
+
+    <fieldset>
+    <legend id="normToUse">Balancing Norm to Use: </legend>
+    <label for="l1norm">L1 Norm (Absolute Value):</label>
+    <input type="radio" name="norm" id="l1norm" value="checked">
+    <label for="l2norm">L2 Norm (Sqrt of Sqares):</label>
+    &nbsp;
+    <input type="radio" name="norm" id="l2norm">    
+    </fieldset>
+
+    <div class="row">
     <div class="col">
 				<nav>
 					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
@@ -177,9 +192,6 @@ canvas {
     </div>
 					</div>
     </div>
-
-
-    
 			</div>
                         
 			<div class="col">
@@ -231,9 +243,6 @@ canvas {
     <span type="text" id="fourth"></span><br><br>
     </section>
     
-    
-
-
     <section>
     <h1>
     Social Tetrahedra
@@ -243,7 +252,13 @@ canvas {
     based on downloadable <a href-"https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx">ideas</a> by Mark Frazier.
     </p>
     <h2>Usage</h2>
-    This system doesn't do much, but to see it, drag a project or purpose onto the 
+    To specify the relative attributes of a project, person, place, or tool, first use the slider on the left
+to specify the 4th dimension. Then drag a project, person, place or tool onto the triangle. These three
+coordinates are considered "balanced", that is, the position on the triangle specifies them with a
+particular algorithm. The closer to one corner of the triangle you are, the more strongly you reflect that
+attribute. The center of the trinagle reflects all attributes equally--that is, "perfect balance."
+The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
+triangle.
     <h2>Purpose</h2>
     <p>The ultimate purpose is match needs with offers, for example to work on technical projects, base on an interpretation
 of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
@@ -540,7 +555,7 @@ $("#fourthslider").slider({
     }
     RSLIDER = $('#fourthslider').slider()
 	.on('slideStop', SliderChange)
-	.data('slider');    
+	.data('slider');
 
 }
 
@@ -1008,24 +1023,44 @@ function setupDropzone (el, accept) {
         // is fixed by the slider, so the others scale to match it.
         // The way it balances depends on our norm.
 
-        var norm_to_use = L1NORM;
 
+
+        function getRadioValue(name) {
+            var rates = document.getElementsByName(name);
+            var rate_value;
+            for(var i = 0; i < rates.length; i++){
+                if(rates[i].checked){
+                    rate_value = i;
+                }
+            }
+            return rate_value+1;
+        }
+        var normToUse = getRadioValue("norm");
+        alert(normToUse);
+
+        var norm_to_use = (normToUse == 1? L1NORM :L2NORM);
+        
         let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
         
         console.log("BALANCE",bal);
 
-        // Now balance needs be scaled ...
-        // If we are using the L1NORM, it is linear.
-        // If we are using the L2NORM, c = sqrt(1 - a^2).
-        var c;
-        // one can conjecture here that c = (1 - d4**n)**(1/n) for other norms
-        if (norm_to_use == L1NORM) {
-            c = 1 - d4;
-        } else {
-            c = Math.sqrt( 1 - d4**2);
-        }
-        bal.multiplyScalar(c);
+        var balancep = document.getElementById("balancefourth").checked;
+        if (balancep) {
 
+            // Now balance needs be scaled ...
+            // If we are using the L1NORM, it is linear.
+            // If we are using the L2NORM, c = sqrt(1 - a^2).
+            var c;
+            // one can conjecture here that c = (1 - d4**n)**(1/n) for other norms
+            if (norm_to_use == L1NORM) {
+                c = 1 - d4;
+            } else {
+                c = Math.sqrt( 1 - d4**2);
+            }
+            bal.multiplyScalar(c);
+        }
+
+        
 
         $( "#mind" ).text( (bal.x * 100).toFixed(0) +  "%" );
         $( "#body" ).text( (bal.y * 100).toFixed(0) +  "%" );
