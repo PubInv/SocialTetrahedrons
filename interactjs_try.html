@@ -150,7 +150,7 @@ canvas {
 
  <div class="row">
       <div class="col-2 col-sm-1">
-    <input id="ex4" type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="-3" data-slider-orientation="vertical"/>    
+    <input id="fourthslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>    
       </div>
     <div class="col-4 col-sm-11">
     
@@ -221,7 +221,10 @@ canvas {
     <span type="text" id="body"></span><br>
     
     <label for="spirit">Spirit: </label>
-    <span type="text" id="spirit"></span><br><br>
+    <span type="text" id="spirit"></span><br>
+    
+    <label for="fourth">Fourth: </label>
+    <span type="text" id="fourth"></span><br><br>
     
 <!-- 
 <div id="drag1" class="draggable js-drag">Drag me…</div>
@@ -258,6 +261,7 @@ var PROJECTS = [];
 var PERSONS = [];
 var PLACES = [];
 var TOOLS = [];
+var RSLIDER;
 
 // Now some constructors to give these things some shapes
 
@@ -499,9 +503,16 @@ function main() {
     render_svgs();
 
     // With JQuery
-$("#ex4").slider({
+$("#fourthslider").slider({
 	reversed : true
 });
+
+    var SliderChange = function() {
+        console.log(RSLIDER.getValue());
+    }
+    RSLIDER = $('#fourthslider').slider()
+	.on('slideStop', SliderChange)
+	.data('slider');    
 
 }
 
@@ -963,16 +974,20 @@ function setupDropzone (el, accept) {
             ADDED_TET_TOOLs.push(atp);                        
         }
 
-        
-
-
         let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,L1NORM);
         
         console.log("BALANCE",bal);
 
+        let d4 = RSLIDER.getValue()/100;
+
+        console.log("RSLIDER.getValue()",d4);                
+
         $( "#mind" ).text( (bal.x * 100).toFixed(0) +  "%" );
         $( "#body" ).text( (bal.y * 100).toFixed(0) +  "%" );
-        $( "#spirit" ).text( (bal.z * 100).toFixed(0) +  "%" );        
+        $( "#spirit" ).text( (bal.z * 100).toFixed(0) +  "%" );
+        $( "#fourth" ).text( (d4 * 100).toFixed(0) +  "%" );
+        
+
         
         render_svgs();
     });
