@@ -140,23 +140,39 @@ canvas {
 
 <body>
 <br>
-<div class="container">
-
+    <div class="container">
     <h1 class="section-title h1">Social Tetrahedra</h1>
+    
+    <h2>First Three Dimensions</h2>
+<div>
+<button type="button" class="btn btn-primary" id="MBS">Mind/Body/Spirit</button>
+<button type="button" class="btn btn-secondary" id="HHH">Head/Heart/Hands</button>
+<button type="button" class="btn btn-success" id="PSM">Physical/Social/Mental</button>
+<button type="button" class="btn btn-danger" id="SEF">Strength/Endurance/Flexibility</button>
+<button type="button" class="btn btn-warning" id="FSH">Father/Son/Holy Spirit</button>
+    </div>
+    
+    <fieldset>
+    <legend id="normToUse">Balancing Norm to Use: </legend>
+    <label for="l1norm">L1 Norm (Absolute Value):</label>
+    <input type="radio" name="norm" id="l1norm" checked="checked">
+    <label for="l2norm">L2 Norm (Sqrt of Squares):</label>
+    &nbsp;
+    <input type="radio" name="norm" id="l2norm">    
+    </fieldset>
+
   <fieldset>
-    <legend>Balance Fourth Dimension: </legend>
+
+    <!--   <legend>Balance Fourth Dimension: </legend> -->
+<label for="d3name">Fourth Dimension Name:</label>    
+    <input type="text" id="d3name" value="Condition"></input>
     <label for="balancefourth">Balance fourth with Norm:</label>
     <input type="checkbox" name="balancefourth" id="balancefourth">
     </fieldset>
 
-    <fieldset>
-    <legend id="normToUse">Balancing Norm to Use: </legend>
-    <label for="l1norm">L1 Norm (Absolute Value):</label>
-    <input type="radio" name="norm" id="l1norm" value="checked">
-    <label for="l2norm">L2 Norm (Sqrt of Sqares):</label>
-    &nbsp;
-    <input type="radio" name="norm" id="l2norm">    
-    </fieldset>
+
+    </section>
+
 
     <div class="row">
     <div class="col">
@@ -230,26 +246,25 @@ canvas {
 			</div>
     </div>
     <section>
-    <label for="mind">Mind </label>
-    <span type="text" id="mind"></span><br>
+    <label for="d0" id="d0l">Mind: </label>
+    <span type="text" id="d0"></span><br>
     
-    <label for="body">Body: </label>
-    <span type="text" id="body"></span><br>
+    <label for="d1" id="d1l">Body: </label>
+    <span type="text" id="d1"></span><br>
     
-    <label for="spirit">Spirit: </label>
-    <span type="text" id="spirit"></span><br>
+    <label for="d2" id="d2l">Spirit: </label>
+    <span type="text" id="d2"></span><br>
     
-    <label for="fourth">Fourth: </label>
-    <span type="text" id="fourth"></span><br><br>
+    <label for="d3" id="d3l">Condition: </label>
+    <span type="text" id="d3"></span><br><br>
     </section>
-    
     <section>
     <h1>
     Social Tetrahedra
 </h1>
     <p>
     This is an <a href="">open source demonstration project</a> of <a href="https://pubinv.github.io/PubInv/">Public Invention</a>
-    based on downloadable <a href-"https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx">ideas</a> by Mark Frazier.
+    based on downloadable <a href="https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx">ideas</a> by Mark Frazier.
     </p>
     <h2>Usage</h2>
     To specify the relative attributes of a project, person, place, or tool, first use the slider on the left
@@ -259,22 +274,45 @@ particular algorithm. The closer to one corner of the triangle you are, the more
 attribute. The center of the trinagle reflects all attributes equally--that is, "perfect balance."
 The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
 triangle.
+    <h2>L1 Norm vs. L2 Norm</h2>
+    <p>
+    To be able to write algorithms about the similarity or complimentarity of,
+for example, a person to a project in terms of Mind/Body/Spirit balance,
+we need a function to translate a position on the triangle into a mathematical
+object of some kind. We also must be able to invert this function, to
+obtain a position on the triangle from a mathematical object.
+    </p>
+    <p>
+    The most obvious way to do this is to treat a given assertion as a vector
+with dimensions labeled, for example, Mind/Body/Spirit. Then a "balanced"
+vector maybe thought of an any vector of unit length. There are different
+ways to express the length of a vector. The L1 Norm is simply the sum
+of the absolute values, so by choosing that all dimensions sum to 1.0.
+    </p>
+    <p>
+    However, it is also reasonable to use the L2 Norm, which is the "Euclidean distance." This is rather like saying every vector is a point on the surface
+of sphere of radius 1.0.  The components of the L2 Norm will sum to something
+usually greater than 1.0.
+    </p>
+    <h2>The Fourth Dimension</h2>
+    In Mark's conception, the fourth dimension is "condition", which may 
+be thought of a power or development. It is represented as a slider on the
+right. The checkbox labelled "Balance fourth with Norm" controls whether
+this dimension is thought of as separate, or whether we require a length 1
+vector of all for dimensions.
     <h2>Purpose</h2>
     <p>The ultimate purpose is match needs with offers, for example to work on technical projects, base on an interpretation
 of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
 captures, for example, the Mind/Body/Spirt and Condition situation, and might then be matched with projects that 
 are suited to them. Exactly how this will be done is still being worked out; this is a step.
-</p>
+    </p>
+    <h2>License</h2>
+    You are free to reuse this software under the terms
+of the GNU Affero General Public License.
     </section>
     </div>
 
 </div>
-<!-- 
-<div id="drag1" class="draggable js-drag">Drag me…</div>
-<div id="drag2" class="draggable js-drag">Drag me…</div>
-<div id="drag3" class="draggable js-drag">Drag me…</div>
-    <div id="drag4" class="draggable js-drag">Drag me…</div>
-    -->
 
 
    <!-- Optional JavaScript -->
@@ -285,17 +323,281 @@ are suited to them. Exactly how this will be done is still being worked out; thi
 
     <script src="./js/bootstrap-slider.js"></script>
     
+    <script src="./js/TriBalance.js"></script>
+    
+<script>
+var WORLD_TRIANGLE_COORDS;
+const w = 500;
+const h = 500;
+
+const TRIANGLE_WIDTH = 1;
+const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
+const SIDE_LENGTH_PIXEL = 400;
+const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
+const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
+
+function get_world_triangle() {
+     let wtc = [[-SIDE_LENGTH_PIXEL/2,BASE],
+                             [SIDE_LENGTH_PIXEL/2,BASE],
+               [0,BASE+SIDE_LENGTH_HEIGHT]];
+    return wtc;
+}
+
+</script>
+
+
+//     <script>
+
+// // This code from here: https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
+// // Note this routine seems to depend on the chirality of the points; possibly it only counts an approach from one side.
+// function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
+// {
+//     var ro = new THREE.Vector2(rayOrigin.x,rayOrigin.y);
+//     var rd = new THREE.Vector2(rayDirection.x,rayDirection.y);
+//     rd.normalize();
+//     var p1 = new THREE.Vector2(point1.x,point1.y);
+//     var p2 = new THREE.Vector2(point2.x,point2.y);
+//     var v1 = new THREE.Vector2().subVectors(ro,p1);
+//     var v2 = new THREE.Vector2().subVectors(p2,p1);    
+
+//     // This is construct a perpendicular.
+//     var v3 = new THREE.Vector2(-rd.y,rd.x);
+//     var dot = v2.dot(v3);
+
+//     if (Math.abs(dot) < 0.000001)
+//             return null;
+
+//     var t1 = v2.cross(v1) / dot;
+    
+//     var t2 = v1.dot(v3) /dot;    
+
+//     if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)) {
+//         rd.multiplyScalar(t1);
+//         return [ro.add(rd),t1];
+//     }
+//     return null;
+// }
+// // This is a crummy hack because the above code doesn't work when the segment points are in a particular order.
+// function GetRayToLineSegmentInt(rayOrigin,rayDirection,p1,p2) {
+//     return GetRayToLineSegmentIntersection(rayOrigin,rayDirection,p1,p2);
+// }
+// function testGetRayToLineSegmentIntersection(WORLD_TRIANGLE_COORDS) {
+//     let ro = new THREE.Vector2(0,0);
+//     let rd = new THREE.Vector2(1,1);
+//     let p1 = new THREE.Vector2(0,10);
+//     let p2 = new THREE.Vector2(10,0);
+//     var r = GetRayToLineSegmentInt(ro,rd,p1,p2)[0];
+//     console.assert(r.x == r.y);
+//     var r = GetRayToLineSegmentInt(ro,rd,p2,p1)[0];
+//     console.log(r);
+//     console.assert(r.x == r.y);
+
+//     var rd1 = new THREE.Vector2(94.1015625,-36.36328125);
+//     let c0 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[0][0],WORLD_TRIANGLE_COORDS[0][1]);
+//     let c1 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[1][0],WORLD_TRIANGLE_COORDS[1][1]);
+//     let c2 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[2][0],WORLD_TRIANGLE_COORDS[2][1]);        
+
+//     var r12 = GetRayToLineSegmentInt(ro,rd1,c1,c2);
+//     console.assert(r12 != null);
+// }
+
+// function distance(x0,y0,x1,y1) {
+//     return Math.sqrt((x0 - x1)**2 + (y0 - y1)**2);
+// }
+
+// // This is the fundamental math behind a TriBalance Diagram.
+// // I will probably put this in LaTeX soon.
+// // A balance diagram is a way of choosing a unit vector
+// // of n dimensions (most usefully 3) from a n-gon.
+// // If n > 3, it is not possible to complete map all points.
+// // The fundamental math of a TriBalance diagram is to convert
+// // between a point on the 2-dimensional n-gon (the "representation") from
+// // the "balance" -- a n-dimensional vector.
+// // Call the function that produces the repesentation from a unit vector
+// // "r" and the function that produces the balance vector from the respresentation "b".
+// // Desiderator of these functions are:
+// // We want them to be inversions of each other.
+// // We want the center of the representation to map to a balanced vector.
+// // A representation at the vertex is a vector having a single 1 and the rest zeros.
+// // As we change the angle betwen the origin and the point in a representation toward a vertex,
+// // the value of that vertex should increase.
+// // As we move along such a line, we should not change the relative proportion of the
+// // other values. (this is vague).
+// // It should be easy to compute and explain (at least geometrically.)
+// // I now believe this should allow a "norm" to be passed in
+// // as a function. I think the L1 norm is probably better than L2
+// // norm for some functions, but it can be optional.
+// // It is essential that this function be invertible.
+
+// function L1NORM(v) {
+//     let r = new THREE.Vector3(0,0).manhattanDistanceTo(v);
+//     v.divideScalar(r);
+// }
+// function L2NORM(v) {
+//     v.normalize();
+// }
+// function L1LENGTH(v) {
+//     let r = new THREE.Vector3(0,0).manhattanDistanceTo(v);
+//     return r;
+// }
+// function L2LENGTH(v) {
+//     return v.length();
+// }
+
+// var L1 = [L1NORM,L1LENGTH];
+// var L2 = [L2NORM,L2LENGTH];
+
+// function TriBalance2to3(obj,wtc,normalize = L2NORM) {
+//     // First, let's set everything up in THREE.js so we can use vector math...
+//     let WTC = [new THREE.Vector2(wtc[0][0],wtc[0][1]),
+//                new THREE.Vector2(wtc[1][0],wtc[1][1]),
+//                new THREE.Vector2(wtc[2][0],wtc[2][1])];
+//     let ro = new THREE.Vector2(0,0);
+    
+//     let p = new THREE.Vector2(obj.x,obj.y);
+//     // Now we want to do a linear interpolation of how far we are from an edge,
+//     // but also how far the projection to the edge is between the vertices.
+//     // We must first decide which edges the line form the orign to p intersects.
+//     // If it intersects two segments, then are aimed at a vertex.
+//     var first;
+//     var first_idx = -1;
+//     for(var i = 0; i < 3; i++) {
+//         var r = GetRayToLineSegmentInt(ro,p,WTC[i],WTC[(i +1) %3]);
+//         if (r != null) {
+//             first_idx = i;
+//             first = r;
+//         }
+//     }
+//     console.assert(first != null);
+//     if (first == null) {
+//         console.log("UNABLE TO FIND",obj);
+//     }
+//     // now first tells us an edge struck by the ray. We will now
+//     // compute the distances...
+//     // This is the distance to the edge...
+//     let total_distance_to_edge = ro.distanceTo(first[0]);
+//     p.clampLength(0,total_distance_to_edge);
+//     var p_to_edge = p.distanceTo(first[0])/ro.distanceTo(first[0]);
+//     let BAL = new THREE.Vector3(1,1,1);
+
+//     // Now the remainder of the contribution
+//     // to the unit vector should come from the two
+//     // points on the edge, in linear proportion.
+//     // These coordinates are first_idx and (first_idx+1) % 3.
+//     var d1 = WTC[first_idx].distanceTo(first[0]);
+//     var d2 = WTC[(first_idx+1)%3].distanceTo(first[0]);
+//     let vs = [0,0,0];
+//     vs[first_idx] = d2;
+//     vs[(first_idx+1) % 3] = d1;
+//     let IMB = new THREE.Vector3(vs[0],vs[1],vs[2]);
+
+//     normalize(BAL);
+//     BAL.multiplyScalar(p_to_edge);
+//     normalize(IMB);
+//     IMB.multiplyScalar(1-p_to_edge);
+//     // now construct a balanced vector proportional
+//     // to the length from the edge to the p towards the axis
+//     // so that this be a unit vector if p is the origin.
+//     let result = new THREE.Vector3();
+//     result.add(IMB);
+//     result.add(BAL);
+//     return result;
+    
+// }
+
+// // This is an attempt to invert the above function, which is basically needed
+// function invertTriBalance2to3(vec,wtc,normAndLen = L2) {
+//     let WTC = [new THREE.Vector2(wtc[0][0],wtc[0][1]),
+//                new THREE.Vector2(wtc[1][0],wtc[1][1]),
+//                new THREE.Vector2(wtc[2][0],wtc[2][1])];
+    
+//     // First, can we determine the blance and imbalance coefficients?
+//     let min = Math.min(Math.min(vec.x,vec.y),vec.z);
+//     let imb = new THREE.Vector3(vec.x - min, vec.y - min, vec.z - min);
+//     let bal = vec.clone();
+//     bal.sub(imb);
+//     // Now that we have balance, we need to compute it's length---unfortuantely,
+//     // This length is dependent on the norm we chose!
+//     let length = normAndLen[1];
+//     let imb_r = length(imb);
+//     let bal_r = length(bal);
+//     console.assert(Math.abs((bal_r+imb_r) - 1) <   1e-5);
+
+//     // Now we have the ratios. We need to determine the direction.
+//     // this is a function of the imbalance vector. We could determine
+//     // which side we are on, and then compute our position along that
+//     // to determine a point on the triangle, and then multiply by the imb_r
+//     // to obtain the actual point.
+//     // At least one value of imb will be zero.
+//     var first_zero = -1;
+//     var p0,p1,alpha;
+//     // the points are OPPOSITE the zero
+//     if (imb.x == 0) {
+//         first_zero = 0;
+//         // Which way should it be?
+//         p0 = WTC[2];
+//         p1 = WTC[1];
+//         alpha = imb.y/(imb.y + imb.z);
+//     } else if (imb.y == 0) {
+//         first_zero = 1;
+//         p0 = WTC[2];
+//         p1 = WTC[0];
+//         alpha = imb.z/(imb.x + imb.y);        
+//     } else if (imb.z == 0) {
+//         first_zero = 2;
+//         p0 = WTC[0];
+//         p1 = WTC[1];
+//         alpha = imb.x/(imb.x + imb.z);        
+//     }
+//     console.assert(first_zero != -1);
+//     var onTriangle = new THREE.Vector2();
+//     onTriangle.lerpVectors(p0,p1,alpha);
+//     // now onTriangle, should in theory be a point on the triangle
+//     // now, having found that we interpolate a ray to it of length bal_r...
+//     var pnt = new THREE.Vector2();
+//     var origin = new THREE.Vector2(0,0);
+//     // Why this choice?
+//     pnt.lerpVectors(origin,onTriangle,imb_r);
+//     return pnt;
+// }
+
+// function testTriBalance2to3(WORLD_TRIANGLE_COORDS) {
+//     let p = new THREE.Vector2(30000,30);    
+//     TriBalance2to3(p,WORLD_TRIANGLE_COORDS,L1NORM);
+//     let py = new THREE.Vector2(0,WORLD_TRIANGLE_COORDS[2][1]);
+//     TriBalance2to3(py,WORLD_TRIANGLE_COORDS,L1NORM);
+// }
+
+// function testInversion(WORLD_TRIANGLE_COORDS) {
+//     let p = new THREE.Vector2(30,30);    
+//     var vp = TriBalance2to3(p,WORLD_TRIANGLE_COORDS,L1NORM);
+//     var vp_inv = invertTriBalance2to3(vp,WORLD_TRIANGLE_COORDS,L1);
+//     // test length here
+//     var vpc = vp_inv.clone();
+//     vpc.sub(p);
+//     console.assert(vpc.length() < 1e-4);
+    
+//     let py = new THREE.Vector2(0,WORLD_TRIANGLE_COORDS[2][1]);
+//     var vpy = TriBalance2to3(py,WORLD_TRIANGLE_COORDS,L1NORM);    
+//     var vpy_inv = invertTriBalance2to3(vpy,WORLD_TRIANGLE_COORDS,L1);
+    
+//     var vpyc = vpy_inv.clone();
+//     vpyc.sub(py);
+//     console.assert(vpyc.length() < 1e-4);
+// }
+
+// function testAllTriBalance() {
+//     testGetRayToLineSegmentIntersection(WORLD_TRIANGLE_COORDS);
+//     testTriBalance2to3(WORLD_TRIANGLE_COORDS);
+//     testInversion(WORLD_TRIANGLE_COORDS);
+// }
+
+// </script>
+
+
+
     <script>
 
-// TODOS:
-// Make the drag and drop be more targeted. - done
-// Make the data persist. - done (only on page)
-// Make the 4th dimesion work 
-// Separate out the MBS triangle into literate project
-// 
-
-// Trying now to create a basic object model in JavaScript which can later be tied to
-// to a datamodel
 
 // OBJECTS
 // Effectively thise arrays represent an in-memory databes before we hook up Redis or Firebase or something.
@@ -305,6 +607,14 @@ var PERSONS = [];
 var PLACES = [];
 var TOOLS = [];
 var RSLIDER;
+
+var THREE_DIMENSIONS = { "MBS": ["Mind","Body","Spirit"],
+                         "HHH": ["Head","Heart","Hands"],
+                         "PSM": ["Physical","Social","Mental"],
+                         "SEF": ["Strength","Endurance","Flexibility"],
+                         "FSH": ["Father","Son","Holy Spirit"]
+                       };
+var CURRENT_D = "MBS";
 
 // Now some constructors to give these things some shapes
 
@@ -415,10 +725,6 @@ function list_item(content) {
 }
 function list_item_draggable(content) {
     return '<li class="list-group-item draggable js-drag">'+content+'</li>';    
-        // <div id="drag1" class="draggable js-drag">Drag me…</div>
-        // <div id="drag2" class="draggable js-drag">Drag me…</div>
-        // <div id="drag3" class="draggable js-drag">Drag me…</div>
-        // <div id="drag4" class="draggable js-drag">Drag me…</div>
 }
 // These function convert my abstract coordinates
 // to canvas coordinates.
@@ -439,22 +745,6 @@ function append_text(svg,x,y,text) {
     svg.appendChild(newText);
 }
 
-var WORLD_TRIANGLE_COORDS;
-const w = 500;
-const h = 500;
-
-const TRIANGLE_WIDTH = 1;
-const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
-const SIDE_LENGTH_PIXEL = 400;
-const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
-const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
-
-function get_world_triangle() {
-     let wtc = [[-SIDE_LENGTH_PIXEL/2,BASE],
-                             [SIDE_LENGTH_PIXEL/2,BASE],
-               [0,BASE+SIDE_LENGTH_HEIGHT]];
-    return wtc;
-}
 
 function render_create_svg() {
     var svg = $("#create_svg")[0];
@@ -474,29 +764,29 @@ function render_create_svg() {
         point.y = value[1];
         polygon.points.appendItem(point);
     }
-    polygon.style.fill='pink';
+    polygon.style.fill='lemonchiffon';
 
+    
 
     // These are ugly, they should really be computed from the text.
     // In fact, since this does not change, the whole thing could go into
     // HTML and css more profitably.
-    append_text(svg,array[2][0]-20,array[2][1]-5,"Spirit");
-    append_text(svg,array[0][0]-40,array[0][1]+20,"Mind");
-    append_text(svg,array[1][0],array[1][1]+20,"Body");
+    
+    append_text(svg,array[2][0]-20,array[2][1]-5,
+                THREE_DIMENSIONS[CURRENT_D][2]);
+    append_text(svg,array[0][0]-40,array[0][1]+20,
+                THREE_DIMENSIONS[CURRENT_D][0]);
+    append_text(svg,array[1][0],array[1][1]+20,
+                THREE_DIMENSIONS[CURRENT_D][1]
+               );
     
     var circle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
     circle.setAttributeNS(null, 'cx', vpw(w,0));
     circle.setAttributeNS(null, 'cy', vph(h,0));
     circle.setAttributeNS(null, 'r', 2);
-    circle.setAttributeNS(null, 'style', 'fill: blue; stroke: blue; stroke-width: 1px;' );
+    circle.setAttributeNS(null, 'style', 'fill: black; stroke: black; stroke-width: 1px;' );
     svg.appendChild(circle);
     
-    // var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    // newText.setAttributeNS(null,"x",array[2][0]);      
-    // newText.setAttributeNS(null,"y",array[2][1]);   
-    // var textNode = document.createTextNode("Mind");
-    // newText.appendChild(textNode);
-    // svg.appendChild(newText);
     function add_triangle(tri,c) {
         if (tri) {
             var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -551,20 +841,41 @@ $("#fourthslider").slider({
 });
 
     var SliderChange = function() {
-        console.log(RSLIDER.getValue());
+        $("#d3").text(RSLIDER.getValue() +  "%" );
     }
     RSLIDER = $('#fourthslider').slider()
 	.on('slideStop', SliderChange)
 	.data('slider');
 
+    function set_dimension_labels(cur) {
+        $("#d0l").text(THREE_DIMENSIONS[cur][0] + ":");
+        $("#d1l").text(THREE_DIMENSIONS[cur][1] + ":");
+        $("#d2l").text(THREE_DIMENSIONS[cur][2] + ":");
+        $("#d3l").text($("#d3").val() + ":");
+    }
+    function set_and_render(cur) {
+        CURRENT_D = cur;
+        set_dimension_labels(CURRENT_D);
+        render_svgs();        
+    }
+    
+    $("#MBS").click(() => { set_and_render("MBS");});
+    $("#HHH").click(() => { set_and_render("HHH");});
+    $("#PSM").click(() => { set_and_render("PSM");});
+    $("#SEF").click(() => { set_and_render("SEF");});
+    $("#FSH").click(() => { set_and_render("FSH");});
+
+    $("#d3").change(() => {
+        set_dimension_labels(CURRENT_D);
+        render_svgs();
+    }
+    );
 }
 
-
-// A $( document ).ready() block.
 $( document ).ready(function() {
-    console.log( "ready!" );
+
     main();
-                            });
+           });
 
 
 let transformProp;
@@ -582,22 +893,14 @@ var CUR_TEXT;
 interact('.js-drag')
   .draggable({
       max: Infinity,
-//    snap: {
-//      targets: [interact.createSnapGrid({ x: 100, y: 100 })],
-//      relativePoints: [{ x: 0.5, y: 0.5 }],
-//    },
   })
   .on('dragstart', function (event) {
     event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
       event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
-      console.log("X Y",event.interaction.x,event.interaction.y);
-      console.log("EVENT",event);
       if (!startPos) {
           var rect = interact.getElementRect(event.target);
-          console.log("RECT",rect);
           CUR_POS_X = event.clientX - rect.left;
           CUR_POS_Y = event.clientY - rect.top;
-          console.log("CUR POS",CUR_POS_X,CUR_POS_Y);
 
           // record center point when starting the very first a drag
           startPos = {
@@ -608,10 +911,7 @@ interact('.js-drag')
           CUR_HEIGHT = event.target.style.height;
           CUR_FONT_SIZE = event.target.style.fontSize;
           CUR_TEXT = event.target.textContent;
-          console.log("CUR_TEXT",CUR_TEXT);
-          console.log("startPos",startPos);
       };
-      console.log("START",event.target.getAttribute('data-x'),event.target.getAttribute('data-y'));
   })
     .on('dragend',function (event) {
         event.target.style.width = CUR_WIDTH;
@@ -638,8 +938,8 @@ interact('.js-drag')
       else {
           var lw = -20; // this is the width of the draggable element
           var lh = -10; // this is the width of the draggable element          
-      event.target.style.left = CUR_POS_X+ lw + event.interaction.x + 'px';
-      event.target.style.top  = CUR_POS_Y+ lh + event.interaction.y + 'px';
+      event.target.style.left = CUR_POS_X + lw + event.interaction.x + 'px';
+      event.target.style.top  = CUR_POS_Y + lh + event.interaction.y + 'px';
     }
   })
  .on('dragleave', function (event) {
@@ -653,274 +953,7 @@ interact('.js-drag')
         event.relatedTarget.classList.remove('can-drop');
     });
 
-// setup drop areas.
-// dropzone #1 accepts draggable #1
-// setupDropzone('#create_svg', '#drag1');
-// setupDropzone('#create_svg', '#drag1');
-// dropzone #2 accepts draggable #1 and #2
-// setupDropzone('#create_svg', '#drag1, #drag2');
-// every dropzone accepts draggable #3
 setupDropzone('.js-drop', '.js-drag');
-
-// This code from here: https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
-// Note this routine seems to depend on the chirality of the points; possibly it only counts an approach from one side.
-function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
-{
-    var ro = new THREE.Vector2(rayOrigin.x,rayOrigin.y);
-    var rd = new THREE.Vector2(rayDirection.x,rayDirection.y);
-    rd.normalize();
-    var p1 = new THREE.Vector2(point1.x,point1.y);
-    var p2 = new THREE.Vector2(point2.x,point2.y);
-    var v1 = new THREE.Vector2().subVectors(ro,p1);
-    var v2 = new THREE.Vector2().subVectors(p2,p1);    
-
-    // This is construct a perpendicular.
-    var v3 = new THREE.Vector2(-rd.y,rd.x);
-    var dot = v2.dot(v3);
-
-    if (Math.abs(dot) < 0.000001)
-            return null;
-
-    var t1 = v2.cross(v1) / dot;
-    
-    var t2 = v1.dot(v3) /dot;    
-
-    if (t1 >= 0.0 && (t2 >= 0.0 && t2 <= 1.0)) {
-        rd.multiplyScalar(t1);
-        return [ro.add(rd),t1];
-    }
-    return null;
-}
-// This is a crummy hack because the above code doesn't work when the segment points are in a particular order.
-function GetRayToLineSegmentInt(rayOrigin,rayDirection,p1,p2) {
-    return GetRayToLineSegmentIntersection(rayOrigin,rayDirection,p1,p2);
-}
-function testGetRayToLineSegmentIntersection() {
-    let ro = new THREE.Vector2(0,0);
-    let rd = new THREE.Vector2(1,1);
-    let p1 = new THREE.Vector2(0,10);
-    let p2 = new THREE.Vector2(10,0);
-    var r = GetRayToLineSegmentInt(ro,rd,p1,p2)[0];
-    console.assert(r.x == r.y);
-    var r = GetRayToLineSegmentInt(ro,rd,p2,p1)[0];
-    console.log(r);
-    console.assert(r.x == r.y);
-
-    var rd1 = new THREE.Vector2(94.1015625,-36.36328125);
-    let c0 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[0][0],WORLD_TRIANGLE_COORDS[0][1]);
-    let c1 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[1][0],WORLD_TRIANGLE_COORDS[1][1]);
-    let c2 = new THREE.Vector2(WORLD_TRIANGLE_COORDS[2][0],WORLD_TRIANGLE_COORDS[2][1]);        
-
-    var r12 = GetRayToLineSegmentInt(ro,rd1,c1,c2);
-    console.assert(r12 != null);
-}
-
-function distance(x0,y0,x1,y1) {
-    return Math.sqrt((x0 - x1)**2 + (y0 - y1)**2);
-}
-function Frazier2to3(obj,wtc) {
-    let x = obj.x;
-    let y = obj.y;
-    let d0 = distance(x,y,wtc[0][0],wtc[0][1]);
-    let d1 = distance(x,y,wtc[1][0],wtc[1][1]);
-    let d2 = distance(x,y,wtc[2][0],wtc[2][1]);
-    console.log("x,y",x,y);
-    console.log(wtc[0],wtc[1],wtc[2]);
-    console.log("distances",d0,d1,d2);
-    let d0i = 1/d0;
-    let d1i = 1/d1;
-    let d2i = 1/d2;
-    let d = Math.sqrt(d0i**2 + d1i**2 + d2i**2);
-    let v = [d0i/d,d1i/d,d2i/d];
-    let dc = Math.sqrt(v[0]**2 + v[1]**2 + v[2]**2);
-    console.log("dc",dc);
-    return v;
-}
-
-// This is the fundamental math behind a TriBalance Diagram.
-// I will probably put this in LaTeX soon.
-// A balance diagram is a way of choosing a unit vector
-// of n dimensions (most usefully 3) from a n-gon.
-// If n > 3, it is not possible to complete map all points.
-// The fundamental math of a TriBalance diagram is to convert
-// between a point on the 2-dimensional n-gon (the "representation") from
-// the "balance" -- a n-dimensional vector.
-// Call the function that produces the repesentation from a unit vector
-// "r" and the function that produces the balance vector from the respresentation "b".
-// Desiderator of these functions are:
-// We want them to be inversions of each other.
-// We want the center of the representation to map to a balanced vector.
-// A representation at the vertex is a vector having a single 1 and the rest zeros.
-// As we change the angle betwen the origin and the point in a representation toward a vertex,
-// the value of that vertex should increase.
-// As we move along such a line, we should not change the relative proportion of the
-// other values. (this is vague).
-// It should be easy to compute and explain (at least geometrically.)
-// I now believe this should allow a "norm" to be passed in
-// as a function. I think the L1 norm is probably better than L2
-// norm for some functions, but it can be optional.
-// It is essential that this function be invertible.
-
-function L1NORM(v) {
-    let r = new THREE.Vector3(0,0).manhattanDistanceTo(v);
-    v.divideScalar(r);
-}
-function L2NORM(v) {
-    v.normalize();
-}
-function L1LENGTH(v) {
-    let r = new THREE.Vector3(0,0).manhattanDistanceTo(v);
-    return r;
-}
-function L2LENGTH(v) {
-    return v.length();
-}
-
-var L1 = [L1NORM,L1LENGTH];
-var L2 = [L2NORM,L2LENGTH];
-
-function TriBalance2to3(obj,wtc,normalize = L2NORM) {
-    // First, let's set everything up in THREE.js so we can use vector math...
-    let WTC = [new THREE.Vector2(wtc[0][0],wtc[0][1]),
-               new THREE.Vector2(wtc[1][0],wtc[1][1]),
-               new THREE.Vector2(wtc[2][0],wtc[2][1])];
-    let ro = new THREE.Vector2(0,0);
-    
-    let p = new THREE.Vector2(obj.x,obj.y);
-    // Now we want to do a linear interpolation of how far we are from an edge,
-    // but also how far the projection to the edge is between the vertices.
-    // We must first decide which edges the line form the orign to p intersects.
-    // If it intersects two segments, then are aimed at a vertex.
-    var first;
-    var first_idx = -1;
-    for(var i = 0; i < 3; i++) {
-        var r = GetRayToLineSegmentInt(ro,p,WTC[i],WTC[(i +1) %3]);
-        if (r != null) {
-            first_idx = i;
-            first = r;
-        }
-    }
-    console.assert(first != null);
-    if (first == null) {
-        console.log("UNABLE TO FIND",obj);
-    }
-    // now first tells us an edge struck by the ray. We will now
-    // compute the distances...
-    // This is the distance to the edge...
-    let total_distance_to_edge = ro.distanceTo(first[0]);
-    p.clampLength(0,total_distance_to_edge);
-    var p_to_edge = p.distanceTo(first[0])/ro.distanceTo(first[0]);
-    let BAL = new THREE.Vector3(1,1,1);
-
-    // Now the remainder of the contribution
-    // to the unit vector should come from the two
-    // points on the edge, in linear proportion.
-    // These coordinates are first_idx and (first_idx+1) % 3.
-    var d1 = WTC[first_idx].distanceTo(first[0]);
-    var d2 = WTC[(first_idx+1)%3].distanceTo(first[0]);
-    let vs = [0,0,0];
-    vs[first_idx] = d2;
-    vs[(first_idx+1) % 3] = d1;
-    let IMB = new THREE.Vector3(vs[0],vs[1],vs[2]);
-
-    normalize(BAL);
-    BAL.multiplyScalar(p_to_edge);
-    normalize(IMB);
-    IMB.multiplyScalar(1-p_to_edge);
-    // now construct a balanced vector proportional
-    // to the length from the edge to the p towards the axis
-    // so that this be a unit vector if p is the origin.
-    let result = new THREE.Vector3();
-    result.add(IMB);
-    result.add(BAL);
-    return result;
-    
-}
-
-// This is an attempt to invert the above function, which is basically needed
-function invertTriBalance2to3(vec,wtc,normAndLen = L2) {
-    let WTC = [new THREE.Vector2(wtc[0][0],wtc[0][1]),
-               new THREE.Vector2(wtc[1][0],wtc[1][1]),
-               new THREE.Vector2(wtc[2][0],wtc[2][1])];
-    
-    // First, can we determine the blance and imbalance coefficients?
-    let min = Math.min(Math.min(vec.x,vec.y),vec.z);
-    let imb = new THREE.Vector3(vec.x - min, vec.y - min, vec.z - min);
-    let bal = vec.clone();
-    bal.sub(imb);
-    // Now that we have balance, we need to compute it's length---unfortuantely,
-    // This length is dependent on the norm we chose!
-    let length = normAndLen[1];
-    let imb_r = length(imb);
-    let bal_r = length(bal);
-    console.log(" L(VEC),L(BAL), L(IMB)",length(vec),bal_r,imb_r);;
-    console.assert(Math.abs((bal_r+imb_r) - 1) <   1e-5);
-
-    // Now we have the ratios. We need to determine the direction.
-    // this is a function of the imbalance vector. We could determine
-    // which side we are on, and then compute our position along that
-    // to determine a point on the triangle, and then multiply by the imb_r
-    // to obtain the actual point.
-    // At least one value of imb will be zero.
-    var first_zero = -1;
-    var p0,p1,alpha;
-    // the points are OPPOSITE the zero
-    if (imb.x == 0) {
-        first_zero = 0;
-        // Which way should it be?
-        p0 = WTC[2];
-        p1 = WTC[1];
-        alpha = imb.y/(imb.y + imb.z);
-    } else if (imb.y == 0) {
-        first_zero = 1;
-        p0 = WTC[2];
-        p1 = WTC[0];
-        alpha = imb.z/(imb.x + imb.y);        
-    } else if (imb.z == 0) {
-        first_zero = 2;
-        p0 = WTC[0];
-        p1 = WTC[1];
-        alpha = imb.x/(imb.x + imb.z);        
-    }
-    console.assert(first_zero != -1);
-    var onTriangle = new THREE.Vector2();
-    onTriangle.lerpVectors(p0,p1,alpha);
-    // now onTriangle, should in theory be a point on the triangle
-    console.log("ON TRIANGLE",onTriangle);
-    // now, having found that we interpolate a ray to it of length bal_r...
-    var pnt = new THREE.Vector2();
-    var origin = new THREE.Vector2(0,0);
-    // Why this choice?
-    pnt.lerpVectors(origin,onTriangle,imb_r);
-    return pnt;
-}
-
-function testTriBalance2to3() {
-    let p = new THREE.Vector2(30000,30);    
-    TriBalance2to3(p,WORLD_TRIANGLE_COORDS,L1NORM);
-    let py = new THREE.Vector2(0,WORLD_TRIANGLE_COORDS[2][1]);
-    TriBalance2to3(py,WORLD_TRIANGLE_COORDS,L1NORM);
-}
-
-function testInversion() {
-    let p = new THREE.Vector2(30,30);    
-    var vp = TriBalance2to3(p,WORLD_TRIANGLE_COORDS,L1NORM);
-    var vp_inv = invertTriBalance2to3(vp,WORLD_TRIANGLE_COORDS,L1);
-    // test length here
-    var vpc = vp_inv.clone();
-    vpc.sub(p);
-    console.assert(vpc.length() < 1e-4);
-    
-    let py = new THREE.Vector2(0,WORLD_TRIANGLE_COORDS[2][1]);
-    var vpy = TriBalance2to3(py,WORLD_TRIANGLE_COORDS,L1NORM);    
-    var vpy_inv = invertTriBalance2to3(vpy,WORLD_TRIANGLE_COORDS,L1);
-    
-    var vpyc = vpy_inv.clone();
-    vpyc.sub(py);
-    console.assert(vpyc.length() < 1e-4);
-}
-
-
 
 /**
  * Setup a given element as a dropzone.
@@ -979,28 +1012,19 @@ function setupDropzone (el, accept) {
       event.relatedTarget.textContent = 'Drag me…';
     })
     .on('drop', function (event) {
-//        console.log("drop event",event);
       removeClass(event.target, '-drop-over');
         event.relatedTarget.textContent = 'Dropped';
         var element = event.relatedTarget;
-        console.log("element",element.offsetLeft,element.offsetTop);
-        console.log("this", event.target.offsetLeft,event.target.offsetTop);
         var draggedBox = element.getBoundingClientRect();
         element.textContent = CUR_TEXT;                
         var droppableBox = event.target.getBoundingClientRect();
-        console.log("bounding",
-                    event.target.getBoundingClientRect());
-        console.log("bounding",
-                    draggedBox);
         var xc = event.dragEvent.clientX;
         var yc = event.dragEvent.clientY;
-//        console.log("xc,yc",xc,yc);
         var y = yc - droppableBox.y;
         var x = xc - droppableBox.x;
         // we need to convert this to "world" coordinates, not viewport...
         var yc = -(y + -250);
         var xc = x + -250;
-        console.log("X,Y",xc,yc);
         var atp = {x: xc,y: yc};
 
         // this is sort of any ugly way to do this
@@ -1017,13 +1041,12 @@ function setupDropzone (el, accept) {
             ADDED_TET_TOOLs.push(atp);                        
         }
 
-        let d4 = RSLIDER.getValue()/100;
-        console.log("RSLIDER.getValue()",d4);
+        let d3 = RSLIDER.getValue()/100;
         // Our basic idea here is that the fourth dimension
         // is fixed by the slider, so the others scale to match it.
         // The way it balances depends on our norm.
 
-
+        $("#d3").text(RSLIDER.getValue() + '%');
 
         function getRadioValue(name) {
             var rates = document.getElementsByName(name);
@@ -1036,14 +1059,11 @@ function setupDropzone (el, accept) {
             return rate_value+1;
         }
         var normToUse = getRadioValue("norm");
-        alert(normToUse);
 
-        var norm_to_use = (normToUse == 1? L1NORM :L2NORM);
+        var norm_to_use = (normToUse == 1 ? L1NORM :L2NORM);
         
         let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
         
-        console.log("BALANCE",bal);
-
         var balancep = document.getElementById("balancefourth").checked;
         if (balancep) {
 
@@ -1051,23 +1071,19 @@ function setupDropzone (el, accept) {
             // If we are using the L1NORM, it is linear.
             // If we are using the L2NORM, c = sqrt(1 - a^2).
             var c;
-            // one can conjecture here that c = (1 - d4**n)**(1/n) for other norms
+            // one can conjecture here that c = (1 - d3**n)**(1/n) for other norms
             if (norm_to_use == L1NORM) {
-                c = 1 - d4;
+                c = 1 - d3;
             } else {
-                c = Math.sqrt( 1 - d4**2);
+                c = Math.sqrt( 1 - d3**2);
             }
             bal.multiplyScalar(c);
         }
 
-        
-
-        $( "#mind" ).text( (bal.x * 100).toFixed(0) +  "%" );
-        $( "#body" ).text( (bal.y * 100).toFixed(0) +  "%" );
-        $( "#spirit" ).text( (bal.z * 100).toFixed(0) +  "%" );
-        $( "#fourth" ).text( (d4 * 100).toFixed(0) +  "%" );
-        
-
+        $( "#d0" ).text( (bal.x * 100).toFixed(0) +  "%" );
+        $( "#d1" ).text( (bal.y * 100).toFixed(0) +  "%" );
+        $( "#d2" ).text( (bal.z * 100).toFixed(0) +  "%" );
+        $( "#d3" ).text( (d3 * 100).toFixed(0) +  "%" );
         
         render_svgs();
     });
@@ -1102,9 +1118,7 @@ interact(document).on('ready', function () {
 
 WORLD_TRIANGLE_COORDS = get_world_triangle();
 
-testGetRayToLineSegmentIntersection();
-testTriBalance2to3();
-testInversion();
+testAllTriBalance();
 
       </script>
 
