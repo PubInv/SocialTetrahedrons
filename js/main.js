@@ -381,7 +381,7 @@ var params = {
 };
 
 
-function initGraphics() {
+function initGraphics(window_width,window_height) {
 
     am.container = document.getElementById('threecontainer');
 
@@ -390,13 +390,13 @@ function initGraphics() {
 
     if (OPERATION == "helices") {
         var width = 10;
-        var height = width * (window.innerHeight * am.window_height_factor) / window.innerWidth;
+        var height = width * (window_height * am.window_height_factor) / window_width;
         am.camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000);
     } else {
-        am.camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight * am.window_height_factor), PERSPECTIVE_NEAR, 2000);
+        am.camera = new THREE.PerspectiveCamera(60, window_width / (window_height * am.window_height_factor), PERSPECTIVE_NEAR, 2000);
     }
 
-    //   am.camera.aspect = window.innerWidth / (window.innerHeight * am.window_height_factor);
+    //   am.camera.aspect = window_width / (window_height * am.window_height_factor);
 
     var origin = new THREE.Vector3(0, 0, 0);
     am.camera.lookAt(origin);
@@ -418,7 +418,8 @@ function initGraphics() {
     am.renderer.autoClearColor = true;
 
     am.renderer.setPixelRatio(window.devicePixelRatio);
-    am.renderer.setSize(window.innerWidth, window.innerHeight * am.window_height_factor);
+    // I think this is where we want to try doing this....
+    am.renderer.setSize(window_width, window_height * am.window_height_factor);
     am.SCREEN_WIDTH = am.renderer.getSize().width;
     am.SCREEN_HEIGHT = am.renderer.getSize().height;
     am.camera.radius = (am.SCREEN_WIDTH + am.SCREEN_HEIGHT) / this.CAMERA_RADIUS_FACTOR;
@@ -468,29 +469,9 @@ function initGraphics() {
 
     am.sceneOrtho = new THREE.Scene();
 
-    window.addEventListener('resize', onWindowResize, false);
+//    window.addEventListener('resize', onWindowResize, false);
 
 }
-
-// AM.prototype.push_body_mesh_pair = function (body, mesh) {
-//     this.meshes.push(mesh);
-//     this.bodies.push(body);
-// }
-// AM.prototype.remove_body_mesh_pair = function (body, mesh) {
-//     for (var i = this.meshes.length - 1; i >= 0; i--) {
-//         if (this.meshes[i].name === mesh.name) {
-//             this.meshes.splice(i, 1);
-//             this.bodies.splice(i, 1);
-//         }
-//     }
-//     delete mesh["ammo_obj"];
-//     for (var i = this.rigidBodies.length - 1; i >= 0; i--) {
-//         if (this.rigidBodies[i].name === body.name) {
-//             this.rigidBodies.splice(i, 1);
-//         }
-//     }
-// }
-
 
 function onWindowResize() {
     am.camera.aspect = window.innerWidth / (window.innerHeight * am.window_height_factor);
@@ -591,7 +572,8 @@ function initiation_stuff() {
 
 
 function init() {
-    initGraphics();
+    //    initGraphics(window.innerWidth,window.innerHeight);
+    initGraphics(700,500);    
     //    createGround(am);
 }
 
@@ -668,6 +650,16 @@ function add_data_object() {
     render_data_objects();
 }
 
+function add_data_object_aux(bv,lab) {
+    DATA_OBJECTS.push({label: lab,
+                       pos: bv});
+    CURRENT_DATA_OBJECT = DATA_OBJECTS.length - 1;
+
+    // Now how do I add a simple object that can be moved?
+
+    render_data_objects();
+}
+
 const GRADIENT = 0.1;
 
 function move_current(f) {
@@ -710,42 +702,75 @@ function spirit_minus_click() {
 }
 
 
+function render_individual(d) {
+    
+    var tcolor = new THREE.Color("white");
+    var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
+    var tet = new THREE.TetrahedronGeometry(0.2, 0);
+
+    // https://stackoverflow.com/questions/12784455/three-js-rotate-tetrahedron-on-correct-axis
+    tet.applyMatrix(
+        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
+
+    tet.applyMatrix(
+        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 1, 0 ).normalize(),
+                                              45*(Math.PI/180) )
+    );
+
+    tet.translate(d.pos.x,d.pos.y,d.pos.z);
+    
+    var mesh = new THREE.Mesh(tet, cmat);
+    
+    mesh.castShadow = false;
+    mesh.receiveShadow = false;
+    mesh.debugObject = true;
+
+    mesh.obj_type = "data_tet";
+    am.scene.add(mesh);
+
+    var label = makeTextSprite(d.label,{fontsize: 60 },"red");
+    label.position.set(d.pos.x,d.pos.y,d.pos.z);
+
+    label.userData.obj_type = "data_tet";
+    am.grid_scene.add(label);
+}
+
 function render_data_objects() {
-    var table = document.getElementById('object_table');
-    function addRow(d,i) {
-        var row = table.insertRow();
+    // var table = document.getElementById('object_table');
+    // function addRow(d,i) {
+    //     var row = table.insertRow();
 
-        // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-        var cell0 = row.insertCell(0);
-        cell0.innerHTML = d.label;
-        var cell1 = row.insertCell(1);
-        cell1.innerHTML = "<button class='currentbutton' id='current"+i+"'>Make Current</button>";
-    }
-    var rows = table.getElementsByTagName("tr")
-    const n = rows.length;
-    for (var i = 1; i < n; i++) {
-        table.deleteRow(-1);
-    }
-    DATA_OBJECTS.forEach(addRow);
+    //     // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+    //     var cell0 = row.insertCell(0);
+    //     cell0.innerHTML = d.label;
+    //     var cell1 = row.insertCell(1);
+    //     cell1.innerHTML = "<button class='currentbutton' id='current"+i+"'>Make Current</button>";
+    // }
+    // var rows = table.getElementsByTagName("tr")
+    // const n = rows.length;
+    // for (var i = 1; i < n; i++) {
+    //     table.deleteRow(-1);
+    // }
+//    DATA_OBJECTS.forEach(addRow);
 
-    let current_label = document.getElementById("current-label");    
-    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;    
+//    let current_label = document.getElementById("current-label");    
+//    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;    
     
-$(".currentbutton").on('click', function(event){
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    //(... rest of your JS code)
-    console.log(event);
-    console.log(event.currentTarget.id);
-    let idstr = event.currentTarget.id.substring("current".length);
-    let idnum = parseInt(idstr);
-    console.log(idnum);
-    CURRENT_DATA_OBJECT = idnum;
-    let current_label = document.getElementById("current-label");
-    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;
+// $(".currentbutton").on('click', function(event){
+//     event.stopPropagation();
+//     event.stopImmediatePropagation();
+//     //(... rest of your JS code)
+//     console.log(event);
+//     console.log(event.currentTarget.id);
+//     let idstr = event.currentTarget.id.substring("current".length);
+//     let idnum = parseInt(idstr);
+//     console.log(idnum);
+//     CURRENT_DATA_OBJECT = idnum;
+//     let current_label = document.getElementById("current-label");
+//     current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;
     
     
-});
+// });
 
 
     am.scene.children.forEach(function (child) {
@@ -763,42 +788,9 @@ $(".currentbutton").on('click', function(event){
         }
     });
 
-    DATA_OBJECTS.forEach(d => {
-
-        // we have no way to release this.
-    
-    var tcolor = new THREE.Color("white");
-    var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
-    var tet = new THREE.TetrahedronGeometry(0.2, 0);
-
-    // https://stackoverflow.com/questions/12784455/three-js-rotate-tetrahedron-on-correct-axis
-    tet.applyMatrix(
-        new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 1, 0, -1 ).normalize(), Math.atan( Math.sqrt(2)) ) );
-
-        tet.applyMatrix(
-            new THREE.Matrix4().makeRotationAxis( new THREE.Vector3( 0, 1, 0 ).normalize(),
-                                                  45*(Math.PI/180) )
-        );
-
-
-        tet.translate(d.pos.x,d.pos.y,d.pos.z);
-        
-        var mesh = new THREE.Mesh(tet, cmat);
-        
-        mesh.castShadow = false;
-        mesh.receiveShadow = false;
-        mesh.debugObject = true;
-
-        mesh.obj_type = "data_tet";
-        am.scene.add(mesh);
-
-        var label = makeTextSprite(d.label,{fontsize: 60 },"red");
-        label.position.set(d.pos.x,d.pos.y,d.pos.z);
-
-        label.userData.obj_type = "data_tet";
-        am.grid_scene.add(label);
-        
-    });
+    DATA_OBJECTS.forEach(d =>
+                         render_individual(d)
+    );
 
 }
 
@@ -826,35 +818,35 @@ $(".currentbutton").on('click', function(event){
     
     $(function () { main(); });
     function main() {
-        executeButton = document.getElementById('execute-button');
-        funcStatus = document.getElementById('function-status');
-        var addButton = document.getElementById('add');
-        addButton.addEventListener('click', add_data_object);
+        // executeButton = document.getElementById('execute-button');
+        // funcStatus = document.getElementById('function-status');
+        // var addButton = document.getElementById('add');
+        // addButton.addEventListener('click', add_data_object);
 
-        new_label = document.getElementById('new_label');        
-        executeButton.addEventListener('click', onExecute);
-
-
-        up_button = document.getElementById('up');        
-        up_button.addEventListener('click', up_click);
-        dn_button = document.getElementById('dn');        
-        dn_button.addEventListener('click', dn_click);
+        // new_label = document.getElementById('new_label');        
+        // executeButton.addEventListener('click', onExecute);
 
 
-        mind_plus_button = document.getElementById('mind_plus');        
-        mind_plus_button.addEventListener('click', mind_plus_click);
-        mind_minus_button = document.getElementById('mind_minus');        
-        mind_minus_button.addEventListener('click', mind_minus_click);
+        // up_button = document.getElementById('up');        
+        // up_button.addEventListener('click', up_click);
+        // dn_button = document.getElementById('dn');        
+        // dn_button.addEventListener('click', dn_click);
 
-        body_plus_button = document.getElementById('body_plus');        
-        body_plus_button.addEventListener('click', body_plus_click);
-        body_minus_button = document.getElementById('body_minus');        
-        body_minus_button.addEventListener('click', body_minus_click);
 
-        spirit_plus_button = document.getElementById('spirit_plus');        
-        spirit_plus_button.addEventListener('click', spirit_plus_click);
-        spirit_minus_button = document.getElementById('spirit_minus');        
-        spirit_minus_button.addEventListener('click', spirit_minus_click);
+        // mind_plus_button = document.getElementById('mind_plus');        
+        // mind_plus_button.addEventListener('click', mind_plus_click);
+        // mind_minus_button = document.getElementById('mind_minus');        
+        // mind_minus_button.addEventListener('click', mind_minus_click);
+
+        // body_plus_button = document.getElementById('body_plus');        
+        // body_plus_button.addEventListener('click', body_plus_click);
+        // body_minus_button = document.getElementById('body_minus');        
+        // body_minus_button.addEventListener('click', body_minus_click);
+
+        // spirit_plus_button = document.getElementById('spirit_plus');        
+        // spirit_plus_button.addEventListener('click', spirit_plus_click);
+        // spirit_minus_button = document.getElementById('spirit_minus');        
+        // spirit_minus_button.addEventListener('click', spirit_minus_click);
         
 
 

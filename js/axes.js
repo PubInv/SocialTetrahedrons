@@ -41,7 +41,7 @@ function createAGrid(opts) {
       gridGeo.vertices.push(new THREE.Vector3(i, config.width, 0));
     }
     
-  var line = new THREE.Line(gridGeo, material, THREE.LinePieces);
+  var line = new THREE.Line(gridGeo, material, THREE.LineSegments);
   gridObject.add(line);
 
   return gridObject;
@@ -71,18 +71,22 @@ function createZeroedGrid(opts) {
     var halfheight = config.cellheight*config.numCellsPosHeight;
     var halfwidth = config.cellwidth*config.numCellsPosWidth;
     for (var i = -config.numCellsPosWidth; i <= config.numCellsPosWidth; i += stepw) {
-      gridGeo.vertices.push(new THREE.Vector3(-halfheight, i*config.cellwidth, 0));
+        gridGeo = new THREE.Geometry(),                
+        gridGeo.vertices.push(new THREE.Vector3(-halfheight, i*config.cellwidth, 0));
 	gridGeo.vertices.push(new THREE.Vector3(halfheight, i*config.cellwidth, 0));
+        var line = new THREE.Line(gridGeo, material, THREE.LineSegments);
+        gridObject.add(line);
     }
     
     //height
     for (var i = -config.numCellsPosHeight; i <= config.numCellsPosHeight; i += steph) {
-      gridGeo.vertices.push(new THREE.Vector3(i*config.cellheight, -halfwidth, 0));
+        gridGeo = new THREE.Geometry(),        
+        gridGeo.vertices.push(new THREE.Vector3(i*config.cellheight, -halfwidth, 0));
 	gridGeo.vertices.push(new THREE.Vector3(i*config.cellheight, halfwidth, 0));
+        var line = new THREE.Line(gridGeo, material, THREE.LineSegments);
+        gridObject.add(line);
     }
     
-  var line = new THREE.Line(gridGeo, material, THREE.LinePieces);
-  gridObject.add(line);
 
   return gridObject;
 }
@@ -117,7 +121,7 @@ function labelAxis(width, data, direction){
 
 // This was written by Lee Stemkoski
 // https://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
-function makeTextSprite( message, parameters )
+function makeTextSprite( message, parameters, color = "yellow" )
 {
 	if ( parameters === undefined ) parameters = {};
 
@@ -133,7 +137,7 @@ function makeTextSprite( message, parameters )
 
 
 	// text color
-        context.fillStyle = "yellow";
+        context.fillStyle = color;
 
 	context.fillText( message, 0, fontsize);
 
