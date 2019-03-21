@@ -108,8 +108,7 @@ section .section-title {
 
 canvas {
     border: 1px solid black;
-    width: 100%;
-    height: 400px;
+width: 100%;
 }
 
     </style>
@@ -168,184 +167,180 @@ canvas {
       </style>
 
 <body>
-<br>
-    <div class="container">
+  <br>
+  <div class="container">
     <h1 class="section-title h1">Social Tetrahedra</h1>
     
     <h2>First Three Dimensions</h2>
-<div>
-<button type="button" class="btn btn-primary" id="MBS">Mind/Body/Spirit</button>
-<button type="button" class="btn btn-secondary" id="HHH">Head/Heart/Hands</button>
-<button type="button" class="btn btn-success" id="PSM">Physical/Social/Mental</button>
-<button type="button" class="btn btn-danger" id="SEF">Strength/Endurance/Flexibility</button>
-<button type="button" class="btn btn-warning" id="FSH">Father/Son/Holy Spirit</button>
+    <div>
+      <button type="button" class="btn btn-primary" id="MBS">Mind/Body/Spirit</button>
+      <button type="button" class="btn btn-secondary" id="HHH">Head/Heart/Hands</button>
+      <button type="button" class="btn btn-success" id="PSM">Physical/Social/Mental</button>
+      <button type="button" class="btn btn-danger" id="SEF">Strength/Endurance/Flexibility</button>
+      <button type="button" class="btn btn-warning" id="FSH">Father/Son/Holy Spirit</button>
     </div>
     
     <fieldset>
-    <legend id="normToUse">Balancing Norm to Use: </legend>
-    <label for="l1norm">L1 Norm (Absolute Value):</label>
-    <input type="radio" name="norm" id="l1norm" checked="checked">
-    <label for="l2norm">L2 Norm (Sqrt of Squares):</label>
-    &nbsp;
-    <input type="radio" name="norm" id="l2norm">    
+      <span id="normToUse">Balancing Norm to Use: </span>
+      <label for="l1norm">L1 Norm (Absolute Value):</label>
+      <input type="radio" name="norm" id="l1norm" checked="checked">
+      <label for="l2norm">L2 Norm (Sqrt of Squares):</label>
+      &nbsp;
+      <input type="radio" name="norm" id="l2norm">    
     </fieldset>
-  <fieldset>
+    <fieldset>
 
-<label for="d3name">Fourth Dimension Name:</label>    
-    <input type="text" id="d3name" value="Condition"></input>
-    <label for="balancefourth">Balance fourth with Norm:</label>
-    <input type="checkbox" name="balancefourth" id="balancefourth">
+      <label for="d3name">Fourth Dimension Name:</label>    
+      <input type="text" id="d3name" value="Abundance"></input>
+      <label for="balancefourth">Balance fourth with Norm:</label>
+      <input type="checkbox" name="balancefourth" id="balancefourth">
     </fieldset>
     
     <fieldset style="display: inline}">
-    <label for="d0" id="d0l">Mind: </label>
-    <span type="text" id="d0">0%</span>
-    <label for="d1" id="d1l">, Body: </label>
-    <span type="text" id="d1">0%</span>
-    <label for="d2" id="d2l">, Spirit: </label>
-    <span type="text" id="d2">0%</span>
-    <label for="d3" id="d3l">, Condition: </label>
-    <span type="text" id="d3">0%</span>
+      <label for="d0" id="d0l">Mind: </label>
+      <span type="text" id="d0">0%</span>
+      <label for="d1" id="d1l">, Body: </label>
+      <span type="text" id="d1">0%</span>
+      <label for="d2" id="d2l">, Spirit: </label>
+      <span type="text" id="d2">0%</span>
+      <label for="d3" id="d3l">, Abundance: </label>
+      <span type="text" id="d3">0%</span>
     </fieldset>
 
 
-    </section>
+</section>
 
 
-    <div class="row">
-    <div class="col">
-				<nav>
-					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-						<a class="nav-item nav-link active" id="nav-create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="true">Create Social Tetrahedrons</a>
-						<a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#nav-social" role="tab" aria-controls="nav-show" aria-selected="false">Show Social Tetrahedrons</a>
-					</div>
+<div class="row">
+  <div class="col-6">
+    <!-- <nav> -->
+    <!--   <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist"> -->
+    <!--     <a class="nav-item nav-link active" id="nav-create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="true">Create Social Tetrahedrons</a> -->
+    <!--     <a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#nav-social" role="tab" aria-controls="nav-show" aria-selected="false">Show Social Tetrahedrons</a> -->
+    <!--   </div> -->
+    <!-- </nav> -->
+    <!-- <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent"> -->
+    <!--   <div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab"> -->
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <div class="col-2 col-sm-1">
+                <input id="fourthslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>    
+              </div>
+              <div class="col-4 col-sm-11">
+                <div id="create-canvas">
+                  <svg id="create_svg"  class="dropzone js-drop" height="400px" width="400px" viewbox="-200 -200 400 400"> 
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-2 col-sm-1">
+              </div>
+              <div class="col-4 col-sm-11">              
+                <div id="threecontainer" height="800px" width="500px"></div>
+</div>
+            </div>
+          </div>
+      <!--   </div> -->
+      <!-- </div> -->
+    </div>
+  </div>
+  <div class="col-6">
+    <nav>
+      <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="nav-projects-tab" data-toggle="tab" href="#nav-projects" role="tab" aria-controls="nav-projects" aria-selected="true">Projects</a>
+	<a class="nav-item nav-link" id="nav-persons-tab" data-toggle="tab" href="#nav-persons" role="tab" aria-controls="nav-persons" aria-selected="false">Persons</a>
+	<a class="nav-item nav-link" id="nav-places-tab" data-toggle="tab" href="#nav-places" role="tab" aria-controls="nav-places" aria-selected="false">Places</a>
+	<a class="nav-item nav-link" id="nav-tools-tab" data-toggle="tab" href="#nav-tools" role="tab" aria-controls="nav-tools" aria-selected="false">Tools</a>
+      </div>
     </nav>
+    <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent" >
+      <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
 
-
-				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
-
-    <div class="row">
-    <div class="col-8">
-    <div id="threecontainer" height="500px" width="700px"></div>
-    
-    
-    </div>
-    
-      <div class="col-2 col-sm-1">
-    <input id="fourthslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>    
+        <ul class="list-group" id="nav-projects-list" >
+          <li class="list-group-item active">Cras justo odio</li>
+        </ul>
       </div>
-    <div class="col-4 col-sm-11">
-    
-    <div id="create-canvas">
-    <svg id="create_svg"  class="dropzone js-drop" height="500" width="700" viewbox="-250 -250 500 500"> 
-    </svg>
-    </div>
+      <div class="tab-pane fade" id="nav-persons" role="tabpanel" aria-labelledby="nav-persons-tab">
+        <ul class="list-group" id="nav-persons-list">
+          <li class="list-group-item active">Cras justo odio</li>
+        </ul>
+
+      </div>
+      <div class="tab-pane fade" id="nav-places" role="tabpanel" aria-labelledby="nav-places-tab">
+        <ul class="list-group" id="nav-places-list">
+          <li class="list-group-item active">Cras justo odio</li>
+        </ul>
+      </div>
+      <div class="tab-pane fade" id="nav-tools" role="tabpanel" aria-labelledby="nav-tools-tab">
+        <ul class="list-group" id="nav-tools-list">
+          <li class="list-group-item active">Cras justo odio</li>
+        </ul>
       </div>
     </div>
-    
-					</div>
-    <div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-show-tab">
-    
-					</div>
-    </div>
-			</div>
-                        
-			<div class="col-4">
-				<nav>
-					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-						<a class="nav-item nav-link active" id="nav-projects-tab" data-toggle="tab" href="#nav-projects" role="tab" aria-controls="nav-projects" aria-selected="true">Projects</a>
-						<a class="nav-item nav-link" id="nav-persons-tab" data-toggle="tab" href="#nav-persons" role="tab" aria-controls="nav-persons" aria-selected="false">Persons</a>
-						<a class="nav-item nav-link" id="nav-places-tab" data-toggle="tab" href="#nav-places" role="tab" aria-controls="nav-places" aria-selected="false">Places</a>
-						<a class="nav-item nav-link" id="nav-tools-tab" data-toggle="tab" href="#nav-tools" role="tab" aria-controls="nav-tools" aria-selected="false">Tools</a>
-					</div>
-				</nav>
-				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent" >
-    <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
-
-<ul class="list-group" id="nav-projects-list" >
-  <li class="list-group-item active">Cras justo odio</li>
-</ul>
-					</div>
-					<div class="tab-pane fade" id="nav-persons" role="tabpanel" aria-labelledby="nav-persons-tab">
-<ul class="list-group" id="nav-persons-list">
-  <li class="list-group-item active">Cras justo odio</li>
-</ul>
-
-					</div>
-					<div class="tab-pane fade" id="nav-places" role="tabpanel" aria-labelledby="nav-places-tab">
-<ul class="list-group" id="nav-places-list">
-  <li class="list-group-item active">Cras justo odio</li>
-</ul>
-								</div>
-					<div class="tab-pane fade" id="nav-tools" role="tabpanel" aria-labelledby="nav-tools-tab">
-<ul class="list-group" id="nav-tools-list">
-  <li class="list-group-item active">Cras justo odio</li>
-</ul>
-					</div>
-				</div>
-			</div>
-    </div>
-    <section>
-    <h1>
+  </div>
+</div>
+<section>
+  <h1>
     Social Tetrahedra
-</h1>
-    <p>
+  </h1>
+  <p>
     This is an <a href="">open source demonstration project</a> of <a href="https://pubinv.github.io/PubInv/">Public Invention</a>
     based on downloadable <a href="https://github.com/PubInv/SocialTetrahedrons/blob/master/Prototype-TetrahedralProfile-V2.docx">ideas</a> by Mark Frazier.
-    </p>
-    <h2>Usage</h2>
-    To specify the relative attributes of a project, person, place, or tool, first use the slider on the left
-to specify the 4th dimension. Then drag a project, person, place or tool onto the triangle. These three
-coordinates are considered "balanced", that is, the position on the triangle specifies them with a
-particular algorithm. The closer to one corner of the triangle you are, the more strongly you reflect that
-attribute. The center of the trinagle reflects all attributes equally--that is, "perfect balance."
-The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
-triangle.
-    <h2>L1 Norm vs. L2 Norm</h2>
-    <p>
+  </p>
+  <h2>Usage</h2>
+  To specify the relative attributes of a project, person, place, or tool, first use the slider on the left
+  to specify the 4th dimension. Then drag a project, person, place or tool onto the triangle. These three
+  coordinates are considered "balanced", that is, the position on the triangle specifies them with a
+  particular algorithm. The closer to one corner of the triangle you are, the more strongly you reflect that
+  attribute. The center of the trinagle reflects all attributes equally--that is, "perfect balance."
+  The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
+  triangle.
+  <h2>L1 Norm vs. L2 Norm</h2>
+  <p>
     To be able to write algorithms about the similarity or complimentarity of,
-for example, a person to a project in terms of Mind/Body/Spirit balance,
-we need a function to translate a position on the triangle into a mathematical
-object of some kind. We also must be able to invert this function, to
-obtain a position on the triangle from a mathematical object.
-    </p>
-    <p>
+    for example, a person to a project in terms of Mind/Body/Spirit balance,
+    we need a function to translate a position on the triangle into a mathematical
+    object of some kind. We also must be able to invert this function, to
+    obtain a position on the triangle from a mathematical object.
+  </p>
+  <p>
     The most obvious way to do this is to treat a given assertion as a vector
-with dimensions labeled, for example, Mind/Body/Spirit. Then a "balanced"
-vector maybe thought of an any vector of unit length. There are different
-ways to express the length of a vector. The L1 Norm is simply the sum
-of the absolute values, so by choosing that all dimensions sum to 1.0.
-    </p>
-    <p>
+    with dimensions labeled, for example, Mind/Body/Spirit. Then a "balanced"
+    vector maybe thought of an any vector of unit length. There are different
+    ways to express the length of a vector. The L1 Norm is simply the sum
+    of the absolute values, so by choosing that all dimensions sum to 1.0.
+  </p>
+  <p>
     However, it is also reasonable to use the L2 Norm, which is the "Euclidean distance." This is rather like saying every vector is a point on the surface
-of sphere of radius 1.0.  The components of the L2 Norm will sum to something
-usually greater than 1.0.
-    </p>
-    <h2>The Fourth Dimension</h2>
-    In Mark's conception, the fourth dimension is "condition", which may 
-be thought of a power or development. It is represented as a slider on the
-right. The checkbox labelled "Balance fourth with Norm" controls whether
-this dimension is thought of as separate, or whether we require a length 1
-vector of all for dimensions.
-        <h2 id="message_banner">Usage of the 3D View</h2>
-        <p> This is an interactive 3D simulation. To change the view, place your mouse in the view area, and
-            hold and "drag" the mouse to rotate the image.
-            The mouse wheel or a drag on your trackpad should zoom you in or out.</p>
-        <p>All of the code on this site is released under the Affero GNU General Public License, and I hope you will
-          reuse it. </p>
+    of sphere of radius 1.0.  The components of the L2 Norm will sum to something
+    usually greater than 1.0.
+  </p>
+  <h2>The Fourth Dimension</h2>
+  In Mark's conception, the fourth dimension is "condition", which may 
+  be thought of a power or development. It is represented as a slider on the
+  right. The checkbox labelled "Balance fourth with Norm" controls whether
+  this dimension is thought of as separate, or whether we require a length 1
+  vector of all for dimensions.
+  <h2 id="message_banner">Usage of the 3D View</h2>
+  <p> This is an interactive 3D simulation. To change the view, place your mouse in the view area, and
+    hold and "drag" the mouse to rotate the image.
+    The mouse wheel or a drag on your trackpad should zoom you in or out.</p>
+  <p>All of the code on this site is released under the Affero GNU General Public License, and I hope you will
+    reuse it. </p>
 
-    <h2>Purpose</h2>
-    <p>The ultimate purpose is match needs with offers, for example to work on technical projects, base on an interpretation
-of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
-captures, for example, the Mind/Body/Spirt and Condition situation, and might then be matched with projects that 
-are suited to them. Exactly how this will be done is still being worked out; this is a step.
-    </p>
-    <h2>License</h2>
-    You are free to reuse this software under the terms
-of the GNU Affero General Public License.
-    </section>
-    </div>
+  <h2>Purpose</h2>
+  <p>The ultimate purpose is to match needs with offers, for example to work on technical projects, base on an interpretation
+    of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
+    captures, for example, the Mind/Body/Spirt and Abundance situation, and might then be matched with projects that 
+    are suited to them. Exactly how this will be done is still being worked out; this is a step.
+  </p>
+  <h2>License</h2>
+  You are free to reuse this software under the terms
+  of the GNU Affero General Public License.
+</section>
+</div>
 
 </div>
 
@@ -361,12 +356,12 @@ of the GNU Affero General Public License.
     
 <script>
 var WORLD_TRIANGLE_COORDS;
-const w = 500;
-const h = 500;
+const w = 400;
+const h = 400;
 
 const TRIANGLE_WIDTH = 1;
 const TRIANGLE_HEIGHT = Math.sqrt(3)/2;
-const SIDE_LENGTH_PIXEL = 400;
+const SIDE_LENGTH_PIXEL = 300;
 const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
 const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
 
@@ -378,6 +373,8 @@ function get_world_triangle() {
 }
 
 </script>
+
+<script src="./js/main.js"></script>
 
 <script>
 
@@ -853,23 +850,28 @@ function setupDropzone (el, accept) {
             var y = yc - droppableBox.y;
             var x = xc - droppableBox.x;
             // we need to convert this to "world" coordinates, not viewport...
-            var yc = -(y + -250);
-            var xc = x + -250;
+            var yc = -(y + -200);
+            var xc = x + -200;
             var triangle_coords = {x: xc,y: yc};
             CUR_TRIANGLE_COORDS = triangle_coords;
 
             // this is sort of any ugly way to do this
+            var color;
             if ($('#nav-projects.tab-pane.fade.show.active').length) {
-                ADDED_TET_PROJs.push(triangle_coords);            
+                ADDED_TET_PROJs.push(triangle_coords);
+                color = "blue";
             }
             if ($('#nav-persons.tab-pane.fade.show.active').length) {
-                ADDED_TET_PERSs.push(triangle_coords);                        
+                ADDED_TET_PERSs.push(triangle_coords);
+                color = "red";
             }
             if ($('#nav-places.tab-pane.fade.show.active').length) {
-                ADDED_TET_PLACs.push(triangle_coords);                        
+                ADDED_TET_PLACs.push(triangle_coords);
+                color = "greeen";
             }
             if ($('#nav-tools.tab-pane.fade.show.active').length) {
-                ADDED_TET_TOOLs.push(triangle_coords);                        
+                ADDED_TET_TOOLs.push(triangle_coords);
+                color = "orange";                
             }
 
             setBalance(triangle_coords);
@@ -879,9 +881,9 @@ function setupDropzone (el, accept) {
             // the z axis is the other two (positive vs. negative),
             // and the y axis as up and down!
 
-            var for3dTet = new THREE.Vector3(-xc/250,d3,-yc/250);
+            var for3dTet = new THREE.Vector3(-xc/200,d3,-yc/200);
             // I need to be more careful about the handedness of my system
-            add_data_object_aux(for3dTet,CUR_TEXT);
+            add_data_object_aux(for3dTet,CUR_TEXT,color);
             
             render_svgs();
         });
@@ -917,9 +919,13 @@ interact(document).on('ready', function () {
 WORLD_TRIANGLE_COORDS = get_world_triangle();
 
 testAllTriBalance();
-
+    init_3d(400,800);
+   animate();
 </script>
     
-    <script src="./js/main.js"></script>
+
+<script>
+
+</script>
 </body>
 </html>

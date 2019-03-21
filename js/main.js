@@ -571,17 +571,16 @@ function initiation_stuff() {
 }
 
 
-function init() {
+function init_3d(w,h) {
     //    initGraphics(window.innerWidth,window.innerHeight);
-    initGraphics(700,500);    
+    initGraphics(w,h);    
     //    createGround(am);
 }
 
 
 initiation_stuff();
 
-init();
-animate();
+// animate();
 
 
 
@@ -650,8 +649,9 @@ function add_data_object() {
     render_data_objects();
 }
 
-function add_data_object_aux(bv,lab) {
+function add_data_object_aux(bv,lab,color) {
     DATA_OBJECTS.push({label: lab,
+                       color: color,
                        pos: bv});
     CURRENT_DATA_OBJECT = DATA_OBJECTS.length - 1;
 
@@ -704,7 +704,7 @@ function spirit_minus_click() {
 
 function render_individual(d) {
     
-    var tcolor = new THREE.Color("white");
+    var tcolor = new THREE.Color(d.color);
     var cmat = new THREE.MeshPhongMaterial({ color: tcolor });
     var tet = new THREE.TetrahedronGeometry(0.2, 0);
 
