@@ -15,8 +15,6 @@
 // along with TriadBalance.  If not, see <https://www.gnu.org/licenses/>.
 
 
-
-
 function GetRayToLineSegmentIntersection(rayOrigin,rayDirection,point1,point2)
 {
 // This code from here: https://stackoverflow.com/questions/14307158/how-do-you-check-for-intersection-between-a-line-segment-and-a-line-ray-emanatin
