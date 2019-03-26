@@ -27,7 +27,8 @@ Copyright (C) 2019 by
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+  <link rel="shortcut icon" type="image/ico" href="./images/favicon.ico"/>
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
 
     <script src="./js/three.js"></script>
@@ -179,7 +180,8 @@ width: 100%;
       <button type="button" class="btn btn-danger" id="SEF">Strength/Endurance/Flexibility</button>
       <button type="button" class="btn btn-warning" id="FSH">Father/Son/Holy Spirit</button>
     </div>
-    
+
+<!--
     <fieldset>
       <span id="normToUse">Balancing Norm to Use: </span>
       <label for="l1norm">L1 Norm (Absolute Value):</label>
@@ -187,7 +189,9 @@ width: 100%;
       <label for="l2norm">L2 Norm (Sqrt of Squares):</label>
       &nbsp;
       <input type="radio" name="norm" id="l2norm">    
-    </fieldset>
+  </fieldset>
+  -->
+  
     <fieldset>
 
       <label for="d3name">Fourth Dimension Name:</label>    
@@ -297,30 +301,10 @@ width: 100%;
   attribute. The center of the trinagle reflects all attributes equally--that is, "perfect balance."
   The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
   triangle.
-  <h2>L1 Norm vs. L2 Norm</h2>
-  <p>
-    To be able to write algorithms about the similarity or complimentarity of,
-    for example, a person to a project in terms of Mind/Body/Spirit balance,
-    we need a function to translate a position on the triangle into a mathematical
-    object of some kind. We also must be able to invert this function, to
-    obtain a position on the triangle from a mathematical object.
-  </p>
-  <p>
-    The most obvious way to do this is to treat a given assertion as a vector
-    with dimensions labeled, for example, Mind/Body/Spirit. Then a "balanced"
-    vector maybe thought of an any vector of unit length. There are different
-    ways to express the length of a vector. The L1 Norm is simply the sum
-    of the absolute values, so by choosing that all dimensions sum to 1.0.
-  </p>
-  <p>
-    However, it is also reasonable to use the L2 Norm, which is the "Euclidean distance." This is rather like saying every vector is a point on the surface
-    of sphere of radius 1.0.  The components of the L2 Norm will sum to something
-    usually greater than 1.0.
-  </p>
   <h2>The Fourth Dimension</h2>
-  In Mark's conception, the fourth dimension is "condition", which may 
-  be thought of a power or development. It is represented as a slider on the
-  right. The checkbox labelled "Balance fourth with Norm" controls whether
+  In Mark's conception, the fourth dimension is "abundance" or "condition", which may 
+  be thought of as power or development. It is represented as a slider on the
+  left. The checkbox labeled "Balance fourth with Norm" controls whether
   this dimension is thought of as separate, or whether we require a length 1
   vector of all for dimensions.
   <h2 id="message_banner">Usage of the 3D View</h2>
@@ -352,7 +336,7 @@ width: 100%;
 
     <script src="./js/bootstrap-slider.js"></script>
     
-    <script src="./js/TriBalance.js"></script>
+    <script src="./js/TriadBalance.js"></script>
     
 <script>
 var WORLD_TRIANGLE_COORDS;
@@ -366,11 +350,17 @@ const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
 const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
 
 function get_world_triangle() {
-     let wtc = [[-SIDE_LENGTH_PIXEL/2,BASE],
-                             [SIDE_LENGTH_PIXEL/2,BASE],
-               [0,BASE+SIDE_LENGTH_HEIGHT]];
-    return wtc;
+    let wtc_vector = [new THREE.Vector2(-SIDE_LENGTH_PIXEL/2,BASE),
+               new THREE.Vector2(SIDE_LENGTH_PIXEL/2,BASE),
+               new THREE.Vector2(0,BASE+SIDE_LENGTH_HEIGHT)];
+    return wtc_vector;
 }
+
+// These function convert my abstract coordinates
+// to svg coordinates.
+function vph(h,y) { return (-y); }
+function vpw(w,x) { return (x); }
+
 
 </script>
 
@@ -536,9 +526,9 @@ function render_create_svg() {
 
     let wtc = WORLD_TRIANGLE_COORDS;
 
-    var array = [ [ vpw(w,wtc[0][0]),vph(h,wtc[0][1]) ], 
-                  [ vpw(w,wtc[1][0]),vph(h,wtc[1][1]) ],
-                  [ vpw(w,wtc[2][0]),vph(h,wtc[2][1]) ] ];
+    var array = [ [ vpw(w,wtc[0].x),vph(h,wtc[0].y) ], 
+                  [ vpw(w,wtc[1].x),vph(h,wtc[1].y) ],
+                  [ vpw(w,wtc[2].x),vph(h,wtc[2].y) ] ];
     
     for (value of array) {
         var point = svg.createSVGPoint();
@@ -547,8 +537,6 @@ function render_create_svg() {
         polygon.points.appendItem(point);
     }
     polygon.style.fill='lemonchiffon';
-
-    
 
     // These are ugly, they should really be computed from the text.
     // In fact, since this does not change, the whole thing could go into
@@ -559,8 +547,12 @@ function render_create_svg() {
     append_text(svg,array[0][0]-40,array[0][1]+20,
                 THREE_DIMENSIONS[CURRENT_D][0]);
     append_text(svg,array[1][0],array[1][1]+20,
-                THREE_DIMENSIONS[CURRENT_D][1]
-               );
+                THREE_DIMENSIONS[CURRENT_D][1]);
+
+  for(var i = 0; i < 3; i++) {
+    DIMENSION_NAMES[i] = THREE_DIMENSIONS[CURRENT_D][i];
+  }
+  DIMENSION_NAMES[i] = $("#d3name").val();
     
     var circle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
     circle.setAttributeNS(null, 'cx', vpw(w,0));
@@ -636,8 +628,15 @@ function main_social() {
     }
     function set_and_render(cur) {
         CURRENT_D = cur;
-        set_dimension_labels(CURRENT_D);
-        render_svgs();        
+      set_dimension_labels(CURRENT_D);
+      var names = [];
+      for(var i = 0; i < 3; i++) {
+        names[i] = THREE_DIMENSIONS[CURRENT_D][i];
+      }
+      names[3] = $("#d3name").val();
+      set_dimension_names(names);
+      render_svgs();
+      update_dimension_names();
     }
     
     $("#MBS").click(() => { set_and_render("MBS");});
@@ -736,6 +735,18 @@ interact('.js-drag')
 
 setupDropzone('.js-drop', '.js-drag');
 
+function getRadioValue(name) {
+    var rates = document.getElementsByName(name);
+    var rate_value;
+    for(var i = 0; i < rates.length; i++){
+        if(rates[i].checked){
+            rate_value = i;
+        }
+    }
+    return rate_value+1;
+}
+
+
 function setBalance(atp) {
     let d3 = RSLIDER.getValue()/100;
     // Our basic idea here is that the fourth dimension
@@ -744,21 +755,12 @@ function setBalance(atp) {
 
     $("#d3").text(RSLIDER.getValue() + '%');
 
-    function getRadioValue(name) {
-        var rates = document.getElementsByName(name);
-        var rate_value;
-        for(var i = 0; i < rates.length; i++){
-            if(rates[i].checked){
-                rate_value = i;
-            }
-        }
-        return rate_value+1;
-    }
-    var normToUse = getRadioValue("norm");
+//    var normToUse = getRadioValue("norm");
 
-    var norm_to_use = (normToUse == 1 ? L1NORM :L2NORM);
+  //    var norm_to_use = (normToUse == 1 ? L1 :L2);
+   var norm_to_use = L1;
     
-    let bal = TriBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
+    let bal = TriadBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
     
     var balancep = document.getElementById("balancefourth").checked;
     if (balancep) {
@@ -768,7 +770,7 @@ function setBalance(atp) {
         // If we are using the L2NORM, c = sqrt(1 - a^2).
         var c;
         // one can conjecture here that c = (1 - d3**n)**(1/n) for other norms
-        if (norm_to_use == L1NORM) {
+        if (norm_to_use == L1) {
             c = 1 - d3;
         } else {
             c = Math.sqrt( 1 - d3**2);
@@ -852,8 +854,20 @@ function setupDropzone (el, accept) {
             // we need to convert this to "world" coordinates, not viewport...
             var yc = -(y + -200);
             var xc = x + -200;
-            var triangle_coords = {x: xc,y: yc};
+            var triangle_coords = new THREE.Vector2(xc,yc);
+
+            // Note, we could balance and invert here to make sure we are inside the trianble!
             CUR_TRIANGLE_COORDS = triangle_coords;
+            var bal = setBalance(triangle_coords);
+            var vec = new THREE.Vector3(bal[0],bal[1],bal[2]);
+
+//            var normToUse = getRadioValue("norm");
+          //            var norm_to_use = (normToUse == 1 ? L1 :L2);
+          norm_to_use = L1;
+            var inv = invertTriadBalance2to3(vec,WORLD_TRIANGLE_COORDS,norm_to_use);
+            // This is a hack
+            triangle_coords = inv;
+
 
             // this is sort of any ugly way to do this
             var color;
@@ -874,7 +888,7 @@ function setupDropzone (el, accept) {
                 color = "orange";                
             }
 
-            setBalance(triangle_coords);
+//            setBalance(triangle_coords);
             let d3 = RSLIDER.getValue()/100;
             // now when we form this, the graphics
             // system treats the x axis as the first dimension,
@@ -918,7 +932,7 @@ interact(document).on('ready', function () {
 
 WORLD_TRIANGLE_COORDS = get_world_triangle();
 
-testAllTriBalance();
+testAllTriadBalance(WORLD_TRIANGLE_COORDS);
     init_3d(400,800);
    animate();
 </script>

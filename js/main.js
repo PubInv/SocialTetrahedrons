@@ -31,7 +31,7 @@ var TET_DISTANCE = 0.5;
 const MAX_PARAMETRIC_STEPS = 1000;
 const PARAMETRIC_BISECTION_LIMIT = 50;
 
-const DIMENSIONS = ["Mind","Body","Spirit","Abundance"];
+var DIMENSION_NAMES = ["Mind","Body","Spirit","Abundance"];
 
 var DATA_OBJECTS = [];
 var CURRENT_DATA_OBJECT = -1;
@@ -148,15 +148,30 @@ function create_vertex_mesh(pos, c) {
         am.scene.add(mesh);
 }
 
-function draw_big_tet() {
-    const colors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Blue")];
-    const three_colors = [0xff0000,
-                          0xffff00,
-                          0x00ff00,
-                          0x0000ff];    
-    const l = 2;
+function set_dimension_names(d) {
+  DIMENSIONS_NAMES = d;
+}
+function update_dimension_names() {
 
-    var v = [new THREE.Vector3( Math.sqrt(8/9),-1/3,0),
+  var children_to_remove = [];
+  am.grid_scene.children.forEach(function (child) {
+    if (child.userData.obj_type == "dimension_name")
+      children_to_remove.push(child);
+  });
+  children_to_remove.forEach(c => am.grid_scene.remove(c));
+  var v = get_vertices();
+  console.log("updating DIMENSION_NAMES",DIMENSION_NAMES);
+    for (var i in DIMENSION_NAMES) {
+        var label = makeTextSprite(DIMENSION_NAMES[i],{fontsize: 60 },"red");
+      label.position.set(v[i].x,v[i].y,v[i].z);
+      label.userData.obj_type = "dimension_name";
+        am.grid_scene.add(label);
+    }  
+}
+
+function get_vertices() {
+      const l = 2;
+   var v = [new THREE.Vector3( Math.sqrt(8/9),-1/3,0),
              new THREE.Vector3(-Math.sqrt(2/9),-1/3,Math.sqrt(2/3)),
              new THREE.Vector3(-Math.sqrt(2/9),-1/3,-Math.sqrt(2/3)),
              new THREE.Vector3(0,1,0)];
@@ -164,14 +179,24 @@ function draw_big_tet() {
     v[1].y += 1/3;
     v[2].y += 1/3;
     v[3].y += 1/3;    
-    v.forEach(x => { x.x *= l; x.y *= l; x.z *= l; });
-    v.forEach(x => create_vertex_mesh(x,d3.color("DarkRed")));
+  v.forEach(x => { x.x *= l; x.y *= l; x.z *= l; });
+  return v;
+ }
 
-    for (var i in DIMENSIONS) {
-        var label = makeTextSprite(DIMENSIONS[i],{fontsize: 60 },"red");
-        label.position.set(v[i].x,v[i].y,v[i].z);
-        am.grid_scene.add(label);
+function draw_big_tet() {
+    const colors = [d3.color("DarkRed"), d3.color("DarkOrange"), d3.color("Blue")];
+    const three_colors = [0xff0000,
+                          0xffff00,
+                          0x00ff00,
+                          0x0000ff];    
 
+
+  var v = get_vertices();
+  v.forEach(x => create_vertex_mesh(x,d3.color("DarkRed")));
+
+  update_dimension_names();
+
+    for (var i in DIMENSION_NAMES) {
        var bulbGeometry = new THREE.SphereBufferGeometry( 0.02, 16, 8 );
         const col_num = three_colors[i];
         bulbLight = new THREE.PointLight( col_num, 1, 100, 0.01 );
@@ -588,7 +613,7 @@ initiation_stuff();
 // for testing, we need to know when somethigns is "closeto a target"
 // to deal with roundoff error
 
-function near(x, y, e) {
+function near(x, y, e = 1e-4) {
     return Math.abs(x - y) <= e;
 }
 
@@ -728,7 +753,7 @@ function render_individual(d) {
     mesh.obj_type = "data_tet";
     am.scene.add(mesh);
 
-    var label = makeTextSprite(d.label,{fontsize: 60 },"red");
+    var label = makeTextSprite(d.label,{fontsize: 30 },d.color);
     label.position.set(d.pos.x,d.pos.y,d.pos.z);
 
     label.userData.obj_type = "data_tet";
@@ -736,42 +761,6 @@ function render_individual(d) {
 }
 
 function render_data_objects() {
-    // var table = document.getElementById('object_table');
-    // function addRow(d,i) {
-    //     var row = table.insertRow();
-
-    //     // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-    //     var cell0 = row.insertCell(0);
-    //     cell0.innerHTML = d.label;
-    //     var cell1 = row.insertCell(1);
-    //     cell1.innerHTML = "<button class='currentbutton' id='current"+i+"'>Make Current</button>";
-    // }
-    // var rows = table.getElementsByTagName("tr")
-    // const n = rows.length;
-    // for (var i = 1; i < n; i++) {
-    //     table.deleteRow(-1);
-    // }
-//    DATA_OBJECTS.forEach(addRow);
-
-//    let current_label = document.getElementById("current-label");    
-//    current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;    
-    
-// $(".currentbutton").on('click', function(event){
-//     event.stopPropagation();
-//     event.stopImmediatePropagation();
-//     //(... rest of your JS code)
-//     console.log(event);
-//     console.log(event.currentTarget.id);
-//     let idstr = event.currentTarget.id.substring("current".length);
-//     let idnum = parseInt(idstr);
-//     console.log(idnum);
-//     CURRENT_DATA_OBJECT = idnum;
-//     let current_label = document.getElementById("current-label");
-//     current_label.innerHTML = DATA_OBJECTS[CURRENT_DATA_OBJECT].label;
-    
-    
-// });
-
 
     am.scene.children.forEach(function (child) {
         if (child.obj_type == "data_tet")
