@@ -1,7 +1,7 @@
 <!--
 Copyright (C) 2019 by
   Robert L. Read <read.robert@gmail.com>
-  
+
   This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
     published by the Free Software Foundation, either version 3 of the
@@ -28,11 +28,11 @@ Copyright (C) 2019 by
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="shortcut icon" type="image/ico" href="./images/favicon.ico"/>
-  
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
 
     <script src="./js/three.js"></script>
-    
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
@@ -45,7 +45,7 @@ Copyright (C) 2019 by
 
     <link rel="stylesheet" href="./css/main.css">
 
-    
+
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="./js/scijs-newton-raphson.js"></script>
@@ -171,14 +171,14 @@ width: 100%;
   <br>
   <div class="container">
     <h1 class="section-title h1">Social Tetrahedra</h1>
-    
+
     <h2>First Three Dimensions</h2>
     <div>
       <button type="button" class="btn btn-primary" id="MBS">Mind/Body/Spirit</button>
       <button type="button" class="btn btn-secondary" id="HHH">Head/Heart/Hands</button>
       <button type="button" class="btn btn-success" id="PSM">Physical/Social/Mental</button>
       <button type="button" class="btn btn-danger" id="SEF">Strength/Endurance/Flexibility</button>
-      <button type="button" class="btn btn-warning" id="FSH">Father/Son/Holy Spirit</button>
+      <button type="button" class="btn btn-warning" id="PBC">Personal/Business/Civic</button>
     </div>
 
 <!--
@@ -188,18 +188,18 @@ width: 100%;
       <input type="radio" name="norm" id="l1norm" checked="checked">
       <label for="l2norm">L2 Norm (Sqrt of Squares):</label>
       &nbsp;
-      <input type="radio" name="norm" id="l2norm">    
+      <input type="radio" name="norm" id="l2norm">
   </fieldset>
   -->
-  
+
     <fieldset>
 
-      <label for="d3name">Fourth Dimension Name:</label>    
+      <label for="d3name">Fourth Dimension Name:</label>
       <input type="text" id="d3name" value="Abundance"></input>
       <label for="balancefourth">Balance fourth with Norm:</label>
       <input type="checkbox" name="balancefourth" id="balancefourth">
     </fieldset>
-    
+
     <fieldset style="display: inline}">
       <label for="d0" id="d0l">Mind: </label>
       <span type="text" id="d0">0%</span>
@@ -229,11 +229,11 @@ width: 100%;
           <div class="col">
             <div class="row">
               <div class="col-2 col-sm-1">
-                <input id="fourthslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>    
+                <input id="fourthslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-orientation="vertical"/>
               </div>
               <div class="col-4 col-sm-11">
                 <div id="create-canvas">
-                  <svg id="create_svg"  class="dropzone js-drop" height="400px" width="400px" viewbox="-200 -200 400 400"> 
+                  <svg id="create_svg"  class="dropzone js-drop" height="400px" width="400px" viewbox="-200 -200 400 400">
                   </svg>
                 </div>
               </div>
@@ -241,7 +241,7 @@ width: 100%;
             <div class="row">
               <div class="col-2 col-sm-1">
               </div>
-              <div class="col-4 col-sm-11">              
+              <div class="col-4 col-sm-11">
                 <div id="threecontainer" height="800px" width="500px"></div>
 </div>
             </div>
@@ -302,7 +302,7 @@ width: 100%;
   The weights of these attributes will be recorded with your assertion, and displayed (temporarily) below the
   triangle.
   <h2>The Fourth Dimension</h2>
-  In Mark's conception, the fourth dimension is "abundance" or "condition", which may 
+  In Mark's conception, the fourth dimension is "abundance" or "condition", which may
   be thought of as power or development. It is represented as a slider on the
   left. The checkbox labeled "Balance fourth with Norm" controls whether
   this dimension is thought of as separate, or whether we require a length 1
@@ -317,7 +317,7 @@ width: 100%;
   <h2>Purpose</h2>
   <p>The ultimate purpose is to match needs with offers, for example to work on technical projects, base on an interpretation
     of Maslow's Pyramid, having four dimenstions.  People express their desires by placing themselves on a tetrahedron that
-    captures, for example, the Mind/Body/Spirt and Abundance situation, and might then be matched with projects that 
+    captures, for example, the Mind/Body/Spirt and Abundance situation, and might then be matched with projects that
     are suited to them. Exactly how this will be done is still being worked out; this is a step.
   </p>
   <h2>License</h2>
@@ -335,9 +335,9 @@ width: 100%;
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
     <script src="./js/bootstrap-slider.js"></script>
-    
+
     <script src="./js/TriadBalance.js"></script>
-    
+
 <script>
 var WORLD_TRIANGLE_COORDS;
 const w = 400;
@@ -382,7 +382,7 @@ var THREE_DIMENSIONS = { "MBS": ["Mind","Body","Spirit"],
                          "HHH": ["Head","Heart","Hands"],
                          "PSM": ["Physical","Social","Mental"],
                          "SEF": ["Strength","Endurance","Flexibility"],
-                         "FSH": ["Father","Son","Holy Spirit"]
+                         "PBC": ["Personal","Business","Civic"]
                        };
 var CURRENT_D = "MBS";
 
@@ -435,57 +435,17 @@ function Tetrahedron(key,type) {
 
 // Now, before I will create a function to populate a test database....
 function InitProjects() {
-    PROJECTS.push(new Project('Project #16: "Gluss", A Robotic Truss','Public Invention',''));
-    PROJECTS.push(new Project('Project #3, Human-powered Rotary Lawn Mower','Public Invention',''));
-    PROJECTS.push(new Project('Project #28: Develop toolkit for the design of easily constructable CMS joints','Public Invention',''));
-    PROJECTS.push(new Project('Project #34: Ferrofluid based actuator','Public Invention',''));
-    PROJECTS.push(new Project('Project #12: Magnetic Bearing for Cam-and-Following System','Public Invention',''));
-    PROJECTS.push(new Project('Project #13: "Changing Slope" Continuously Variable Transmission','Public Invention',''));
-    PROJECTS.push(new Project('Project #29: Continuously variable linkage with linear motor member','Public Invention',''));
-    PROJECTS.push(new Project('Project #36: Motile Ferrofluid Snail','Public Invention',''));
-    PROJECTS.push(new Project('Project #4: Maximum work from an Adiabatic Expansion of a Piston','Public Invention',''));
-    PROJECTS.push(new Project('Project #6: "Air Treader", resistance-based flight','Public Invention',''));
-    PROJECTS.push(new Project('Project #5: More Efficient Pot for Heating Water','Public Invention',''));
-    PROJECTS.push(new Project('Project #8: Power-of-2 Square Gas Compression Chamber','Public Invention',''));
-    PROJECTS.push(new Project('Project #11: Control Heat Engine or ICE with Cam-Follower rather than Crank Shaft','Public Invention',''));
-    PROJECTS.push(new Project('Project #24: Very simple heat engine with bistable magnetic device','Public Invention',''));
-    PROJECTS.push(new Project('Project #41: Rapid coliform presence detector','Public Invention',''));
-    PROJECTS.push(new Project('Project #21: Interactive Model of Inputs and Outputs in Waste Treatment','Public Invention',''));
-    PROJECTS.push(new Project('Project #9: Human Waste Sanitation Through Thermal DepolymerizationImmature Ideas','Public Invention',''));
-    PROJECTS.push(new Project('Project #23: Pyrolysis Toilet','Public Invention',''));
-    PROJECTS.push(new Project('Project #25: In-pipe fan with gas sensor for EWB','Public Invention',''));
-    PROJECTS.push(new Project('Project #14: In-situ Brush Pile to Biochar Converter','Public Invention',''));
-    PROJECTS.push(new Project('Project #15: Stovetop Micro-Retort For Experimentation','Public Invention',''));
-    PROJECTS.push(new Project('Project #19: Single-chamber biochar producer and stove','Public Invention',''));
-    PROJECTS.push(new Project('Project #40: For oil painting, a wheel for very thin lines','Public Invention',''));
-    PROJECTS.push(new Project('Project #38: 3D-printable variable length snap line','Public Invention',''));
-    PROJECTS.push(new Project('Project #17: Grow Wooden Objects Directly','Public Invention',''));
-    PROJECTS.push(new Project('Project #37: Solar-ice','Public Invention',''));
-    PROJECTS.push(new Project('Project #20: Personal Stool Analysis','Public Invention',''));
-    PROJECTS.push(new Project('Project #43: Software to compute helix from repeated object stacking','Public Invention',''));
-    PROJECTS.push(new Project('Project #1: "Little Free Library" mobile app','Public Invention',''));
-    PROJECTS.push(new Project('Project #10, Free Transparent Public Accounting','Public Invention',''));
-    PROJECTS.push(new Project('Project #22: Abstract Data Type: Conserved Quantities','Public Invention',''));
-    PROJECTS.push(new Project('Project #31: Oracular Graph Paper','Public Invention',''));
-    PROJECTS.push(new Project('Project #32: Computational Theory Based on Progressive Refinement of Inputs','Public Invention',''));
-    PROJECTS.push(new Project('Project #30: Build a map of common irrational combinations','Public Invention',''));
-    PROJECTS.push(new Project('Project #2: Lovecraft, The Programming Language','Public Invention',''));
-    PROJECTS.push(new Project('Project #35: Develop new view of the expansion of e-to-the-x','Public Invention',''));
-    PROJECTS.push(new Project('Project #42: Volumetric Colony Counting','Public Invention',''));
-    PROJECTS.push(new Project('Project #39: Botanical Embedded Chemical Sensor','Public Invention',''));
-    PROJECTS.push(new Project('Project #18: Virtual Soundscape Recorder and Wildlife Locator','Public Invention',''));
-    PROJECTS.push(new Project('Project #7: Color-block-based Writing System','Public Invention',''));
-    PROJECTS.push(new Project('Project #33: Use PVA to 3D print dissolvable molds for fluids','Public Invention',''));
-    PROJECTS.push(new Project('Project #27: Space Propulsion via throwing and catching projectiles','Public Invention',''));
-    PROJECTS.push(new Project('Project #44: Social Tetrahedrons','Public Invention',''));
-    PROJECTS.push(new Project('Project #45: Segmented Helices generated by chains of Repeated Units','Public Invention',''));
+    PROJECTS.push(new Project('Project #1','Public Invention',''));
+    PROJECTS.push(new Project('Project #2,','Public Invention',''));
+    PROJECTS.push(new Project('Project #4','Public Invention',''));
+    PROJECTS.push(new Project('Project #4','Public Invention',''));
 }
 function InitDatabase() {
     InitProjects();
     PROJECTS.push(new Project('Gluss (robotic truss))','Public Invention','https://pubinv.github.io/tetrobot/'));
     PROJECTS.push(new Project('Geotagtext','Public Invention','https://github.com/PubInv/geotagtext'));
     PERSONS.push(new Person('Robert L. Read','read.robert@gmail.com'));
-    PERSONS.push(new Person('Mark Frazier','yadayada@gmail.com'));    
+    PERSONS.push(new Person('Mark Frazier','yadayada@gmail.com'));
     PLACES.push(new Place('Poindexter\'s Lab',30.252408, -97.774618));
     TOOLS.push(new Tool('JavaScript',4));
 }
@@ -494,7 +454,7 @@ function list_item(content) {
     return '<li class="list-group-item">'+content+'</li>';
 }
 function list_item_draggable(content) {
-    return '<li class="list-group-item draggable js-drag">'+content+'</li>';    
+    return '<li class="list-group-item draggable js-drag">'+content+'</li>';
 }
 // These function convert my abstract coordinates
 // to canvas coordinates.
@@ -510,8 +470,8 @@ var CUR_TRIANGLE_COORDS;
 
 function append_text(svg,x,y,text) {
     var newText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    newText.setAttributeNS(null,"x",x);      
-    newText.setAttributeNS(null,"y",y);   
+    newText.setAttributeNS(null,"x",x);
+    newText.setAttributeNS(null,"y",y);
     var textNode = document.createTextNode(text);
     newText.appendChild(textNode);
     svg.appendChild(newText);
@@ -526,10 +486,10 @@ function render_create_svg() {
 
     let wtc = WORLD_TRIANGLE_COORDS;
 
-    var array = [ [ vpw(w,wtc[0].x),vph(h,wtc[0].y) ], 
+    var array = [ [ vpw(w,wtc[0].x),vph(h,wtc[0].y) ],
                   [ vpw(w,wtc[1].x),vph(h,wtc[1].y) ],
                   [ vpw(w,wtc[2].x),vph(h,wtc[2].y) ] ];
-    
+
     for (value of array) {
         var point = svg.createSVGPoint();
         point.x = value[0];
@@ -541,7 +501,7 @@ function render_create_svg() {
     // These are ugly, they should really be computed from the text.
     // In fact, since this does not change, the whole thing could go into
     // HTML and css more profitably.
-    
+
     append_text(svg,array[2][0]-20,array[2][1]-5,
                 THREE_DIMENSIONS[CURRENT_D][2]);
     append_text(svg,array[0][0]-40,array[0][1]+20,
@@ -553,21 +513,21 @@ function render_create_svg() {
     DIMENSION_NAMES[i] = THREE_DIMENSIONS[CURRENT_D][i];
   }
   DIMENSION_NAMES[i] = $("#d3name").val();
-    
+
     var circle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
     circle.setAttributeNS(null, 'cx', vpw(w,0));
     circle.setAttributeNS(null, 'cy', vph(h,0));
     circle.setAttributeNS(null, 'r', 2);
     circle.setAttributeNS(null, 'style', 'fill: black; stroke: black; stroke-width: 1px;' );
     svg.appendChild(circle);
-    
+
     function add_triangle(tri,c) {
         if (tri) {
             var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
             svg.appendChild(polygon);
             var F = 0.05;
 
-            var array = arr = [ [ vpw(w,tri.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ], 
+            var array = arr = [ [ vpw(w,tri.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ],
                                 [ vpw(w,tri.x + F*SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ],
                                 [ vpw(w,tri.x + 0),vph(h,tri.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
             for (value of array) {
@@ -584,7 +544,7 @@ function render_create_svg() {
     ADDED_TET_PROJs.forEach( atp => add_triangle(atp,"blue"));
     ADDED_TET_PERSs.forEach( atp => add_triangle(atp,"red"));
     ADDED_TET_PLACs.forEach( atp => add_triangle(atp,"green"));
-    ADDED_TET_TOOLs.forEach( atp => add_triangle(atp,"orange"));            
+    ADDED_TET_TOOLs.forEach( atp => add_triangle(atp,"orange"));
 }
 
 function render_types(groupid,array,f) {
@@ -638,12 +598,12 @@ function main_social() {
       render_svgs();
       update_dimension_names();
     }
-    
+
     $("#MBS").click(() => { set_and_render("MBS");});
     $("#HHH").click(() => { set_and_render("HHH");});
     $("#PSM").click(() => { set_and_render("PSM");});
     $("#SEF").click(() => { set_and_render("SEF");});
-    $("#FSH").click(() => { set_and_render("FSH");});
+    $("#PBC").click(() => { set_and_render("PBC");});
 
     $("#d3").change(() => {
         set_dimension_labels(CURRENT_D);
@@ -697,13 +657,13 @@ interact('.js-drag')
         event.target.style.width = CUR_WIDTH;
         event.target.style.height = CUR_HEIGHT;
         event.target.style.fontSize = CUR_FONT_SIZE;
-        event.target.textContent = CUR_TEXT;        
+        event.target.textContent = CUR_TEXT;
         event.target.style.left = "" + 0 + "px";
         event.target.style.top = "" + 0 + "px";
         startPos = null;
         render_svgs();
         event.interaction.x = 0;
-        event.interaction.y = 0;        
+        event.interaction.y = 0;
         event.target.setAttribute('data-x', event.interaction.x);
         event.target.setAttribute('data-y', event.interaction.y);
     })
@@ -717,7 +677,7 @@ interact('.js-drag')
         }
         else {
             var lw = -20; // this is the width of the draggable element
-            var lh = -10; // this is the width of the draggable element          
+            var lh = -10; // this is the width of the draggable element
             event.target.style.left = CUR_POS_X + lw + event.interaction.x + 'px';
             event.target.style.top  = CUR_POS_Y + lh + event.interaction.y + 'px';
         }
@@ -759,9 +719,9 @@ function setBalance(atp) {
 
   //    var norm_to_use = (normToUse == 1 ? L1 :L2);
    var norm_to_use = L1;
-    
+
     let bal = TriadBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
-    
+
     var balancep = document.getElementById("balancefourth").checked;
     if (balancep) {
 
@@ -845,7 +805,7 @@ function setupDropzone (el, accept) {
             event.relatedTarget.textContent = 'Dropped';
             var element = event.relatedTarget;
             var draggedBox = element.getBoundingClientRect();
-            element.textContent = CUR_TEXT;                
+            element.textContent = CUR_TEXT;
             var droppableBox = event.target.getBoundingClientRect();
             var xc = event.dragEvent.clientX;
             var yc = event.dragEvent.clientY;
@@ -885,7 +845,7 @@ function setupDropzone (el, accept) {
             }
             if ($('#nav-tools.tab-pane.fade.show.active').length) {
                 ADDED_TET_TOOLs.push(triangle_coords);
-                color = "orange";                
+                color = "orange";
             }
 
 //            setBalance(triangle_coords);
@@ -898,7 +858,7 @@ function setupDropzone (el, accept) {
             var for3dTet = new THREE.Vector3(-xc/200,d3,-yc/200);
             // I need to be more careful about the handedness of my system
             add_data_object_aux(for3dTet,CUR_TEXT,color);
-            
+
             render_svgs();
         });
 }
@@ -936,7 +896,7 @@ testAllTriadBalance(WORLD_TRIANGLE_COORDS);
     init_3d(400,800);
    animate();
 </script>
-    
+
 
 <script>
 
