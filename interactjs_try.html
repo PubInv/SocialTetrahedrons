@@ -29,8 +29,13 @@ Copyright (C) 2019 by
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="shortcut icon" type="image/ico" href="./images/favicon.ico"/>
 
+
+    <link rel="stylesheet" href="./css/TriadBalance.css">
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.0/bootstrap-slider.js"></script>
 
+    <script src="./js/three.js"></script>
     <script src="./js/three.js"></script>
 
     <!-- Bootstrap CSS -->
@@ -336,7 +341,7 @@ width: 100%;
 
     <script src="./js/bootstrap-slider.js"></script>
 
-    <script src="./js/TriadBalance.js"></script>
+    <script src="./js/TriadBalance.debug.js"></script>
 
 <script>
 var WORLD_TRIANGLE_COORDS;
@@ -349,12 +354,20 @@ const SIDE_LENGTH_PIXEL = 300;
 const SIDE_LENGTH_HEIGHT = SIDE_LENGTH_PIXEL * TRIANGLE_HEIGHT;
 const BASE = -(1/3) * SIDE_LENGTH_HEIGHT;
 
+// function get_world_triangle() {
+//     let wtc_vector = [new THREE.Vector2(-SIDE_LENGTH_PIXEL/2,BASE),
+//                new THREE.Vector2(SIDE_LENGTH_PIXEL/2,BASE),
+//                new THREE.Vector2(0,BASE+SIDE_LENGTH_HEIGHT)];
+//     return wtc_vector;
+// }
+
+
 function get_world_triangle() {
-    let wtc_vector = [new THREE.Vector2(-SIDE_LENGTH_PIXEL/2,BASE),
-               new THREE.Vector2(SIDE_LENGTH_PIXEL/2,BASE),
-               new THREE.Vector2(0,BASE+SIDE_LENGTH_HEIGHT)];
-    return wtc_vector;
-}
+     let wtc_vector = [[-SIDE_LENGTH_PIXEL/2,BASE],
+                [SIDE_LENGTH_PIXEL/2,BASE],
+                [0,BASE+SIDE_LENGTH_HEIGHT]];
+     return wtc_vector;
+ }
 
 // These function convert my abstract coordinates
 // to svg coordinates.
@@ -384,7 +397,7 @@ var THREE_DIMENSIONS = { "MBS": ["Mind","Body","Spirit"],
                          "SEF": ["Strength","Endurance","Flexibility"],
                          "PBC": ["Personal","Business","Civic"]
                        };
-var CURRENT_D = "MBS";
+var CURRENT_LABELS = "MBS";
 
 // Now some constructors to give these things some shapes
 
@@ -474,52 +487,38 @@ function append_text(svg,x,y,text) {
     newText.setAttributeNS(null,"y",y);
     var textNode = document.createTextNode(text);
     newText.appendChild(textNode);
-    svg.appendChild(newText);
+   svg.appendChild(newText);
+}
+
+var TBS;
+function init() {
+  // HERE IS THE INITIALIZATION OF THE DIAGRAM
+  let GLOBAL_SVG_ID = "create_svg";
+  TBS = new triadb.TriadBalanceState();
+  TBS.SVG_ELT = document.getElementById(GLOBAL_SVG_ID);
+  TBS.CLICK_CALLBACK = ((tp,tpi,bal) => setBalance(bal));
+  TBS.LABELS = THREE_DIMENSIONS[CURRENT_LABELS];
+
+  // These are optional configuraton settings, which have defaults.
+  TBS.POINTS_UPWARD = true;
+  TBS.FONT_SIZE_RATIO_TO_HEIGHT = 1/20;
+  // These value look good to me but I am not a web designer.
+  // 4/5 is generally too high for this!
+  TBS.SIDE_TO_MIN_BOUND = 7/10;
+  // The percentage to push the origin down to make it look balanced.
+
+  // This would normally be different, but we are interacting with the
+  // SVG extensively.
+  TBS.Y_DISP_PER_CENT = 0;
+
+  TBS.NORM_TO_USE = (getRadioValue("norm") == 0 ? triadb.m.L1 : triadb.m.L2);
+
+  triadb.initialize_triad_diagram(TBS);
 }
 
 
-function render_create_svg() {
-    var svg = $("#create_svg")[0];
-    $("#create_svg").empty();
-    var polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    svg.appendChild(polygon);
-
-    let wtc = WORLD_TRIANGLE_COORDS;
-
-    var array = [ [ vpw(w,wtc[0].x),vph(h,wtc[0].y) ],
-                  [ vpw(w,wtc[1].x),vph(h,wtc[1].y) ],
-                  [ vpw(w,wtc[2].x),vph(h,wtc[2].y) ] ];
-
-    for (value of array) {
-        var point = svg.createSVGPoint();
-        point.x = value[0];
-        point.y = value[1];
-        polygon.points.appendItem(point);
-    }
-    polygon.style.fill='lemonchiffon';
-
-    // These are ugly, they should really be computed from the text.
-    // In fact, since this does not change, the whole thing could go into
-    // HTML and css more profitably.
-
-    append_text(svg,array[2][0]-20,array[2][1]-5,
-                THREE_DIMENSIONS[CURRENT_D][2]);
-    append_text(svg,array[0][0]-40,array[0][1]+20,
-                THREE_DIMENSIONS[CURRENT_D][0]);
-    append_text(svg,array[1][0],array[1][1]+20,
-                THREE_DIMENSIONS[CURRENT_D][1]);
-
-  for(var i = 0; i < 3; i++) {
-    DIMENSION_NAMES[i] = THREE_DIMENSIONS[CURRENT_D][i];
-  }
-  DIMENSION_NAMES[i] = $("#d3name").val();
-
-    var circle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-    circle.setAttributeNS(null, 'cx', vpw(w,0));
-    circle.setAttributeNS(null, 'cy', vph(h,0));
-    circle.setAttributeNS(null, 'r', 2);
-    circle.setAttributeNS(null, 'style', 'fill: black; stroke: black; stroke-width: 1px;' );
-    svg.appendChild(circle);
+function render_triangles_svg() {
+   var svg = $("#create_svg")[0];
 
     function add_triangle(tri,c) {
         if (tri) {
@@ -527,9 +526,9 @@ function render_create_svg() {
             svg.appendChild(polygon);
             var F = 0.05;
 
-            var array = arr = [ [ vpw(w,tri.x + F*-SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ],
-                                [ vpw(w,tri.x + F*SIDE_LENGTH_PIXEL/2),vph(h,tri.y + F*BASE) ],
-                                [ vpw(w,tri.x + 0),vph(h,tri.y + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
+            var array = arr = [ [ vpw(w,tri[0] + F*-SIDE_LENGTH_PIXEL/2),vph(h,tri[1] + F*BASE) ],
+                                [ vpw(w,tri[0] + F*SIDE_LENGTH_PIXEL/2),vph(h,tri[1] + F*BASE) ],
+                                [ vpw(w,tri[0] + 0),vph(h,tri[1] + F*(BASE+SIDE_LENGTH_HEIGHT)) ] ];
             for (value of array) {
                 var point = svg.createSVGPoint();
                 point.x = value[0];
@@ -557,7 +556,7 @@ function render_types(groupid,array,f) {
 }
 
 function render_svgs() {
-    render_create_svg();
+    render_triangles_svg();
 }
 
 function main_social() {
@@ -587,11 +586,11 @@ function main_social() {
         $("#d3l").text(", " + $("#d3name").val() + ":");
     }
     function set_and_render(cur) {
-        CURRENT_D = cur;
-      set_dimension_labels(CURRENT_D);
+        CURRENT_LABELS = cur;
+      set_dimension_labels(CURRENT_LABELS);
       var names = [];
       for(var i = 0; i < 3; i++) {
-        names[i] = THREE_DIMENSIONS[CURRENT_D][i];
+        names[i] = THREE_DIMENSIONS[CURRENT_LABELS][i];
       }
       names[3] = $("#d3name").val();
       set_dimension_names(names);
@@ -606,7 +605,7 @@ function main_social() {
     $("#PBC").click(() => { set_and_render("PBC");});
 
     $("#d3").change(() => {
-        set_dimension_labels(CURRENT_D);
+        set_dimension_labels(CURRENT_LABELS);
         render_svgs();
     }
                    );
@@ -614,6 +613,7 @@ function main_social() {
 
 $( document ).ready(function() {
 
+  init();
     main_social();
 });
 
@@ -717,20 +717,22 @@ function setBalance(atp) {
 
 //    var normToUse = getRadioValue("norm");
 
-  //    var norm_to_use = (normToUse == 1 ? L1 :L2);
-   var norm_to_use = L1;
+  //    var norm_to_use = (normToUse == 1 ? triadb.m.L1 :triadb.m.L2);
+   var norm_to_use = triadb.m.L1;
 
-    let bal = TriadBalance2to3(atp,WORLD_TRIANGLE_COORDS,norm_to_use);
+  let patp = [atp.x,atp.y];
+  let bala = triadb.TriadBalance2to3(patp,WORLD_TRIANGLE_COORDS,norm_to_use);
+  let bal = new THREE.Vector3(bala[0],bala[1],bala[2]);
 
     var balancep = document.getElementById("balancefourth").checked;
     if (balancep) {
 
         // Now balance needs be scaled ...
-        // If we are using the L1NORM, it is linear.
-        // If we are using the L2NORM, c = sqrt(1 - a^2).
+        // If we are using the triadb.m.L1NORM, it is linear.
+        // If we are using the triadb.m.L2NORM, c = sqrt(1 - a^2).
         var c;
         // one can conjecture here that c = (1 - d3**n)**(1/n) for other norms
-        if (norm_to_use == L1) {
+        if (norm_to_use == triadb.m.L1) {
             c = 1 - d3;
         } else {
             c = Math.sqrt( 1 - d3**2);
@@ -817,14 +819,15 @@ function setupDropzone (el, accept) {
             var triangle_coords = new THREE.Vector2(xc,yc);
 
             // Note, we could balance and invert here to make sure we are inside the trianble!
-            CUR_TRIANGLE_COORDS = triangle_coords;
+          CUR_TRIANGLE_COORDS = triangle_coords;
+
             var bal = setBalance(triangle_coords);
-            var vec = new THREE.Vector3(bal[0],bal[1],bal[2]);
+//            var vec = new THREE.Vector3(bal[0],bal[1],bal[2]);
 
 //            var normToUse = getRadioValue("norm");
-          //            var norm_to_use = (normToUse == 1 ? L1 :L2);
-          norm_to_use = L1;
-            var inv = invertTriadBalance2to3(vec,WORLD_TRIANGLE_COORDS,norm_to_use);
+          //            var norm_to_use = (normToUse == 1 ? triadb.m.L1 :triadb.m.L2);
+          norm_to_use = triadb.m.L1;
+            var inv = triadb.invertTriadBalance2to3(bal,WORLD_TRIANGLE_COORDS,norm_to_use);
             // This is a hack
             triangle_coords = inv;
 
@@ -892,7 +895,7 @@ interact(document).on('ready', function () {
 
 WORLD_TRIANGLE_COORDS = get_world_triangle();
 
-testAllTriadBalance(WORLD_TRIANGLE_COORDS);
+// testAllTriadBalance(WORLD_TRIANGLE_COORDS);
     init_3d(400,800);
    animate();
 </script>
